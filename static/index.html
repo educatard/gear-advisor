@@ -131,6 +131,39 @@ h1.page .cnt{font-size:20px;color:var(--muted);font-weight:700}
 details.ai summary{cursor:pointer;font-weight:700}
 pre.json{font:12px/1.45 ui-monospace,Menlo,monospace;background:var(--soft);border-radius:8px;padding:12px;overflow-x:auto;margin:8px 0 0}
 
+/* my rig page */
+.rigpage{padding-bottom:90px}
+.righead{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0 8px}
+.stat{background:var(--soft);border-radius:10px;padding:14px 16px}
+.stat b{display:block;font-size:30px;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums}
+.stat span{font-size:13px;color:var(--muted)}
+.stat.alert b{color:var(--warn)}
+.riggrid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:32px;margin-top:20px}
+.riggrid h2{font-size:22px;font-weight:800;margin:0 0 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.chains{display:flex;flex-direction:column;gap:12px;margin-bottom:28px}
+.chain{background:var(--soft2);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.chain h3{margin:0 0 10px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.flow{display:flex;align-items:center;gap:6px;overflow-x:auto;padding-bottom:4px}
+.node{flex:none;width:118px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:6px;text-align:center;font-size:12px;line-height:1.3}
+.node .sil{aspect-ratio:3/2;margin-bottom:4px}
+.node.missing{border-style:dashed;border-color:var(--purple);color:var(--purple);background:var(--purple-soft);display:grid;place-items:center;min-height:98px;font-weight:700;cursor:pointer}
+.flow .arr{flex:none;color:var(--muted)}
+.gearlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.gear{background:var(--soft);border-radius:10px;padding:12px;display:grid;grid-template-columns:84px minmax(0,1fr);gap:12px;align-items:start}
+.gear h4{margin:0;font-size:15px;line-height:1.3}
+.gear .meta{font-size:12.5px;color:var(--muted);margin:2px 0 6px}
+.gear .acts{display:flex;gap:6px;flex-wrap:wrap}
+.addgear{border:1.5px dashed var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.addgear .row2{display:flex;gap:8px;flex-wrap:wrap}
+.addgear input,.addgear select{border:1px solid var(--ink);border-radius:8px;padding:8px 10px;min-width:0;flex:1 1 160px;background:var(--bg)}
+.side{display:flex;flex-direction:column;gap:16px;min-width:0}
+.side .box h4{font-size:16px}
+.health .fitline{border-top:1px solid var(--line);padding:8px 0}
+.health .fitline:first-of-type{border-top:0}
+@media (max-width:980px){.riggrid{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:520px){.stats{grid-template-columns:1fr 1fr}.stats .stat:last-child{grid-column:1 / -1}}
+
 /* contact */
 .contact{display:grid;grid-template-columns:240px minmax(0,1fr);gap:40px;padding:24px 0 80px}
 .side-nav{display:flex;flex-direction:column;gap:14px;font-weight:700;font-size:15px}
@@ -383,7 +416,7 @@ const rigItems=()=>S.rig.map(r=>r.custom?{...r,key:r.name}:{...r,...BY[r.id],key
 function toast(t){const el=document.createElement("div");el.className="toast";el.textContent=t;document.body.append(el);setTimeout(()=>el.remove(),2600)}
 function addBasket(id,qty=1){const ex=S.basket.find(x=>x.id===id);if(ex)ex.qty+=qty;else S.basket.push({id,qty});store.set("basket",S.basket);bcount();toast("Added to basket: "+BY[id].n)}
 function bcount(){$("#bcount").textContent=S.basket.reduce((a,b)=>a+b.qty,0)}
-function addRig(id){if(!S.rig.some(r=>r.id===id)){S.rig.push({id,since:"2026-11"});store.set("rig",S.rig);toast("Added to My rig: "+BY[id].n);if(S.view.name==="product")render()}}
+function addRig(id){if(!S.rig.some(r=>r.id===id)){S.rig.push({id,since:"2026-11"});store.set("rig",S.rig);toast("Added to My rig: "+BY[id].n);if(["product","rig"].includes(S.view.name))render()}}
 function catAvg(c){const l=P.filter(p=>p.c===c);return (l.reduce((a,p)=>a+p.ret.rate,0)/l.length).toFixed(1)}
 function returnHtml(p){
   return `<div><div class="muted">Return rate ${p.ret.rate}% · category average ${catAvg(p.c)}%</div>
@@ -436,8 +469,10 @@ function render(){
   $("#needhelp").hidden=v.name==="contact";
   if(v.name==="product") el.innerHTML=productView(BY[v.id]);
   else if(v.name==="contact") el.innerHTML=contactView();
+  else if(v.name==="rig") el.innerHTML=rigView();
   else el.innerHTML=resultsView();
   if(v.name==="results") bindFilters();
+  if(v.name==="rig") bindRig();
 }
 function scoreQ(p,q){
   if(!q)return 1;const words=q.toLowerCase().split(/\s+/).filter(w=>w.length>1&&!["for","the","a","and","with","my","to"].includes(w));
@@ -523,6 +558,120 @@ function productView(p){
      <div class="prow"><button class="btn" data-ask="Is there a cheaper option or B-Stock for the ${esc(p.n)}?">Price check</button><button class="btn" data-ask="Compare the ${esc(p.n)} with similar products.">Compare</button></div></div>
    </aside>
   </div></div>`;
+}
+/* ---------------- My rig page ---------------- */
+const CUSTOM_KINDS={guitar:["Guitar","guitars","electric guitar"],amp:["Amp","amps","amp"],pedal:["Pedal","pedals","pedal"],interface:["Audio interface","interfaces","interface"],mic:["Microphone","mics","mic"],headphones:["Headphones","headphones","headphones"],keys:["Keyboard","keys","keys"],computer:["Computer","computer","computer"],other:["Other","other","other"]};
+const daysSince=d=>{const t=new Date(String(d).length===7?d+"-01":d);return isNaN(t)?null:Math.round((TODAY-t)/864e5)};
+function rigHealth(){
+  const items=rigItems(),kind=k=>items.filter(x=>x.cp?.kind===k),out=[];
+  const str=kind("strings")[0];
+  if(str){const d=daysSince(str.since);if(d!==null)out.push(d>90?{s:"warn",t:`Your strings were changed ${d} days ago. Most players change them every 2–3 months.`,ask:"My strings are over 3 months old. Which ones should I get?"}:{s:"ok",t:`Strings changed ${d} days ago.`})}
+  const pedals=kind("pedal"),psu=kind("psu")[0];
+  if(pedals.length&&!psu)out.push({s:"warn",t:`${pedals.length} pedal${pedals.length>1?"s run":" runs"} on batteries. A 9 V supply saves batteries and noise.`,ask:"Which power supply should I get for my pedals?"});
+  if(psu)for(const pd of pedals)if(!psu.cp.outputs.some(o=>o.mA>=pd.cp.mA))out.push({s:"bad",t:`${pd.name} needs ${pd.cp.mA} mA; no output on your ${psu.name} gives that.`,ask:`My ${psu.name} can't power my ${pd.name}. What should I do?`});
+  const g=kind("electric guitar"),amp=kind("amp")[0];
+  if(g.length&&!amp&&!pedals.some(p=>p.cp.headphoneOut))out.push({s:"warn",t:"You have an electric guitar but no amp or headphone amp.",ask:"I need an amp for my guitar. What fits my rig?"});
+  if(g.length&&amp)out.push({s:"ok",t:`${g[0].name} → ${amp.name}: ready to play.`});
+  const itf=kind("interface")[0],comp=kind("computer")[0];
+  if(itf&&comp)out.push(itf.cp.usb==="C"||!comp.cp.ports.includes("USB-C")?{s:"ok",t:`${itf.name} connects directly to your ${comp.name}.`}:{s:"warn",t:`${itf.name} needs a USB-${itf.cp.usb} to USB-C cable for your ${comp.name}.`});
+  for(const h of kind("headphones")){
+    if(itf)out.push(h.cp.ohm<=itf.cp.hpMax?{s:"ok",t:`${h.name} (${h.cp.ohm} Ω) are driven fine by your ${itf.name}.`}:{s:"warn",t:`${h.name} (${h.cp.ohm} Ω) may be quiet on your ${itf.name}.`});
+    if(h.cp.ohm>=250)out.push({s:"warn",t:`${h.name} are ${h.cp.ohm} Ω: quiet when plugged into a phone or laptop directly.`});
+  }
+  for(const m of kind("mic")){
+    if(!itf){out.push({s:"bad",t:`${m.name}: no interface to plug it into.`,ask:"I need an audio interface for my mic. What fits?"});continue}
+    if(m.cp.needsPhantom&&!itf.cp.phantom)out.push({s:"bad",t:`${m.name} needs phantom power; ${itf.name} has none.`});
+    const boost=kind("booster")[0],gain=itf.cp.gain+(boost?boost.cp.boost:0);
+    out.push(gain>=m.cp.gainNeed?{s:"ok",t:`${m.name}: enough gain from your ${itf.name}${boost?" + "+boost.name:""}.`}:{s:"warn",t:`${m.name} needs about ${m.cp.gainNeed} dB; your ${itf.name} gives ${itf.cp.gain} dB.`,ask:`My ${m.name} is too quiet on my ${itf.name}. What can I do?`});
+  }
+  if(kind("mic").length>(itf?.cp.xlr||0)&&itf)out.push({s:"warn",t:`${kind("mic").length} mics but ${itf.cp.xlr} mic input on your ${itf.name}.`});
+  if(!out.length)out.push({s:"ok",t:"No issues found in your rig."});
+  return out;
+}
+function rigChains(){
+  const items=rigItems(),pick=f=>items.filter(f);
+  const chains=[];
+  const gtr=pick(x=>x.cp?.kind==="electric guitar"),ped=pick(x=>x.cp?.kind==="pedal"),amp=pick(x=>x.cp?.kind==="amp");
+  if(gtr.length||amp.length){
+    const flow=[...gtr.slice(0,1),...ped];if(ped.length&&!pick(x=>x.cp?.kind==="psu").length)flow.push({missing:"Pedal power",ask:"Which power supply should I get for my pedals?"});
+    flow.push(...(amp.length?amp.slice(0,1):[{missing:"Amp",ask:"I need an amp for my guitar. What fits my rig?"}]));
+    chains.push({title:"Guitar",flow});
+  }
+  const mic=pick(x=>x.cp?.kind==="mic"),itf=pick(x=>x.cp?.kind==="interface"),comp=pick(x=>x.cp?.kind==="computer"),hp=pick(x=>x.cp?.kind==="headphones"||x.cp?.kind==="monitors");
+  if(itf.length||mic.length){
+    chains.push({title:"Recording",flow:[...(mic.length?mic.slice(0,1):[{missing:"Microphone",ask:"Which microphone should I get for my interface?"}]),...(itf.length?itf.slice(0,1):[{missing:"Interface",ask:"I need an audio interface. What fits my rig?"}]),...comp.slice(0,1),...hp.slice(0,1)]});
+  }
+  const keys=pick(x=>x.cp?.kind==="keys");
+  if(keys.length)chains.push({title:"Keys",flow:[...keys.slice(0,1),...pick(x=>x.cp?.kind==="sustain").slice(0,1),...comp.slice(0,1)]});
+  return chains;
+}
+function rigSuggestions(){
+  const owned=new Set(S.rig.map(r=>r.id)),items=rigItems(),has=k=>items.some(x=>x.cp?.kind===k),out=[];
+  const want=[];
+  if(has("pedal")&&!has("psu"))want.push(["power","Powers your pedals"]);
+  if(has("interface")&&!has("mic"))want.push(["mics","Uses your interface's mic input"]);
+  if(has("interface")&&!has("monitors"))want.push(["monitors","Speakers for your interface"]);
+  if(has("electric guitar"))want.push(["pedals","Adds a new sound to your board"]);
+  want.push(["accessories","Spares for your rig"]);
+  for(const [cat,why] of want){
+    const best=P.filter(p=>p.c===cat&&!owned.has(p.id)).map(p=>({p,f:fitCheck([p.id])})).filter(o=>!o.f.some(x=>x.status==="bad")).sort((a,b)=>(a.f.some(x=>x.status==="warn")-b.f.some(x=>x.status==="warn"))||b.p.r-a.p.r||b.p.rv-a.p.rv)[0];
+    if(best&&!out.some(o=>o.p.id===best.p.id))out.push({p:best.p,why,warn:best.f.some(x=>x.status==="warn")});
+    if(out.length>=4)break;
+  }
+  return out;
+}
+function rigView(){
+  const items=rigItems(),health=rigHealth(),attn=health.filter(h=>h.s!=="ok").length;
+  const value=items.reduce((a,x)=>a+(x.p||0),0);
+  const owned=new Set(S.rig.map(r=>r.id));
+  const fromOrders=ORDERS.flatMap(o=>o.items.map(([id])=>({id,o}))).filter(x=>!owned.has(x.id)&&BY[x.id].c!=="accessories");
+  const sug=rigSuggestions();
+  const node=x=>x.missing?`<button class="node missing" data-ask="${esc(x.ask)}">+ ${esc(x.missing)}</button>`:`<div class="node">${sil(x.custom?(x.cat==="computer"?"interfaces":x.cat):x.c)}${esc(x.name)}</div>`;
+  const arrow=`<svg class="i arr" style="width:18px" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`;
+  return `<div class="wrap rigpage">
+  <div class="crumbs"><span>⌂</span><span>My account</span><span class="last">My rig</span></div>
+  <div class="righead"><div><h1 class="page" style="margin:0">My rig</h1><p class="muted" style="margin:4px 0 0">Signed in as Demo customer · the AI advisor checks new gear against this list <span class="tag moat">moat</span> <span class="tag sim">demo data</span></p></div>
+   <button class="cta purple" style="padding:11px 22px" data-ask="Look at my whole rig. What should I upgrade first, and why?">Ask the advisor about my rig</button></div>
+  <div class="stats">
+   <div class="stat"><b>${items.length}</b><span>items you own</span></div>
+   <div class="stat"><b>${eur(Math.round(value))}</b><span>value at today's shop prices</span></div>
+   <div class="stat${attn?" alert":""}"><b>${attn}</b><span>${attn===1?"thing needs":"things need"} attention</span></div>
+  </div>
+  <div class="riggrid">
+   <div style="min-width:0">
+    ${rigChains().length?`<h2>How it connects</h2><div class="chains">${rigChains().map(c=>`<div class="chain"><h3>${esc(c.title)}</h3><div class="flow">${c.flow.map(node).join(arrow)}</div></div>`).join("")}</div>`:""}
+    <h2>Your gear <span class="muted" style="font-weight:400;font-size:14px">${items.length} items</span></h2>
+    <div class="gearlist">${S.rig.map((r,i)=>{const x=rigItems().find(y=>y.key===(r.custom?r.name:r.id));if(!x)return "";
+      const age=daysSince(x.since);
+      return `<div class="gear">${sil(x.custom?(x.cat==="computer"?"interfaces":["guitars","amps","pedals","interfaces","mics","headphones","keys"].includes(x.cat)?x.cat:"accessories"):x.c)}
+       <div style="min-width:0"><h4>${esc(x.name)}</h4><div class="meta">${esc(x.custom?(CUSTOM_KINDS[Object.keys(CUSTOM_KINDS).find(k=>CUSTOM_KINDS[k][1]===x.cat)]?.[0]||"Other"):CATS[x.c])} · since ${esc(x.since||"?")}${x.note?" · "+esc(x.note):""}${!x.custom?` · now ${eur(x.p)}`:""}</div>
+        <div class="acts">${!x.custom?`<button class="btn" data-detail="${x.id}">View</button>`:""}<button class="btn" data-prefill="My ${esc(x.name)} has a problem: ">Having a problem?</button><button class="btn" data-ask="Is there a worthwhile upgrade for my ${esc(x.name)}?">Upgrade?</button><button class="btn" data-rig-rm="${i}" aria-label="Remove ${esc(x.name)}">Remove</button></div></div></div>`}).join("")}</div>
+    <div class="addgear"><b>Add gear you own</b>
+     <div class="row2"><input id="rigSearch" list="rigList" placeholder="Search the catalogue, e.g. Katana" aria-label="Search the catalogue"><datalist id="rigList">${P.filter(p=>!owned.has(p.id)).map(p=>`<option value="${esc(p.n)}">`).join("")}</datalist><button class="btn primary" id="rigAddCat" style="padding:8px 16px">Add</button></div>
+     <div class="muted">Not in our catalogue? Add it by name.</div>
+     <div class="row2"><input id="rigName" placeholder="e.g. MacBook Pro, Gibson SG" aria-label="Gear name"><select id="rigKind" aria-label="Type">${Object.entries(CUSTOM_KINDS).map(([k,v])=>`<option value="${k}">${v[0]}</option>`).join("")}</select><button class="btn" id="rigAddCustom" style="padding:8px 16px">Add</button></div>
+     <button class="btn" id="rigReset2" style="align-self:flex-start">Reset demo rig</button>
+    </div>
+   </div>
+   <aside class="side">
+    <div class="box health" style="border-color:var(--purple)"><h4><span class="aiav sm" style="width:26px;height:26px">${AISVG}</span>Rig health</h4>
+     ${health.map(h=>`<div class="fitline"><span class="badge ${h.s}">${h.s.toUpperCase()}</span><span style="flex:1">${esc(h.t)}${h.ask?` <button class="btn" style="margin-top:4px" data-ask="${esc(h.ask)}">Fix this</button>`:""}</span></div>`).join("")}</div>
+    ${fromOrders.length?`<div class="box"><h4>From your orders</h4>${fromOrders.map(({id,o})=>`<div class="mini"><div class="info"><div>${esc(BY[id].n)}</div><div class="sub">${o.id} · ${esc(o.status)}${o.status!=="Delivered"?" · arrives "+esc(o.eta):""}</div></div><button class="btn" data-rig-add="${id}">${o.status==="Delivered"?"Add to rig":"Add now"}</button></div>`).join("")}</div>`:""}
+    ${sug.length?`<div class="box"><h4>Goes well with your rig</h4>${sug.map(o=>`<div class="mini"><div class="info"><div>${esc(o.p.n)}</div><div class="sub">${esc(o.why)} · ${o.warn?"fits with notes":"fits your rig"}</div></div><span class="price">${eur(o.p.p)}</span><button class="btn" data-detail="${o.p.id}">View</button></div>`).join("")}</div>`:""}
+    <div class="box"><h4>Ask about your rig</h4><div class="chips">${["What should I upgrade first?","Is my rig good for recording guitar at home?","I want a fuller blues sound. What would you change?"].map(t=>`<button class="chip" data-ask="${esc(t)}">${esc(t)}</button>`).join("")}</div></div>
+   </aside>
+  </div></div>`;
+}
+function bindRig(){
+  const after=()=>{store.set("rig",S.rig);render()};
+  document.querySelectorAll("[data-rig-rm]").forEach(b=>b.onclick=()=>{const [gone]=S.rig.splice(+b.dataset.rigRm,1);after();toast("Removed "+(gone.custom?gone.name:BY[gone.id].n)+" from My rig")});
+  $("#rigAddCat").onclick=()=>{const v=$("#rigSearch").value.trim().toLowerCase();const p=P.find(x=>x.n.toLowerCase()===v)||P.find(x=>x.n.toLowerCase().includes(v)&&v.length>2);
+    if(!p){toast("Not found in the catalogue. Add it by name below.");return}addRig(p.id);render()};
+  $("#rigSearch").onkeydown=e=>{if(e.key==="Enter")$("#rigAddCat").click()};
+  $("#rigAddCustom").onclick=()=>{const n=$("#rigName").value.trim();if(!n){toast("Type the gear's name first");return}
+    const [,cat,kind]=CUSTOM_KINDS[$("#rigKind").value];
+    S.rig.push({custom:true,name:n,cat,cp:kind==="computer"?{kind,ports:["USB-C"]}:kind==="electric guitar"?{kind}:{kind:"custom-"+kind},since:"2026-11"});after();toast("Added "+n+" to My rig")};
+  $("#rigReset2").onclick=()=>{S.rig=JSON.parse(JSON.stringify(DEFAULT_RIG));after();toast("Demo rig restored")};
 }
 function jsonLd(p){
   return {"@context":"https://schema.org","@type":"Product",sku:p.id,name:p.n,brand:{"@type":"Brand",name:p.b},category:CATS[p.c],
@@ -611,7 +760,7 @@ const FEATURES=[
  {stage:"Buy",kind:"basic",n:"Stock & delivery",d:"Availability and delivery dates by country.",try:"Is the Boss DD-8 in stock and when would it arrive in Austria?"},
  {stage:"Buy",kind:"edge",n:"Expert handoff",d:"A named specialist joins the live chat with the summary.",try:"I need a 16-channel live sound rig for our church, about €5,000."},
  {stage:"Own",kind:"basic",n:"Order & returns",d:"Tracking, return windows and starting a return.",try:"Where is my latest order? Can I still return the Scarlett Solo?"},
- {stage:"Own",kind:"moat",n:"My rig",d:"Remembers owned gear; upgrades and refills.",try:"What should I upgrade first in my rig?"},
+ {stage:"Own",kind:"moat",n:"My rig",d:"Its own page under the account icon: gear list, how it connects, rig health and matching suggestions. Also remembers gear for upgrades and refills.",try:"What should I upgrade first in my rig?"},
  {stage:"Own",kind:"edge",n:"Setup & fix-it",d:"Gets gear working before a return.",try:"My Scarlett makes no sound in my headphones."},
  {stage:"Beyond site",kind:"basic",n:"AI-ready data",d:"schema.org data on each product page (bottom section).",action:"data"},
  {stage:"Beyond site",kind:"edge",n:"ChatGPT app",d:"Same advisor and account inside an AI platform. Shown here as the expanded chat on its own.",action:"platform"},
@@ -859,7 +1008,7 @@ document.addEventListener("click",e=>{
   if(!t.closest(".searchbox"))ac.hidden=true;
   ["shop","svc","acc"].forEach(k=>{if(!t.closest("#"+k+"Btn"))$("#"+k+"DD").hidden=true});
   if(!t.closest("#plus,#plusmenu"))$("#plusmenu").hidden=true;
-  const a=t.closest("[data-go],[data-detail],[data-cat],[data-add],[data-addq],[data-ask],[data-say],[data-open],[data-rig-add],[data-toast],[data-close],[data-step],[data-step-edit],[data-step-reset],[data-method],[data-handover],[data-backai],[data-cb],[data-platform],[data-spec]");
+  const a=t.closest("[data-go],[data-detail],[data-cat],[data-add],[data-addq],[data-ask],[data-say],[data-open],[data-rig-add],[data-toast],[data-close],[data-step],[data-step-edit],[data-step-reset],[data-method],[data-handover],[data-backai],[data-cb],[data-platform],[data-spec],[data-prefill]");
   if(!a)return;
   if(a.matches("a"))e.preventDefault();
   const d=a.dataset;
@@ -872,7 +1021,7 @@ document.addEventListener("click",e=>{
   else if(d.ask||d.say){if(a.closest(".drawer"))closeDrawer();ac.hidden=true;$("#plusmenu").hidden=true;
     if(a.closest(".choices")){if(S.busy)return}
     send(d.ask||d.say)}
-  else if(d.open){closeDrawer();({rig:openRig,orders:openOrders,basket:openBasket})[d.open]()}
+  else if(d.open){closeDrawer();if(d.open==="rig")go({name:"rig"});else ({orders:openOrders,basket:openBasket})[d.open]()}
   else if(d.rigAdd)addRig(d.rigAdd);
   else if(d.toast)toast(d.toast);
   else if(d.step){const ctx=d.where==="page"?S.contact:S.helpCtx;ctx[d.step]=d.v;refreshSteps(d.where)}
@@ -884,6 +1033,7 @@ document.addEventListener("click",e=>{
   else if(d.backai!==undefined)backToAi();
   else if(d.cb){const box=a.closest(".card").querySelector("[data-cbs]");box.textContent=d.cb==="call"?"Call back requested (simulated). A specialist will call you after 9:00 with this chat's summary.":"Message saved (simulated). A specialist will reply by email after 9:00.";a.parentElement.querySelectorAll("button").forEach(b=>b.disabled=true)}
   else if(d.platform!==undefined){closeDrawer();openChat();$("#chatw").classList.add("expanded")}
+  else if(d.prefill){if(!S.started)startConversation();else setChat("open");cin.value=d.prefill;sendState();setTimeout(()=>{cin.focus();cin.setSelectionRange(cin.value.length,cin.value.length)},60)}
   else if(d.spec!==undefined){$("#plusmenu").hidden=true;handover()}
 });
 document.addEventListener("keydown",e=>{
