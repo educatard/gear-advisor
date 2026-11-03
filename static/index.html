@@ -1,0 +1,932 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body><title>Thomann Gear Advisor</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap">
+<style>
+/* Layout: a shop in Thomann's visual language (black bar, white nav with pill search, results list, product page),
+   with the purple Live-chat widget docked bottom right. Single light theme by choice, matching the shop. */
+:root{
+  --ink:#1f1f1f; --bg:#ffffff; --soft:#f3f3f3; --soft2:#f7f7f8; --line:#e8e8e8; --muted:#686868;
+  --black:#000000; --purple:#7e00f3; --purple-2:#a24bff; --purple-soft:#f2e6fe; --purple-light:#c9a3f7;
+  --bubble:#e0e3ea; --ok:#1d8a3a; --warn:#a85f00; --bad:#c62828; --ok-soft:#e3f4e8; --warn-soft:#fdf0dc; --bad-soft:#fde4e4;
+  --teal:#00a19a; --sil:#d4d4d8; --sil2:#bdbdc4;
+  --f:"Open Sans",Verdana,Tahoma,Arial,sans-serif;
+  color-scheme:light;
+}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--f);margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0;padding:0}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
+.gut{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1240px;margin:0 auto}
+svg.i{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* top bars */
+.promo{background:var(--purple-soft);text-align:center;font-size:13px;padding-block:7px}
+.promo b{color:var(--purple)}
+.topbar{background:var(--black);color:#fff}
+.topbar .wrap{display:flex;align-items:center;gap:16px;height:44px}
+.wm{font-weight:800;font-size:22px;letter-spacing:-.02em;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.wm small{font-weight:600;font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.7}
+.wm-real{display:none}
+body[data-brand="lookalike"] .wm-real{display:inline-flex;align-items:center}
+body[data-brand="lookalike"] .wm-neutral{display:none}
+.wm-real .dot{width:9px;height:9px;border-radius:50%;background:var(--teal);display:inline-block;margin:0 1px;transform:translateY(2px)}
+.topbar .usp{flex:1;text-align:center;font-weight:700;font-size:13px}
+.topbar .links{display:flex;gap:18px;font-size:13px;font-weight:600}
+.nav2{border-bottom:1px solid var(--line);background:var(--bg);position:sticky;top:env(safe-area-inset-top,0px);z-index:20}
+.nav2 .wrap{display:flex;align-items:center;gap:20px;height:62px}
+.menu-btn{font-weight:700;font-size:16px;display:flex;align-items:center;gap:4px;position:relative}
+.searchbox{flex:1;max-width:420px;margin:0 auto;position:relative}
+.searchbox form{display:flex;align-items:center;border:1.5px solid var(--ink);border-radius:30px;padding:0 14px;height:42px;background:var(--bg)}
+.searchbox form:focus-within{border-color:var(--purple);box-shadow:0 0 0 1px var(--purple)}
+.searchbox input{flex:1;min-width:0;border:0;outline:0;background:none;font-size:14.5px}
+.ac{position:absolute;left:-10px;right:-10px;top:48px;background:var(--bg);border-radius:0 0 10px 10px;box-shadow:0 10px 30px rgba(0,0,0,.18);padding:10px 0 12px;border-bottom:3px solid var(--purple);z-index:30}
+.ac .grp{font-weight:700;font-size:14px;padding:8px 20px 2px;text-decoration:underline;text-decoration-color:var(--teal);text-decoration-thickness:3px;text-underline-offset:5px}
+.ac button{display:block;width:100%;text-align:left;padding:6px 20px;font-size:14.5px}
+.ac button:hover,.ac button.sel{background:var(--soft)}
+.ac .askrow{display:flex;gap:10px;align-items:center;margin:0 10px 6px;width:auto;border-radius:10px;background:var(--purple-soft);padding:10px 12px}
+.ac .askrow b{color:var(--purple)}
+.icons{display:flex;gap:22px;align-items:center}
+.iconbtn{position:relative;display:inline-flex}
+.badge-n{position:absolute;top:-6px;right:-9px;background:var(--purple);color:#fff;font-size:10.5px;font-weight:700;border-radius:9px;min-width:17px;height:17px;display:grid;place-items:center;padding:0 4px}
+.dd{position:absolute;top:44px;background:var(--bg);border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.18);padding:8px 0;min-width:220px;z-index:40}
+.dd button{display:flex;gap:10px;align-items:center;width:100%;padding:9px 16px;text-align:left;font-size:14.5px}
+.dd button:hover{background:var(--soft)}
+
+/* generic */
+.pill{display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--ink);border-radius:40px;padding:9px 18px;font-weight:700;font-size:15px;background:var(--bg)}
+.pill:hover{background:var(--soft)}
+.pill.purple{border-color:var(--purple);color:var(--purple)}
+.pill.purple:hover{background:var(--purple-soft)}
+.cta{background:var(--black);color:#fff;border-radius:50px;font-weight:700;padding:12px 28px;font-size:15px;text-transform:uppercase}
+.cta:hover{background:#333}
+.cta.purple{background:var(--purple);text-transform:none}
+.cta.purple:hover{background:#6a00cc}
+.crumbs{display:flex;flex-wrap:wrap;gap:4px;font-size:12.5px;margin:16px 0 10px}
+.crumbs span{background:var(--soft);padding:3px 10px;clip-path:polygon(0 0,calc(100% - 7px) 0,100% 50%,calc(100% - 7px) 100%,0 100%,7px 50%)}
+.crumbs span:first-child{clip-path:polygon(0 0,calc(100% - 7px) 0,100% 50%,calc(100% - 7px) 100%,0 100%);border-radius:4px 0 0 4px}
+.crumbs span.last{background:none}
+.stars{letter-spacing:1px;font-size:14px;white-space:nowrap}
+.st5{background:linear-gradient(90deg,var(--ink) var(--r),#c8c8c8 var(--r));-webkit-background-clip:text;background-clip:text;color:transparent}
+.stars em{font-style:normal;color:var(--purple);font-size:13px;letter-spacing:0;margin-left:4px;text-decoration:underline}
+.instock{color:var(--ok);font-size:13.5px;display:inline-flex;align-items:center;gap:6px}
+.instock::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.instock.low{color:var(--warn)}.instock.out{color:var(--bad)}
+.muted{color:var(--muted);font-size:13px}
+.sil{background:var(--soft2);border-radius:8px;display:grid;place-items:center;aspect-ratio:4/3;max-width:100%}
+.sil svg{width:70%;height:auto}
+
+/* results */
+h1.page{font-size:clamp(28px,4vw,40px);font-weight:800;margin:6px 0 4px;line-height:1.1;text-wrap:balance;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+h1.page .cnt{font-size:20px;color:var(--muted);font-weight:700}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:8px 0 16px;flex-wrap:wrap}
+.toolbar select{border:0;font-weight:600;background:none}
+.res{display:grid;grid-template-columns:220px minmax(0,1fr);gap:28px;padding-bottom:80px}
+.filters h3{font-size:15px;margin:0 0 8px}
+.filters label{display:flex;gap:10px;align-items:center;font-size:14px;padding:3px 0;cursor:pointer}
+.filters input[type=checkbox]{width:18px;height:18px;accent-color:var(--purple)}
+.filters .blk{margin-bottom:22px}
+.filters .range{display:flex;gap:8px}
+.filters .range input{width:100%;min-width:0;border:1px solid var(--ink);border-radius:8px;padding:6px 8px}
+.list{display:flex;flex-direction:column;gap:12px;min-width:0}
+.row{background:var(--soft);border-radius:10px;padding:14px;display:grid;grid-template-columns:150px minmax(0,1fr) auto;gap:18px;cursor:pointer}
+.row:hover{box-shadow:0 0 0 1.5px var(--line) inset;background:#eeeeef}
+.row .sil{aspect-ratio:4/3}
+.row h2{font-size:16px;margin:0 0 2px;font-weight:400}
+.row h2 b{font-weight:700}
+.row ul{margin:6px 0;padding-left:18px;font-size:13.5px}
+.row ul li{list-style:circle}
+.row .side{display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;gap:8px}
+.row .big{font-size:22px;font-weight:800;white-space:nowrap}
+.row .acts{display:flex;gap:12px}
+.flag{background:var(--purple);color:#fff;font-size:11px;font-weight:800;padding:2px 7px;border-radius:3px;text-transform:uppercase}
+.askstrip{border:1.5px dashed var(--purple);background:var(--purple-soft);border-radius:10px;padding:12px 14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.askstrip p{margin:0;flex:1;min-width:200px;font-size:14px}
+.filterbtn{display:none}
+
+/* product */
+.prod{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:40px;padding-bottom:80px}
+.prod h1{font-size:clamp(26px,3.6vw,36px);font-weight:800;margin:4px 0}
+.brandtag{display:inline-block;background:var(--ink);color:#fff;font-weight:800;font-size:12px;padding:3px 9px;border-radius:4px;text-transform:uppercase;letter-spacing:.04em}
+.bigprice{font-size:56px;font-weight:800;line-height:1;letter-spacing:-.02em}
+.bigprice sup{font-size:26px;vertical-align:top;position:relative;top:6px}
+.buy{display:flex;gap:10px;align-items:center;margin:14px 0}
+.qty{background:var(--soft);border-radius:30px;padding:10px 16px;font-weight:600;width:68px;border:0}
+.box{border:1px solid var(--line);border-radius:10px;padding:14px 16px;font-size:14px}
+.box h4{margin:0 0 6px;font-size:15px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.drow{display:flex;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
+.drow:first-child{border-top:0;padding-top:0}
+.drow b{display:flex;justify-content:space-between;gap:10px}
+.fitline{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;padding:4px 0}
+.section{margin-top:28px}
+.section h2{font-size:22px;font-weight:800;margin:0 0 10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.spect{width:100%;border-collapse:collapse;font-size:14.5px}
+.spect td{padding:9px 10px;border-bottom:1px solid var(--line)}
+.spect tr:nth-child(odd){background:var(--soft2)}
+.spect td:first-child{font-weight:600;width:40%}
+details.ai summary{cursor:pointer;font-weight:700}
+pre.json{font:12px/1.45 ui-monospace,Menlo,monospace;background:var(--soft);border-radius:8px;padding:12px;overflow-x:auto;margin:8px 0 0}
+
+/* contact */
+.contact{display:grid;grid-template-columns:240px minmax(0,1fr);gap:40px;padding:24px 0 80px}
+.side-nav{display:flex;flex-direction:column;gap:14px;font-weight:700;font-size:15px}
+.side-nav .on{color:var(--purple)}
+.stepcard{border:1px solid var(--line);border-radius:10px;padding:28px clamp(16px,4vw,48px);margin-top:20px}
+.avatars{display:flex}
+.av{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:14px;color:#fff;border:3px solid #fff;margin-left:-8px;box-shadow:0 0 0 1px var(--line)}
+.avatars .av:first-child{margin-left:0}
+.prog{height:8px;background:var(--line);border-radius:4px;margin:18px 0 6px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--purple);transition:width .3s}
+.steplbl{color:var(--purple);font-weight:600;font-size:13px}
+.answered{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:18px}
+.answered h3,.q h3{margin:0;font-size:18px;font-weight:700}
+.answered p{margin:2px 0 0;font-size:14px}
+.edit{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--ink);display:grid;place-items:center;flex:none}
+.q{margin-top:22px}
+.q h3::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--purple);margin-right:10px;vertical-align:middle}
+.opts{display:flex;flex-direction:column;align-items:flex-start;gap:10px;margin-top:12px}
+.stepfoot{display:flex;justify-content:center;gap:16px;margin-top:28px;border-top:1px solid var(--line);padding-top:18px}
+.stepfoot .ghost{font-weight:700;padding:10px 18px}
+.stepfoot .dis{background:var(--soft);color:#aaa;border-radius:30px;padding:10px 22px;font-weight:700}
+.note{background:var(--soft);border-radius:10px;padding:12px 14px;font-size:14px;margin-top:14px}
+.aitag{font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;background:var(--purple);color:#fff;border-radius:4px;padding:1px 6px}
+
+/* need help pill + drawer */
+.needhelp{position:fixed;right:calc(20px + env(safe-area-inset-right,0px));top:150px;z-index:15;display:flex;align-items:center;gap:10px;background:var(--bg);border-radius:40px;box-shadow:0 4px 18px rgba(0,0,0,.16);padding:6px 6px 6px 18px;font-weight:600;font-size:14px}
+.needhelp .av{width:34px;height:34px;font-size:11px;border-width:2px}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:50}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(400px,100%);background:var(--bg);z-index:51;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px)}
+.drawer.wide{width:min(540px,100%)}
+.dhead{display:flex;align-items:center;justify-content:space-between;padding:22px 24px 6px}
+.dhead h2{margin:0;font-size:20px;font-weight:800}
+.dbody{flex:1;overflow:auto;padding:8px 24px 24px;display:flex;flex-direction:column;gap:14px}
+.dfoot{border-top:1px solid var(--line);padding:12px 24px;display:flex;justify-content:center;gap:16px}
+
+/* chat widget */
+.chatw{position:fixed;right:calc(24px + env(safe-area-inset-right,0px));bottom:calc(24px + env(safe-area-inset-bottom,0px));width:380px;height:min(640px,calc(100% - 140px));z-index:45;border-radius:16px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.25);background:var(--bg);display:flex;flex-direction:column}
+.chatw.expanded{width:min(560px,calc(100% - 48px));height:calc(100% - 48px - env(safe-area-inset-bottom,0px) - env(safe-area-inset-top,0px))}
+.launch{flex:1;display:flex;flex-direction:column;background:var(--purple);color:#fff;position:relative;overflow:hidden}
+.launch::before,.launch::after{content:"";position:absolute;border-radius:50%;pointer-events:none}
+.launch::before{width:520px;height:520px;right:-300px;top:-120px;background:radial-gradient(circle,rgba(255,255,255,.14),rgba(255,255,255,0) 70%)}
+.launch::after{width:600px;height:600px;left:-260px;top:120px;background:radial-gradient(circle,rgba(162,75,255,.55),rgba(126,0,243,0) 70%)}
+.launch .top{display:flex;justify-content:flex-end;padding:16px;position:relative;z-index:1}
+.launch .hello{margin-top:auto;padding:0 28px 22px;position:relative;z-index:1}
+.launch .hello h2{font-size:32px;margin:0;font-weight:800}
+.launch .hello p{margin:6px 0 0;font-size:17px}
+.launch .startcard{background:var(--bg);color:var(--ink);margin:0 20px 22px;border-radius:6px;box-shadow:0 2px 10px rgba(0,0,0,.12);padding:18px 18px 14px;position:relative;z-index:1}
+.launch .startcard .cta{width:100%;padding:14px;font-size:16px;border-radius:4px}
+.launch .startcard p{margin:10px 0 0;font-size:12.5px;color:var(--muted);display:flex;gap:6px;align-items:flex-start}
+.launch .startcard #acctNote{border-top:1px solid var(--line);padding-top:10px;display:block}
+.launch .startcard #acctNote.warn{color:var(--warn);font-weight:600}
+.ondot{width:8px;height:8px;border-radius:50%;background:var(--ok);display:inline-block;flex:none;margin-top:5px}
+.ondot.off{background:#aaa}
+.chead{background:var(--purple);color:#fff;display:flex;align-items:center;gap:10px;padding:12px 12px 12px 8px;min-height:66px}
+.chead .who{flex:1;min-width:0;display:flex;align-items:center;gap:10px}
+.chead .who b{font-size:16px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chead .who small{font-size:12px;opacity:.85;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chead .hb{width:36px;height:36px;display:grid;place-items:center;border-radius:50%}
+.chead .hb:hover{background:rgba(255,255,255,.15)}
+.specbar{display:flex;gap:6px;align-items:center;justify-content:center;width:100%;padding:8px 12px;background:var(--purple-soft);color:var(--purple);font-weight:700;font-size:13px;border-bottom:1px solid var(--line)}
+.specbar:hover{background:#e8d4fd}
+.specbar span{font-weight:400;color:var(--muted)}
+.aiav{width:42px;height:42px;border-radius:50%;background:#fff;display:grid;place-items:center;flex:none;border:2px solid #fff}
+.aiav svg{width:24px;height:24px;fill:var(--purple)}
+.aiav.sm{width:32px;height:32px;background:var(--purple-soft);border:0}
+.aiav.sm svg{width:18px;height:18px}
+.clog{flex:1;overflow:auto;padding:18px 14px;display:flex;flex-direction:column;gap:14px;background:var(--bg)}
+.m{display:grid;grid-template-columns:32px minmax(0,1fr);gap:8px;align-items:start}
+.m .body{min-width:0;display:flex;flex-direction:column;gap:8px}
+.m .b{background:var(--bubble);border-radius:6px;padding:11px 14px;font-size:14.5px;overflow-wrap:anywhere;max-width:100%}
+.m .t{font-size:12px;font-weight:600;color:var(--muted)}
+.m.u{grid-template-columns:minmax(0,1fr)}
+.m.u .body{align-items:flex-end}
+.m.u .b{background:var(--purple-soft)}
+.m.sys{grid-template-columns:1fr;text-align:center;font-size:12.5px;color:var(--muted)}
+.b p{margin:0 0 .5em}.b p:last-child{margin:0}
+.b ul,.b ol{margin:.2em 0 .5em;padding-left:1.2em}
+.b h4{margin:.3em 0;font-size:14.5px}
+.typing{display:inline-flex;gap:4px;padding:4px 2px}
+.typing i{width:7px;height:7px;border-radius:50%;background:#8a8f99;animation:bl 1.2s infinite}
+.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
+@keyframes bl{0%,80%,100%{opacity:.25}40%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.typing i{animation:none}.prog i{transition:none}}
+.status{font-size:12px;color:var(--muted)}
+.cfoot{display:flex;gap:10px;align-items:flex-end;padding:12px 14px calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);position:relative}
+.plus{width:44px;height:44px;border-radius:50%;background:var(--soft);display:grid;place-items:center;flex:none}
+.cinput{flex:1;min-width:0;display:flex;align-items:flex-end;border:1.5px solid var(--line);border-radius:26px;padding:4px 4px 4px 16px;min-height:44px}
+.cinput:focus-within{border-color:var(--purple-light)}
+.cinput textarea{flex:1;min-width:0;border:0;outline:0;resize:none;background:none;padding:8px 0;max-height:120px;font-size:14.5px}
+.sendb{width:38px;height:38px;border-radius:50%;background:var(--purple-light);display:grid;place-items:center;flex:none;color:#fff}
+.sendb.on{background:var(--purple)}
+.sendb svg{width:20px;height:20px}
+.plusmenu{position:absolute;bottom:64px;left:12px;background:var(--bg);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.18);padding:6px 0;z-index:5;min-width:230px}
+.plusmenu button{display:block;width:100%;text-align:left;padding:9px 16px;font-size:14px}
+.plusmenu button:hover{background:var(--soft)}
+.chatbubble{position:fixed;right:calc(24px + env(safe-area-inset-right,0px));bottom:calc(24px + env(safe-area-inset-bottom,0px));width:60px;height:60px;border-radius:50%;background:var(--purple);color:#fff;display:grid;place-items:center;z-index:44;box-shadow:0 6px 20px rgba(126,0,243,.45)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1.5px solid var(--purple);color:var(--purple);border-radius:20px;padding:5px 12px;font-size:13.5px;font-weight:600;background:var(--bg)}
+.chip:hover,.chip[aria-pressed="true"]{background:var(--purple);color:#fff}
+.chip[disabled]{opacity:.5;cursor:default}
+.endnote{border:1.5px dashed var(--purple);border-radius:8px;padding:10px 12px;font-size:13px;background:var(--purple-soft)}
+.composer-off{padding:12px 14px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);text-align:center}
+
+/* tool cards inside chat (shared with tools.js) */
+.card{border:1px solid var(--line);border-radius:10px;background:var(--bg);padding:10px 12px;min-width:0;font-size:13.5px}
+.card h5{margin:0 0 6px;font-size:14px;font-weight:700;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;border-radius:4px;padding:1px 6px;background:var(--soft);color:var(--muted)}
+.tag.edge{background:var(--purple-soft);color:var(--purple)}
+.tag.moat{background:#fff1dc;color:#9a5300}
+.tag.sim{background:#eef0f4;color:#4b5563}
+.mini{display:flex;gap:8px;align-items:center;padding:7px 0;border-top:1px solid var(--line);flex-wrap:wrap}
+.card .mini:first-of-type{border-top:0}
+.mini .info{flex:1 1 140px;min-width:0}
+.mini .info div:first-child{font-weight:600;line-height:1.3}
+.mini .sub{font-size:12px;color:var(--muted)}
+.mini .price{font-size:14px;font-weight:800}
+.btn{border:1.5px solid var(--ink);border-radius:20px;padding:3px 11px;font-size:12.5px;font-weight:700;background:var(--bg)}
+.btn:hover{background:var(--soft)}
+.btn.primary{background:var(--black);color:#fff;border-color:var(--black)}
+.btn.primary:hover{background:#333}
+.btn[disabled]{opacity:.45;cursor:default}
+.tblwrap{overflow-x:auto}
+table.cmp{border-collapse:collapse;font-size:12.5px;width:100%}
+table.cmp th,table.cmp td{border-bottom:1px solid var(--line);padding:5px 6px;text-align:left;vertical-align:top}
+table.cmp th{font-weight:600;color:var(--muted)}
+.check{display:flex;gap:8px;align-items:flex-start;padding:4px 0}
+.badge{font-size:10.5px;font-weight:800;border-radius:4px;padding:1px 6px;flex:none;margin-top:2px}
+.badge.ok{background:var(--ok-soft);color:var(--ok)}.badge.warn{background:var(--warn-soft);color:var(--warn)}.badge.bad{background:var(--bad-soft);color:var(--bad)}
+.bar2,.bar{height:7px;border-radius:4px;background:var(--soft);overflow:hidden;margin-top:3px}
+.bar i,.bar2 i{display:block;height:100%;background:var(--purple)}
+.reason{font-size:13px;margin:6px 0}
+.reason div:first-child{display:flex;justify-content:space-between;gap:8px}
+.choices{display:flex;flex-wrap:wrap;gap:6px}
+.total{display:flex;justify-content:space-between;font-weight:700;border-top:1px solid var(--line);padding-top:6px;margin-top:4px}
+.steps{margin:0;padding:0;list-style:none}
+.steps li{display:flex;gap:8px;padding:4px 0}
+.steps input{accent-color:var(--purple)}
+.prow{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:6px}
+.search{border:1px solid var(--line);border-radius:8px;padding:6px 8px;background:var(--bg)}
+.pbrand{font-size:12px;color:var(--muted)}
+
+.testg{position:fixed;left:calc(16px + env(safe-area-inset-left,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:14;background:var(--ink);color:#fff;border-radius:30px;padding:8px 14px;font-size:13px;font-weight:700;display:flex;gap:6px;align-items:center;box-shadow:0 4px 14px rgba(0,0,0,.2)}
+.feat{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.feat .h{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-weight:700}
+.feat .h .n{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.feat p{margin:0;font-size:13px;color:var(--muted)}
+.switch{display:flex;align-items:center;gap:10px;font-weight:600}
+.switch input{width:20px;height:20px;accent-color:var(--purple)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(24px + env(safe-area-inset-bottom,0px));background:var(--ink);color:#fff;padding:9px 16px;border-radius:8px;font-size:14px;z-index:70}
+
+@media (max-width:980px){
+  .prod{grid-template-columns:minmax(0,1fr)}
+  .res{grid-template-columns:minmax(0,1fr)}
+  .filters{display:none}.filters.open{display:block;border:1px solid var(--line);border-radius:10px;padding:14px}
+  .filterbtn{display:inline-flex}
+  .contact{grid-template-columns:minmax(0,1fr)}.side-nav{display:none}
+  .topbar .usp{display:none}.topbar .wrap{justify-content:space-between}
+}
+@media (max-width:700px){
+  .nav2 .wrap{flex-wrap:wrap;height:auto;padding-block:8px;gap:10px 16px}
+  .searchbox{order:3;flex:1 1 100%;max-width:none}
+  .icons{margin-left:auto}
+  .row{grid-template-columns:96px minmax(0,1fr)}
+  .row .side{grid-column:1 / -1;flex-direction:row;align-items:center}
+  .needhelp{top:auto;bottom:calc(16px + env(safe-area-inset-bottom,0px));right:calc(12px + env(safe-area-inset-right,0px));padding-left:12px}
+  .chatbubble{bottom:calc(80px + env(safe-area-inset-bottom,0px))}
+  .list{padding-bottom:60px}
+  .chatw,.chatw.expanded{inset:0;width:auto;height:auto;border-radius:0;padding-top:env(safe-area-inset-top,0px)}
+  .expandb{display:none!important}
+  .topbar .links a:not(:first-child){display:none}
+  .bigprice{font-size:46px}
+}
+</style>
+
+<div class="promo gut"><b>Concept prototype</b> · AI advisor for Thomann · demo catalogue, prices, orders and specialists · nothing can be bought</div>
+<div class="topbar gut"><div class="wrap">
+  <button class="wm" data-go="results" aria-label="Home"><span class="wm-real"></span><span class="wm-neutral">Gear Advisor <small>concept</small></span></button>
+  <div class="usp">3-Year Warranty · 30-Day Money-Back</div>
+  <div class="links"><a href="#" data-go="contact">Contact us</a><a href="#" data-go="results">All products</a></div>
+</div></div>
+<div class="nav2 gut"><div class="wrap">
+  <div style="position:relative"><button class="menu-btn" id="shopBtn" aria-haspopup="true">Shop <svg class="i" style="width:18px" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button><div class="dd" id="shopDD" hidden></div></div>
+  <div style="position:relative"><button class="menu-btn" id="svcBtn" aria-haspopup="true">Service <svg class="i" style="width:18px" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button><div class="dd" id="svcDD" hidden>
+    <button data-go="contact">Contact us</button><button data-open="orders">Track an order</button><button data-open="orders">Return a product</button><button data-go="contact">Advice from our experts</button></div></div>
+  <div class="searchbox"><form id="sform" role="search"><input id="sq" type="search" placeholder="What are you looking for?" autocomplete="off" aria-label="Search"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></form><div class="ac" id="ac" hidden></div></div>
+  <div class="icons">
+    <div style="position:relative"><button class="iconbtn" id="accBtn" aria-label="My account"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3.5"/><path d="M6 19c1.5-2.5 3.5-3.5 6-3.5s4.5 1 6 3.5"/></svg></button>
+      <div class="dd" id="accDD" hidden style="right:-10px"><div class="muted" style="padding:6px 16px 4px">Signed in as Demo customer</div><button data-open="rig">My rig</button><button data-open="orders">Orders</button><button data-open="basket">Basket</button></div></div>
+    <button class="iconbtn" aria-label="Wishlist" data-toast="Wishlist is not part of this prototype"><svg class="i" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></button>
+    <button class="iconbtn" aria-label="Basket" data-open="basket"><svg class="i" viewBox="0 0 24 24"><path d="M3 4h2l2.4 11h11l2-8H6.2"/><circle cx="9" cy="19.5" r="1.3"/><circle cx="17" cy="19.5" r="1.3"/></svg><span class="badge-n" id="bcount">0</span></button>
+  </div>
+</div></div>
+
+<main id="view" class="gut"></main>
+
+<button class="needhelp" id="needhelp" aria-label="Need help? Contact our specialists">Need help? <span class="avatars" id="nhav"></span></button>
+<button class="testg" id="testg"><svg class="i" style="width:16px;height:16px" viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3"/></svg>Test guide</button>
+<button class="chatbubble" id="chatbubble" hidden aria-label="Open chat"><svg class="i" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 10.5h.01M12 10.5h.01M16 10.5h.01"/></svg></button>
+
+<section class="chatw" id="chatw" hidden aria-label="Live chat">
+  <div class="launch" id="launch">
+    <div class="top"><button class="hb" data-chat="min" aria-label="Minimise chat" style="color:#fff;width:36px;height:36px;display:grid;place-items:center"><svg class="i" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button></div>
+    <div class="hello"><h2>Hi! 👋</h2><p>Got questions?</p></div>
+    <div class="startcard"><button class="cta purple" id="startConv">Start a new conversation</button>
+      <p><span class="ondot" id="ondot"></span><span id="startNote"></span></p><p id="acctNote"></p></div>
+  </div>
+  <div id="conv" hidden style="display:flex;flex-direction:column;flex:1;min-height:0">
+    <div class="chead">
+      <button class="hb" data-chat="back" aria-label="Back"><svg class="i" viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></svg></button>
+      <div class="who" id="who"></div>
+      <button class="hb expandb" data-chat="expand" aria-label="Expand chat"><svg class="i" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-7 7M10 20H4v-6M4 20l7-7"/></svg></button>
+      <button class="hb" data-chat="min" aria-label="Minimise chat"><svg class="i" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
+    </div>
+    <button class="specbar" id="specBtn"><svg class="i" style="width:16px;height:16px" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>Talk to a specialist <span id="specsub"></span></button>
+    <div class="clog" id="clog" aria-live="polite"></div>
+    <form class="cfoot" id="cform">
+      <button type="button" class="plus" id="plus" aria-label="More actions"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+      <div class="plusmenu" id="plusmenu" hidden>
+        <button type="button" data-say="Check my rig: what should I upgrade first?">Check my rig</button>
+        <button type="button" data-say="Where is my latest order?">Track my order</button>
+        <button type="button" data-say="I want to return something.">Return something</button>
+        <button type="button" data-spec>Talk to a specialist</button>
+      </div>
+      <div class="cinput"><textarea id="cin" rows="1" placeholder="Your message" aria-label="Your message"></textarea>
+        <button type="submit" class="sendb" id="sendb" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 12 20 4l-4 16-4-7z"/><path d="m12 13 8-9"/></svg></button>
+        <button type="button" class="sendb on" id="stopb" aria-label="Stop" hidden><svg viewBox="0 0 24 24" fill="currentColor"><rect x="7" y="7" width="10" height="10" rx="2"/></svg></button></div>
+    </form>
+    <div class="composer-off" id="coff" hidden></div>
+  </div>
+</section>
+<div id="layer"></div>
+
+<script src="data.js"></script>
+<script src="engine.js"></script>
+<script src="tools.js"></script>
+<script>
+/* ---------------- State & helpers ---------------- */
+const store={get(k,d){try{const v=localStorage.getItem("ga2_"+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem("ga2_"+k,JSON.stringify(v))}catch(e){}}};
+const S={
+  rig:store.get("rig",DEFAULT_RIG), basket:store.get("basket",[]), tier:store.get("tier","quick"), online:store.get("online",true),
+  view:{name:"results",q:"",cats:[],min:"",max:"",stock:false,sort:"rel"}, viewing:null,
+  contact:{enquiry:null,category:null}, chatCtx:null, turns:[], busy:false, ctl:null,
+  chat:"closed", mode:"ai", expert:null, started:false, apiMode:false,
+};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const eur=n=>"€"+(Math.round(n*100)/100).toLocaleString("en-IE",{minimumFractionDigits:n%1?2:0,maximumFractionDigits:2});
+const now=()=>new Date().toTimeString().slice(0,5);
+const rigItems=()=>S.rig.map(r=>r.custom?{...r,key:r.name}:{...r,...BY[r.id],key:r.id,name:BY[r.id]?.n,cat:BY[r.id]?.c}).filter(x=>x.name);
+function toast(t){const el=document.createElement("div");el.className="toast";el.textContent=t;document.body.append(el);setTimeout(()=>el.remove(),2600)}
+function addBasket(id,qty=1){const ex=S.basket.find(x=>x.id===id);if(ex)ex.qty+=qty;else S.basket.push({id,qty});store.set("basket",S.basket);bcount();toast("Added to basket: "+BY[id].n)}
+function bcount(){$("#bcount").textContent=S.basket.reduce((a,b)=>a+b.qty,0)}
+function addRig(id){if(!S.rig.some(r=>r.id===id)){S.rig.push({id,since:"2026-11"});store.set("rig",S.rig);toast("Added to My rig: "+BY[id].n);if(S.view.name==="product")render()}}
+function catAvg(c){const l=P.filter(p=>p.c===c);return (l.reduce((a,p)=>a+p.ret.rate,0)/l.length).toFixed(1)}
+function returnHtml(p){
+  return `<div><div class="muted">Return rate ${p.ret.rate}% · category average ${catAvg(p.c)}%</div>
+   ${p.ret.reasons.map(([r,s])=>`<div class="reason"><div><span>${esc(r)}</span><span class="muted">${s}%</span></div><div class="bar"><i style="width:${s}%"></i></div></div>`).join("")}
+   ${p.ret.tip?`<div class="muted" style="margin-top:6px"><b>What helped:</b> ${esc(p.ret.tip)}</div>`:""}</div>`;
+}
+function returnWindow(o){
+  if(!o.delivered)return null;const until=new Date(o.delivered+"T12:00:00");until.setDate(until.getDate()+30);
+  const days=Math.ceil((until-TODAY)/864e5);return {until:until.toISOString().slice(0,10),days:Math.max(days,0),open:days>0};
+}
+function orderHtml(o){
+  const tot=o.items.reduce((a,[id,q])=>a+BY[id].p*q,0),rw=returnWindow(o);
+  return `<div class="card"><h5>${o.id} <span class="tag">${esc(o.status)}</span></h5>
+   ${o.items.map(([id,q])=>`<div class="mini"><div class="info"><div>${q>1?q+"× ":""}${esc(BY[id].n)}</div></div><span class="price">${eur(BY[id].p*q)}</span></div>`).join("")}
+   <div class="muted">Ordered ${o.date}${o.tracking?` · ${o.carrier} ${o.tracking}`:""}${o.eta&&o.status!=="Delivered"?` · expected ${o.eta}`:""}${rw?` · money-back until ${rw.until} (${rw.days} days left)`:""}</div>
+   <div class="total"><span>Total</span><span>${eur(tot)}</span></div></div>`;
+}
+const stars=r=>`<span class="st5" style="--r:${r/5*100}%" aria-label="${r} out of 5 stars">★★★★★</span>`;
+function stockLine(p){return p.st?(p.st<15?`<span class="instock low">Only ${p.st} left</span>`:`<span class="instock">In stock</span>`):`<span class="instock out">Back in approx. ${p.restock||10} days</span>`}
+const DEPT=c=>({guitars:"Guitars & Basses",amps:"Guitars & Basses",pedals:"Guitars & Basses",power:"Guitars & Basses",accessories:"Guitars & Basses",interfaces:"Studio Equipment",mics:"Studio Equipment",headphones:"Studio Equipment",monitors:"Studio Equipment",keys:"Keys",drums:"Drums & Percussion"})[c]||"Studio Equipment";
+const DEPT2EXP={"Guitars & Basses":"guitars","Studio Equipment":"recording","Keys":"keys","Drums & Percussion":"drums","PA Equipment":"live","Software":"recording","Lighting":"live"};
+const AVC={guitars:"#c2410c",recording:"#0f766e",live:"#1d4ed8",keys:"#a21caf",drums:"#4d7c0f",service:"#7c2d12"};
+const initials=n=>n.split(/\s+/).map(w=>w[0]).join("").slice(0,2);
+const avatar=(k,cls="av")=>`<span class="${cls}" style="background:${AVC[k]||"#555"}">${esc(initials(EXPERTS[k].name))}</span>`;
+const AISVG=`<svg viewBox="0 0 24 24"><path d="M12 2l1.8 5.6L19.5 9.5l-5.7 1.9L12 17l-1.8-5.6L4.5 9.5l5.7-1.9z"/><path d="M19 15l.8 2.2 2.2.8-2.2.8L19 21l-.8-2.2-2.2-.8 2.2-.8z"/></svg>`;
+
+/* category silhouettes, drawn because product photos can't load in the page */
+function sil(c){
+  const F='fill="var(--sil)"',G='fill="var(--sil2)"';
+  const s={
+   guitars:`<ellipse cx="38" cy="52" rx="22" ry="18" ${F}/><ellipse cx="56" cy="42" rx="15" ry="13" ${F}/><rect x="62" y="38" width="44" height="7" rx="2" ${G}/><rect x="104" y="34" width="12" height="15" rx="3" ${G}/><circle cx="40" cy="50" r="5" ${G}/>`,
+   amps:`<rect x="22" y="12" width="76" height="58" rx="6" ${F}/><rect x="30" y="30" width="60" height="34" rx="3" ${G}/><circle cx="36" cy="21" r="3" ${G}/><circle cx="46" cy="21" r="3" ${G}/><circle cx="56" cy="21" r="3" ${G}/>`,
+   pedals:`<rect x="38" y="10" width="44" height="62" rx="7" ${F}/><circle cx="50" cy="24" r="5" ${G}/><circle cx="70" cy="24" r="5" ${G}/><circle cx="60" cy="56" r="7" ${G}/>`,
+   power:`<rect x="18" y="28" width="84" height="28" rx="5" ${F}/>${[30,44,58,72,86].map(x=>`<circle cx="${x}" cy="42" r="4" ${G}/>`).join("")}`,
+   interfaces:`<rect x="14" y="26" width="92" height="34" rx="7" ${F}/><circle cx="34" cy="43" r="9" ${G}/><circle cx="60" cy="43" r="9" ${G}/><rect x="78" y="38" width="20" height="10" rx="3" ${G}/>`,
+   mics:`<rect x="48" y="6" width="24" height="36" rx="12" ${F}/><rect x="54" y="40" width="12" height="32" rx="4" ${G}/>`,
+   headphones:`<path d="M30 52V40a30 30 0 0 1 60 0v12" stroke="var(--sil2)" stroke-width="6" fill="none"/><rect x="22" y="46" width="18" height="26" rx="6" ${F}/><rect x="80" y="46" width="18" height="26" rx="6" ${F}/>`,
+   monitors:`<rect x="38" y="6" width="44" height="68" rx="5" ${F}/><circle cx="60" cy="50" r="14" ${G}/><circle cx="60" cy="22" r="6" ${G}/>`,
+   keys:`<rect x="8" y="28" width="104" height="30" rx="3" ${F}/>${Array.from({length:12},(_,i)=>`<rect x="${14+i*8}" y="38" width="7" height="18" fill="#fff"/>`).join("")}${[0,1,3,4,5,7,8,10].map(i=>`<rect x="${19+i*8}" y="38" width="4" height="11" ${G}/>`).join("")}`,
+   drums:`<ellipse cx="60" cy="58" rx="24" ry="14" ${F}/><ellipse cx="32" cy="38" rx="14" ry="8" ${G}/><ellipse cx="88" cy="38" rx="14" ry="8" ${G}/><rect x="58" y="18" width="4" height="26" ${G}/>`,
+   accessories:`<circle cx="60" cy="40" r="26" fill="none" stroke="var(--sil)" stroke-width="7"/><circle cx="60" cy="40" r="14" fill="none" stroke="var(--sil2)" stroke-width="5"/>`,
+  }[c]||"";
+  return `<div class="sil" aria-hidden="true"><svg viewBox="0 0 120 80">${s}</svg></div>`;
+}
+
+/* ---------------- Views ---------------- */
+function go(v){if(v.name!=="results")sq.value="";S.view=Object.assign({name:"results",q:"",cats:[],min:"",max:"",stock:false,sort:"rel"},v);if(v.name==="product")S.viewing=v.id;render();window.scrollTo(0,0);if(innerWidth<700&&S.chat==="open")setChat("min")}
+function render(){
+  const v=S.view,el=$("#view");
+  $("#needhelp").hidden=v.name==="contact";
+  if(v.name==="product") el.innerHTML=productView(BY[v.id]);
+  else if(v.name==="contact") el.innerHTML=contactView();
+  else el.innerHTML=resultsView();
+  if(v.name==="results") bindFilters();
+}
+function scoreQ(p,q){
+  if(!q)return 1;const words=q.toLowerCase().split(/\s+/).filter(w=>w.length>1&&!["for","the","a","and","with","my","to"].includes(w));
+  const hay=(p.n+" "+p.b+" "+p.tags.join(" ")+" "+CATS[p.c]).toLowerCase();
+  return words.reduce((a,w)=>a+(hay.includes(w)?1:hay.includes(w.replace(/s$/,""))?1:0),0);
+}
+function resultsList(){
+  const v=S.view;
+  let l=P.map(p=>({p,s:scoreQ(p,v.q)})).filter(o=>o.s>0).map(o=>o.p);
+  if(v.cats.length)l=l.filter(p=>v.cats.includes(p.c));
+  if(v.min)l=l.filter(p=>p.p>=+v.min); if(v.max)l=l.filter(p=>p.p<=+v.max); if(v.stock)l=l.filter(p=>p.st>0);
+  const sorts={rel:(a,b)=>P.indexOf(a)-P.indexOf(b),pop:(a,b)=>b.rv-a.rv,low:(a,b)=>a.p-b.p,high:(a,b)=>b.p-a.p,rated:(a,b)=>b.r-a.r};
+  return l.sort(v.q?((a,b)=>scoreQ(b,v.q)-scoreQ(a,v.q)||sorts[v.sort](a,b)):sorts[v.sort]);
+}
+function resultsView(){
+  const v=S.view,l=resultsList();
+  const base=P.filter(p=>scoreQ(p,v.q)>0);
+  const catCounts=Object.keys(CATS).map(c=>[c,base.filter(p=>p.c===c).length]).filter(x=>x[1]);
+  const title=v.q?esc(v.q):v.cats.length===1?CATS[v.cats[0]]:"All products";
+  return `<div class="wrap">
+  <div class="crumbs"><span>⌂</span><span class="last">${v.q?`“${esc(v.q)}”`:esc(title)}</span></div>
+  <h1 class="page">${title}<span class="cnt">${l.length}</span></h1>
+  <div class="toolbar"><button class="pill filterbtn" id="fbtn" style="padding:6px 14px">Filter</button><span></span>
+    <label class="muted">Sort <select id="sort" aria-label="Sort">${[["rel","Relevance"],["pop","Popularity"],["low","Price: low to high"],["high","Price: high to low"],["rated","Best rated first"]].map(([k,t])=>`<option value="${k}"${v.sort===k?" selected":""}>${t}</option>`).join("")}</select></label></div>
+  <div class="res">
+   <aside class="filters" id="filters">
+    <div class="blk"><h3>Categories</h3>${catCounts.map(([c,n])=>`<label><input type="checkbox" data-fc="${c}"${v.cats.includes(c)?" checked":""}>${CATS[c]} (${n})</label>`).join("")}</div>
+    <div class="blk"><h3>Price range</h3><div class="range"><input id="fmin" inputmode="numeric" placeholder="From (€)" value="${esc(v.min)}" aria-label="Minimum price"><input id="fmax" inputmode="numeric" placeholder="To (€)" value="${esc(v.max)}" aria-label="Maximum price"></div></div>
+    <div class="blk"><h3>Availability</h3><label><input type="checkbox" id="fstock"${v.stock?" checked":""}>In stock</label></div>
+   </aside>
+   <div class="list">
+    ${v.q?`<div class="askstrip"><span class="aiav sm">${AISVG}</span><p><b>Not sure which one fits?</b> The AI advisor can ask what you need, check it works with your gear and compare options.</p><button class="cta purple" style="padding:9px 18px" data-ask="${esc(v.q)}">Ask the advisor</button></div>`:""}
+    ${l.map(p=>`<article class="row" data-detail="${p.id}" tabindex="0">
+      ${sil(p.c)}
+      <div style="min-width:0"><h2><b>${esc(p.b)}</b> ${esc(p.n.replace(p.b+" ",""))}</h2>
+       <div class="stars">${stars(p.r)}<em>${p.rv.toLocaleString("en")}</em></div>
+       <ul>${Object.entries(p.specs).slice(0,3).map(([k,s])=>`<li>${esc(k)}: ${esc(s)}</li>`).join("")}</ul>${stockLine(p)}</div>
+      <div class="side">${p.rv>3000?'<span class="flag">Top seller</span>':"<span></span>"}<div style="text-align:right"><div class="big">${eur(p.p)}</div>${p.bs?`<div class="muted">B-Stock from ${eur(p.bs)}</div>`:""}</div>
+       <div class="acts"><button aria-label="Add to wishlist" data-toast="Wishlist is not part of this prototype"><svg class="i" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></button><button aria-label="Add to basket" data-add="${p.id}"><svg class="i" viewBox="0 0 24 24"><path d="M3 4h2l2.4 11h11l2-8H6.2"/><circle cx="9" cy="19.5" r="1.3"/><circle cx="17" cy="19.5" r="1.3"/></svg></button></div></div>
+     </article>`).join("")||`<div class="note">No products match. Try fewer filters, or <button class="btn" data-ask="${esc(v.q||"Help me find the right gear")}">ask the advisor</button>.</div>`}
+   </div></div></div>`;
+}
+function bindFilters(){
+  const v=S.view;
+  document.querySelectorAll("[data-fc]").forEach(cb=>cb.onchange=()=>{v.cats=cb.checked?[...v.cats,cb.dataset.fc]:v.cats.filter(c=>c!==cb.dataset.fc);render()});
+  $("#fmin").onchange=e=>{v.min=e.target.value.replace(/\D/g,"");render()};$("#fmax").onchange=e=>{v.max=e.target.value.replace(/\D/g,"");render()};
+  $("#fstock").onchange=e=>{v.stock=e.target.checked;render()};$("#sort").onchange=e=>{v.sort=e.target.value;render()};
+  $("#fbtn").onclick=()=>$("#filters").classList.toggle("open");
+}
+function productView(p){
+  const fit=fitCheck([p.id]),worst=fit.some(x=>x.status==="bad")?"bad":fit.some(x=>x.status==="warn")?"warn":"ok";
+  const lab={ok:"Fits your rig",warn:"Fits with notes",bad:"Problem with your rig"};
+  const owned=S.rig.some(r=>r.id===p.id);
+  const [w,c]=String(p.p.toFixed(2)).split(".");
+  return `<div class="wrap">
+  <div class="crumbs"><span>⌂</span><span>All Categories</span><span>${esc(CATS[p.c])}</span><span>${esc(p.b)}</span><span class="last">${esc(p.n.replace(p.b+" ",""))}</span></div>
+  <div class="prod">
+   <div style="min-width:0">
+    <h1>${esc(p.n)}</h1>
+    <div class="stars" style="font-size:18px">${stars(p.r)}<em>(${p.rv.toLocaleString("en")})</em></div>
+    <div style="margin:8px 0 14px"><span class="brandtag">${esc(p.b)}</span></div>
+    ${sil(p.c)}
+    <div class="section"><h2>Specifications</h2><table class="spect">${Object.entries(p.specs).map(([k,v])=>`<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`).join("")}</table></div>
+    <div class="section"><h2>Why customers returned it <span class="tag moat">Thomann data</span> <span class="tag sim">simulated</span></h2>${returnHtml(p)}
+     <div class="prow" style="margin-top:12px"><button class="btn" data-ask="Why do people return the ${esc(p.n)}, and would that affect me?">Would this affect me? Ask the advisor</button></div></div>
+    <div class="section"><details class="ai"><summary>AI-ready product data (schema.org)</summary><p class="muted">Structured data AI shopping tools can read: offers, B-Stock, 30-day return policy, 3-year warranty, plus Thomann's compatibility and return-insight fields.</p><pre class="json">${esc(JSON.stringify(jsonLd(p),null,2))}</pre></details></div>
+   </div>
+   <aside style="display:flex;flex-direction:column;gap:14px;min-width:0">
+    <div><div class="bigprice">${w}${c!=="00"?`<sup>.${c}</sup>`:""} <sup>€</sup></div><div class="muted">All prices incl. VAT</div>${stockLine(p)}</div>
+    <div class="buy"><input class="qty" type="number" min="1" value="1" id="qty" aria-label="Quantity"><button class="cta" style="flex:1" data-addq="${p.id}">Add to basket</button></div>
+    ${p.bs?`<div class="box"><b>B-Stock from ${eur(p.bs)}</b><div class="muted">Checked returns with full 3-year warranty · save ${eur(p.p-p.bs)}</div></div>`:""}
+    <div class="box">
+     <div class="drow"><svg class="i" viewBox="0 0 24 24"><path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/></svg><div style="flex:1"><b>Standard delivery <span>Free</span></b><div class="muted">${p.st?"Delivery in approx. 1–3 business days":`Ships in approx. ${p.restock||10} days`}</div></div></div>
+     <div class="drow"><svg class="i" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 3-6.3M4 4v4h4"/></svg><div style="flex:1"><b>30-Day Money-Back</b><div class="muted">Plus 3-year Thomann warranty</div></div></div>
+    </div>
+    <div class="box" style="border-color:var(--purple)">
+     <h4><span class="aiav sm" style="width:26px;height:26px">${AISVG}</span>Fits your rig? <span class="badge ${worst}">${owned?"You own this":lab[worst]}</span></h4>
+     ${fit.slice(0,3).map(x=>`<div class="fitline"><span class="badge ${x.status}">${x.status.toUpperCase()}</span><span>${esc(x.note)}</span></div>`).join("")}
+     <div class="muted" style="margin:6px 0">Checked against ${rigItems().length} items in <button style="text-decoration:underline" data-open="rig">My rig</button></div>
+     <div class="prow"><button class="btn primary" data-ask="Will the ${esc(p.n)} work with my rig? Explain anything I need to add.">Ask about this product</button>${owned?"":`<button class="btn" data-rig-add="${p.id}">I already own this</button>`}</div>
+    </div>
+    <div class="box"><h4>Questions about this product?</h4><div class="muted">Our AI advisor answers right away. ${EXPERTS[DEPT2EXP[DEPT(p.c)]].name} and the ${esc(DEPT(p.c))} team can join the chat.</div>
+     <div class="prow"><button class="btn" data-ask="Is there a cheaper option or B-Stock for the ${esc(p.n)}?">Price check</button><button class="btn" data-ask="Compare the ${esc(p.n)} with similar products.">Compare</button></div></div>
+   </aside>
+  </div></div>`;
+}
+function jsonLd(p){
+  return {"@context":"https://schema.org","@type":"Product",sku:p.id,name:p.n,brand:{"@type":"Brand",name:p.b},category:CATS[p.c],
+    additionalProperty:Object.entries(p.specs).map(([k,v])=>({"@type":"PropertyValue",name:k,value:v})),
+    aggregateRating:{"@type":"AggregateRating",ratingValue:p.r,reviewCount:p.rv},
+    offers:[{"@type":"Offer",price:p.p,priceCurrency:"EUR",availability:p.st?"https://schema.org/InStock":"https://schema.org/BackOrder",
+      hasMerchantReturnPolicy:{"@type":"MerchantReturnPolicy",merchantReturnDays:30},warranty:{"@type":"WarrantyPromise",durationOfWarranty:{"@type":"QuantitativeValue",value:3,unitCode:"ANN"}}},
+      ...(p.bs?[{"@type":"Offer",price:p.bs,priceCurrency:"EUR",itemCondition:"https://schema.org/RefurbishedCondition",name:"B-Stock"}]:[])],
+    "x-compatibility":p.cp,"x-returnInsights":{returnRatePct:p.ret.rate,topReasons:p.ret.reasons.map(([r,s])=>({reason:r,sharePct:s}))}};
+}
+
+/* ---------------- Contact flow (copied from the shop's stepped form, plus Live chat) ---------------- */
+const ENQ=[["Order/Return","M3 7l9-4 9 4v10l-9 4-9-4zM3 7l9 4 9-4M12 11v10"],["Product advice","M3 12V4h8l10 10-8 8zM7.5 8h.01"],["Other","M4 12h.01M12 12h.01M20 12h.01"]];
+const DEPTS=["Guitars & Basses","Drums & Percussion","Keys","Studio Equipment","Software","PA Equipment","Lighting"];
+const METHODS=[["message","Send us a message","M3 6h18v12H3zM3 6l9 7 9-7"],["call","Call us","M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"],["chat","Live chat","M4 5h16v11H9l-5 4zM8 10.5h.01M12 10.5h.01M16 10.5h.01"],["whatsapp","WhatsApp","M4 20l1.5-4A8 8 0 1 1 8 18.5z"]];
+const ic=d=>`<svg class="i" viewBox="0 0 24 24"><path d="${d}"/></svg>`;
+function stepCardHtml(ctx,where){
+  const c=ctx, needCat=c.enquiry==="Product advice";
+  const step=!c.enquiry?1:(needCat&&!c.category)?2:needCat?3:2, total=needCat?4:3;
+  const expKey=DEPT2EXP[c.category]||(c.enquiry==="Order/Return"?"service":"recording");
+  const trio=[expKey,...Object.keys(EXPERTS).filter(k=>k!==expKey)].slice(0,3);
+  const ans=(t,v,f)=>`<div class="answered"><div><h3>${t}</h3><p>${esc(v)}</p></div><button class="edit" data-step-edit="${f}" data-where="${where}" aria-label="Change answer">${ic("M4 20h4L19 9l-4-4L4 16zM14 6l4 4")}</button></div>`;
+  let q="";
+  if(!c.enquiry) q=`<div class="q"><h3>What is your enquiry?</h3><div class="opts">${ENQ.map(([t,d])=>`<button class="pill" data-step="enquiry" data-v="${t}" data-where="${where}">${ic(d)}${t}</button>`).join("")}</div></div>`;
+  else if(needCat&&!c.category) q=`<div class="q"><h3>Which category does the product belong to?</h3><div class="opts">${DEPTS.map(t=>`<button class="pill" data-step="category" data-v="${t}" data-where="${where}">${t}</button>`).join("")}</div></div>`;
+  else q=`<div class="q"><h3>How would you prefer to contact us?</h3><div class="opts">${METHODS.map(([k,t,d])=>k==="chat"
+     ?`<button class="pill purple" data-method="chat" data-where="${where}">${ic(d)}${t} <span class="aitag">AI first</span></button>`
+     :`<button class="pill" data-method="${k}" data-where="${where}">${ic(d)}${t}</button>`).join("")}</div>
+     <p class="muted" style="margin-top:12px">Live chat starts with our AI advisor, available 24/7. ${S.online?"Specialists are online now and can join the chat at any time.":"Specialists are back at 9:00; the advisor can arrange a call back."}</p>
+     <div id="mnote-${where}"></div></div>`;
+  return `<div class="avatars">${trio.map(k=>avatar(k)).join("")}</div>
+   <div class="prog"><i style="width:${(step/total)*100}%"></i></div><div class="steplbl">Step ${step}</div>
+   ${c.enquiry&&where!=="drawer-dept"?ans("What is your enquiry?",c.enquiry,"enquiry"):""}${c.category?ans("Which category does the product belong to?",c.category,"category"):""}${q}`;
+}
+function contactView(){
+  return `<div class="wrap contact"><nav class="side-nav" aria-label="Service"><span>Overview</span><span class="on">Contact us</span><span>Frequently asked questions</span><span>Shipping costs and delivery times</span><span>Maintenance and repair</span><span>Return product</span><span>The Thomann app</span></nav>
+   <div style="min-width:0"><h1 class="page" style="font-size:44px">Contact</h1><p>As a customer you can reach our <b>specialists</b> and <b>consultants</b> by phone, chat or email.</p>
+   <div class="stepcard" id="stepcard">${stepCardHtml(S.contact,"page")}
+    <div class="stepfoot"><button class="ghost" data-step-reset="page">Cancel</button><span class="dis">Submit</span></div></div></div></div>`;
+}
+function openHelpDrawer(){
+  const dept=S.view.name==="product"?DEPT(BY[S.view.id].c):S.view.cats.length?DEPT(S.view.cats[0]):"Studio Equipment";
+  const ctx={enquiry:"Product advice",category:dept};S.helpCtx=ctx;
+  drawer(`Advice: ${dept.replace(" Equipment","")}`,`<div id="hsteps">${stepCardHtml(ctx,"drawer-dept")}</div>`,null,`<button class="ghost" data-close style="font-weight:700;padding:10px 18px">Cancel</button><span class="dis" style="background:var(--soft);color:#aaa;border-radius:30px;padding:10px 22px;font-weight:700">Submit</span>`);
+}
+function methodNote(where,k){
+  const el=document.getElementById("mnote-"+where);if(!el)return;
+  const txt={message:"In the live shop this opens a message form (your question plus email). Not part of this prototype.",call:"In the live shop this shows the hotline number and opening hours. Not part of this prototype.",whatsapp:"In the live shop this opens WhatsApp. Not part of this prototype."}[k];
+  el.innerHTML=`<div class="note">${txt} <button class="btn" data-method="chat" data-where="${where}">Try Live chat instead</button></div>`;
+}
+
+/* ---------------- Drawers ---------------- */
+function drawer(title,html,onMount,foot,wide){
+  const L=$("#layer");
+  L.innerHTML=`<div class="scrim" data-close></div><div class="drawer${wide?" wide":""}" role="dialog" aria-modal="true" aria-label="${esc(title)}"><div class="dhead"><h2>${esc(title)}</h2><button data-close aria-label="Close">${ic("M6 6l12 12M18 6 6 18")}</button></div><div class="dbody">${html}</div>${foot?`<div class="dfoot">${foot}</div>`:""}</div>`;
+  onMount&&onMount(L.querySelector(".dbody"));
+}
+const closeDrawer=()=>{$("#layer").innerHTML=""};
+function openRig(){
+  drawer("My rig",`<p class="muted" style="margin:0">Gear you own. The advisor checks new products against this list. <span class="tag moat">moat</span> <span class="tag sim">demo customer</span></p>
+   <div class="card">${rigItems().map((x,i)=>`<div class="mini"><div class="info"><div>${esc(x.name)}</div><div class="sub">${esc(x.custom?"Computer":CATS[x.cat])} · since ${esc(x.since||"")}${x.note?" · "+esc(x.note):""}</div></div><button class="btn" data-rm="${i}">Remove</button></div>`).join("")}</div>
+   <select id="rigAdd" class="search" aria-label="Add gear you own"><option value="">Add gear you own…</option>${P.map(p=>`<option value="${p.id}">${esc(p.n)}</option>`).join("")}</select>
+   <div class="prow"><button class="btn" data-ask="What should I upgrade first in my rig?">What should I upgrade first?</button><button class="btn" data-ask="My strings feel dead. What should I do?">My strings feel dead</button><button class="btn" id="rigReset">Reset demo rig</button></div>`,(b)=>{
+    b.querySelectorAll("[data-rm]").forEach(x=>x.onclick=()=>{S.rig.splice(+x.dataset.rm,1);store.set("rig",S.rig);openRig();if(S.view.name==="product")render()});
+    $("#rigAdd").onchange=e=>{if(e.target.value){addRig(e.target.value);openRig()}};
+    $("#rigReset").onclick=()=>{S.rig=JSON.parse(JSON.stringify(DEFAULT_RIG));store.set("rig",S.rig);openRig();if(S.view.name==="product")render()};
+  },null,true);
+}
+function openOrders(){drawer("Orders",`<p class="muted" style="margin:0">Demo order history. <span class="tag sim">simulated</span></p>${ORDERS.map(orderHtml).join("")}<div class="prow"><button class="btn" data-ask="Where is my latest order?">Where is my latest order?</button><button class="btn" data-ask="I want to return my Scarlett Solo.">Return my Scarlett Solo</button></div>`,null,null,true)}
+function openBasket(){
+  const tot=S.basket.reduce((a,x)=>a+BY[x.id].p*x.qty,0);
+  drawer("Basket",S.basket.length?`<div class="card">${S.basket.map((x,i)=>`<div class="mini"><div class="info"><div>${x.qty}× ${esc(BY[x.id].n)}</div><div class="sub">${eur(BY[x.id].p)} each</div></div><button class="btn" data-bi="${i}">Remove</button></div>`).join("")}<div class="total"><span>Total</span><span>${eur(tot)}</span></div></div>
+   <button class="cta" disabled style="opacity:.4;cursor:not-allowed">Checkout is off in this prototype</button><p class="muted">The advisor never adds items or buys for you. You decide what goes in the basket.</p>`:`<p class="muted">Your basket is empty.</p>`,(b)=>{
+    b.querySelectorAll("[data-bi]").forEach(x=>x.onclick=()=>{S.basket.splice(+x.dataset.bi,1);store.set("basket",S.basket);bcount();openBasket()});
+  },null,true);
+}
+const FEATURES=[
+ {stage:"Discover",kind:"basic",n:"Music Q&A",d:"Gear and playing questions answered directly.",try:"What's the difference between single-coil and humbucker pickups?"},
+ {stage:"Discover",kind:"basic",n:"Needs interview",d:"Asks level, style, budget and owned gear before recommending.",try:"I want to start playing electric guitar."},
+ {stage:"Discover",kind:"edge",n:"Sound match",d:"“Sound like X” mapped to pickups, amps and effects.",try:"I want John Mayer's clean tone. What do I need?"},
+ {stage:"Discover",kind:"edge",n:"Rig builder",d:"A full setup within budget.",try:"Build me a podcast setup for two people under €600."},
+ {stage:"Decide",kind:"basic",n:"Comparison",d:"Specs and trade-offs side by side.",try:"Compare the Scarlett Solo, Scarlett 2i2 and Volt 2."},
+ {stage:"Decide",kind:"basic",n:"Price check",d:"Cheaper similar items, B-Stock and bundles.",try:"Is there a cheaper option than the Rode NT1 for vocals?"},
+ {stage:"Decide",kind:"moat",n:"Gear fit check",d:"Checks new gear against what the customer owns. Also on every product page.",try:"Will the Shure SM7B work with my setup?"},
+ {stage:"Decide",kind:"moat",n:"Return insights",d:"Why others sent it back, and what helped. Also on every product page.",try:"Why do people return the SM7B?"},
+ {stage:"Buy",kind:"basic",n:"Stock & delivery",d:"Availability and delivery dates by country.",try:"Is the Boss DD-8 in stock and when would it arrive in Austria?"},
+ {stage:"Buy",kind:"edge",n:"Expert handoff",d:"A named specialist joins the live chat with the summary.",try:"I need a 16-channel live sound rig for our church, about €5,000."},
+ {stage:"Own",kind:"basic",n:"Order & returns",d:"Tracking, return windows and starting a return.",try:"Where is my latest order? Can I still return the Scarlett Solo?"},
+ {stage:"Own",kind:"moat",n:"My rig",d:"Remembers owned gear; upgrades and refills.",try:"What should I upgrade first in my rig?"},
+ {stage:"Own",kind:"edge",n:"Setup & fix-it",d:"Gets gear working before a return.",try:"My Scarlett makes no sound in my headphones."},
+ {stage:"Beyond site",kind:"basic",n:"AI-ready data",d:"schema.org data on each product page (bottom section).",action:"data"},
+ {stage:"Beyond site",kind:"edge",n:"ChatGPT app",d:"Same advisor and account inside an AI platform. Shown here as the expanded chat on its own.",action:"platform"},
+ {stage:"Open question",kind:"open",n:"Refill purchasing",d:"Advise only: suggests string refills; the customer adds them.",try:"My strings feel dead. What should I do?"},
+];
+function openGuide(){
+  const lab={basic:'<span class="tag">basic</span>',edge:'<span class="tag edge">Thomann edge</span>',moat:'<span class="tag moat">moat</span>',open:'<span class="tag sim">decide with Thomann</span>'};
+  drawer("Test guide",`<p class="muted" style="margin:0">For the person running the test. Entry points to try: the search box, “Need help?”, Contact us → Live chat, and the product page boxes.</p>
+   <label class="switch"><input type="checkbox" id="onl"${S.online?" checked":""}> Specialists online (uncheck to test out-of-hours)</label>
+   <div class="switch">Advisor speed <select id="tier" class="search"><option value="quick"${S.tier==="quick"?" selected":""}>Fast</option><option value="default"${S.tier!=="quick"?" selected":""}>Thorough (slower)</option></select></div>
+   ${FEATURES.map(f=>`<div class="feat"><div class="h"><span class="n">${f.stage}</span>${esc(f.n)} ${lab[f.kind]}</div><p>${esc(f.d)}</p>
+    ${f.try?`<div><button class="btn" data-ask="${esc(f.try)}">Try: “${esc(f.try)}”</button></div>`:f.action==="data"?`<div><button class="btn" data-detail="m2" data-close>Open a product page</button></div>`:`<div><button class="btn" data-platform>Open the advisor full screen</button></div>`}</div>`).join("")}
+   <button class="btn" id="resetAll">Reset demo (rig, basket, chat)</button>`,(b)=>{
+    $("#onl").onchange=e=>{S.online=e.target.checked;store.set("online",S.online);updateOnline();if(S.view.name==="contact")render()};
+    $("#tier").onchange=e=>{S.tier=e.target.value;store.set("tier",S.tier)};
+    $("#resetAll").onclick=()=>{S.rig=JSON.parse(JSON.stringify(DEFAULT_RIG));S.basket=[];store.set("rig",S.rig);store.set("basket",[]);bcount();resetChat();closeDrawer();render();toast("Demo reset")};
+  },null,true);
+}
+
+/* ---------------- Chat widget ---------------- */
+let sample=null,sampleState="loading",toolList=TOOLS;
+/* API mode: when the page is served by the Gear Advisor server (not claude.ai), the server calls Claude
+   with the operator's key. Same contract as claude.use("sample"): the page runs the tools, the server runs the model. */
+function apiSample(input,opts={}){
+  return (async()=>{
+    const msgs=typeof input==="string"?[{role:"user",content:input}]:input.map(m=>({role:m.role,content:m.content}));
+    const tools=(opts.tools||[]).map(t=>({name:t.name,description:t.description,input_schema:t.inputSchema||{type:"object",properties:{}}}));
+    const byName=Object.fromEntries((opts.tools||[]).map(t=>[t.name,t]));
+    let text="";
+    for(let round=0;round<8;round++){
+      let res;
+      try{res=await fetch("api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:msgs,tools,tier:opts.modelTier}),signal:opts.signal})}
+      catch(e){throw {code:opts.signal?.aborted?"cancelled":"upstream_error",text}}
+      const data=await res.json().catch(()=>({}));
+      if(!res.ok)throw {code:{rate_limited:"rate_limited",not_configured:"api_unavailable"}[data.error]||"upstream_error",message:data.message||"",text};
+      if(data.stop_reason==="refusal")throw {code:"refused"};
+      const add=data.content.filter(b=>b.type==="text").map(b=>b.text).join("");
+      if(add.trim()){const delta=(text?"\n\n":"")+add;text+=delta;opts.onText?.({text,delta})}
+      msgs.push({role:"assistant",content:data.content});
+      const uses=data.content.filter(b=>b.type==="tool_use");
+      if(data.stop_reason!=="tool_use"||!uses.length)return {text,truncated:data.stop_reason==="max_tokens"};
+      const results=await Promise.all(uses.map(async u=>{
+        try{
+          const t=byName[u.name];if(!t)throw new Error("Unknown tool "+u.name);
+          const out=await t.execute(u.input||{},{signal:opts.signal});
+          const str=typeof out==="string"?out:JSON.stringify(out);
+          return {type:"tool_result",tool_use_id:u.id,content:str.slice(0,32000)};
+        }catch(e){return {type:"tool_result",tool_use_id:u.id,content:"Error: "+(e?.message||e),is_error:true}}
+      }));
+      if(opts.signal?.aborted)throw {code:"cancelled",text};
+      msgs.push({role:"user",content:results});
+    }
+    return {text,truncated:true};
+  })();
+}
+const SIGNIN="To chat with the AI advisor, sign in to Claude (claude.ai) and reload this page. It runs on your own Claude account. You can still browse the shop and ask for a specialist.";
+const clog=$("#clog");
+function scrollLog(){clog.scrollTop=clog.scrollHeight}
+function setChat(st){
+  S.chat=st;const w=$("#chatw");
+  w.hidden=st!=="open";$("#chatbubble").hidden=st!=="min";
+  if(st==="open"){$("#launch").hidden=S.started;$("#conv").hidden=!S.started;if(S.started)setTimeout(()=>$("#cin").focus(),50)}
+}
+function updateOnline(){
+  $("#ondot").className="ondot"+(S.online?"":" off");
+  $("#startNote").textContent=S.online?"You'll start with our AI advisor. A specialist can join any time.":"You'll chat with our AI advisor. Specialists are back at 9:00.";
+  renderWho();
+}
+const noAI=()=>window.claude?SIGNIN:"The AI advisor isn't available right now. You can still browse the shop and ask for a specialist.";
+function updateAcct(){
+  const n=$("#acctNote");
+  if(sampleState==="none"){n.className="warn";n.textContent=noAI()}
+  else if(S.apiMode){n.className="";n.textContent="Free to use in this test. Please don't share personal details in the chat."}
+  else{n.className="";n.textContent="The AI advisor runs on your own Claude account and counts toward your Claude usage. Claude asks you once to allow it."}
+}
+function renderWho(){
+  const w=$("#who");
+  if(S.mode==="human"){const e=EXPERTS[S.expert];w.innerHTML=`${avatar(S.expert,"av")}<div style="min-width:0"><b>${esc(e.name)}</b><small>${esc(e.role)} · simulated</small></div>`;$("#specBtn").hidden=true}
+  else{w.innerHTML=`<span class="aiav">${AISVG}</span><div style="min-width:0"><b>AI advisor</b><small>Thomann · answers instantly</small></div>`;$("#specBtn").hidden=false;$("#specsub").textContent=S.online?"· online now":"· back at 9:00"}
+}
+function sysLine(t){const d=document.createElement("div");d.className="m sys";d.textContent=t;clog.append(d);scrollLog()}
+function botMsg(html,who="ai"){
+  const d=document.createElement("div");d.className="m";
+  d.innerHTML=`${who==="ai"?`<span class="aiav sm">${AISVG}</span>`:avatar(who,"av")}<div class="body">${html?`<div class="b">${html}</div>`:""}<div class="cards"></div><div class="t">${now()}</div></div>`;
+  d.querySelector(".av")?.setAttribute("style",d.querySelector(".av").getAttribute("style")+";width:32px;height:32px;font-size:11px;border-width:0;margin:0");
+  clog.append(d);scrollLog();return d;
+}
+function userMsg(t){const d=document.createElement("div");d.className="m u";d.innerHTML=`<div class="body"><div class="b">${esc(t)}</div><div class="t">${now()}</div></div>`;clog.append(d);scrollLog()}
+function md(src){
+  const lines=esc(src).split("\n");let out="",list=null;
+  const inl=s=>s.replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/(^|[^*])\*([^*\n]+)\*/g,"$1<i>$2</i>").replace(/`([^`]+)`/g,"<code>$1</code>");
+  const close=()=>{if(list){out+=`</${list}>`;list=null}};
+  for(const l of lines){let m;
+    if((m=l.match(/^\s*[-*•]\s+(.*)/))){if(list!=="ul"){close();out+="<ul>";list="ul"}out+=`<li>${inl(m[1])}</li>`}
+    else if((m=l.match(/^\s*\d+[.)]\s+(.*)/))){if(list!=="ol"){close();out+="<ol>";list="ol"}out+=`<li>${inl(m[1])}</li>`}
+    else if((m=l.match(/^#{1,4}\s+(.*)/))){close();out+=`<h4>${inl(m[1])}</h4>`}
+    else if(!l.trim())close(); else{close();out+=`<p>${inl(l)}</p>`}}
+  close();return out;
+}
+const STARTERS={
+ "Guitars & Basses":["I want to start playing electric guitar.","I want John Mayer's clean tone. What do I need?","What pedal power supply do I need?"],
+ "Studio Equipment":["Will the Shure SM7B work with my setup?","Build me a podcast setup for two people under €600.","My Scarlett makes no sound in my headphones."],
+ "Keys":["Which digital piano for a beginner under €500?","Will a Yamaha sustain pedal work with my keyboard?"],
+ "Drums & Percussion":["I need quiet e-drums for a flat.","Compare the Roland TD-07KV and Millenium MPS-850."],
+ "Order/Return":["Where is my latest order?","I want to return my Scarlett Solo."],
+ default:["I want to start playing electric guitar.","Will the Shure SM7B work with my setup?","Build me a podcast setup for two people under €600.","Where is my latest order?"],
+};
+function startConversation(ctx){
+  S.started=true;S.mode="ai";S.chatCtx=ctx||S.chatCtx;setChat("open");renderWho();composer(true);
+  const c=S.chatCtx;
+  const intro=`<p>Hi! I'm Thomann's <b>AI advisor</b>. I can find the right gear, check it works with what you own, compare prices and B-Stock, and track orders.</p>${c?.enquiry?`<p>You chose <b>${esc(c.enquiry)}${c.category?" · "+esc(c.category):""}</b>. What are you working on?</p>`:"<p>What can I help you with?</p>"}<p class="muted" style="margin-top:6px">Prefer a person? Tap <b>Talk to a specialist</b> above at any time.</p>`;
+  const m=botMsg(intro);
+  const st=STARTERS[c?.category]||STARTERS[c?.enquiry]||STARTERS.default;
+  m.querySelector(".cards").innerHTML=`<div class="chips">${st.map(t=>`<button class="chip" data-say="${esc(t)}">${esc(t)}</button>`).join("")}</div>`;
+  if(sampleState==="none") m.querySelector(".cards").insertAdjacentHTML("beforeend",`<div class="endnote">${noAI()}</div>`);
+}
+function resetChat(){if(S.ctl)S.ctl.abort();S.turns=[];S.started=false;S.mode="ai";S.expert=null;clog.innerHTML="";composer(true);if(S.chat==="open")setChat("open")}
+function openChat(ctx){if(ctx)S.chatCtx=ctx;setChat("open")}
+function composer(on,msg){$("#cform").hidden=!on;$("#coff").hidden=on;if(msg)$("#coff").innerHTML=msg}
+
+/* hand-over to a (simulated) specialist */
+function pickExpert(){
+  const c=S.chatCtx;if(c?.category&&DEPT2EXP[c.category])return DEPT2EXP[c.category];
+  if(c?.enquiry==="Order/Return")return "service";
+  if(S.viewing&&BY[S.viewing])return DEPT2EXP[DEPT(BY[S.viewing].c)];
+  return "recording";
+}
+function localSummary(){
+  const asks=S.turns.filter(t=>t.role==="user").map(t=>t.content).slice(-3);
+  return asks.length?`Customer asked: ${asks.map(a=>"“"+a.slice(0,140)+"”").join(" → ")}. Owns: ${rigItems().map(r=>r.name).slice(0,6).join(", ")}.`:`New conversation, no questions yet. Owns: ${rigItems().map(r=>r.name).slice(0,6).join(", ")}.`;
+}
+async function summarise(){
+  if(!sample||!S.turns.length)return localSummary();
+  try{const r=await sample(`Summarise this shop chat for a product specialist in 3 short sentences: goal, budget, owned gear, open questions. No preamble.\n\nMy rig: ${rigItems().map(r=>r.name).join(", ")}\n\n`+S.turns.map(t=>t.role+": "+t.content.replace(/\n\[cards shown.*$/s,"")).join("\n").slice(-6000),{modelTier:"quick",cache:false});return r.text.trim()}catch(e){return localSummary()}
+}
+async function handover(dept,summary){
+  if(S.busy&&S.ctl)S.ctl.abort();
+  const k=dept&&EXPERTS[dept]?dept:pickExpert(),e=EXPERTS[k];
+  if(!S.online){
+    const m=botMsg(`<p>Our specialists are offline right now and back at <b>9:00</b>. I can keep helping, or arrange for <b>${esc(e.name)}</b> to get back to you.</p>`);
+    m.querySelector(".cards").innerHTML=`<div class="card"><h5>${esc(e.name)} · ${esc(e.role)} <span class="tag sim">simulated</span></h5><div class="prow"><button class="btn primary" data-cb="call">Request a call back</button><button class="btn" data-cb="message">Leave a message</button><button class="btn" data-say="Let's keep going with you for now.">Keep chatting with the AI</button></div><div class="muted" data-cbs></div></div>`;
+    return;
+  }
+  sysLine("Connecting you to a specialist…");
+  const sum=summary||await summarise();
+  setTimeout(()=>{
+    S.mode="human";S.expert=k;renderWho();
+    sysLine(`${e.name} joined the chat · has read your conversation`);
+    const m=botMsg(`<p>Hi, I'm ${esc(e.name.split(" ")[0])}, ${esc(e.role.toLowerCase())}. I've read your chat with the advisor, so no need to repeat anything. Let me take it from here.</p>`,k);
+    m.querySelector(".cards").innerHTML=`<div class="card"><h5>What ${esc(e.name.split(" ")[0])} sees <span class="tag edge">expert handoff</span></h5><div>${esc(sum)}</div></div>
+      <div class="endnote"><b>Simulated hand-over.</b> In the live shop ${esc(e.name)} would now chat with you in person. <div class="prow"><button class="btn primary" data-backai>Back to the AI advisor</button></div></div>`;
+    composer(false,`You're with ${esc(e.name)} (simulated). <button class="btn" data-backai>Back to the AI advisor</button>`);
+    scrollLog();
+  },1100);
+}
+function backToAi(){S.mode="ai";renderWho();composer(true);sysLine("You're back with the AI advisor");}
+
+/* expert_handoff now offers to bring the specialist into this live chat */
+TOOLS.find(t=>t.name==="expert_handoff").execute=function(i){
+  const k=EXPERTS[i.department]?i.department:pickExpert(),e=EXPERTS[k];setStatus("Finding the right specialist…");
+  const sid="hs"+Date.now();window.__sums=window.__sums||{};window.__sums[sid]=String(i.summary||"");
+  push(`<div class="card"><h5>${avatar(k,"av").replace('class="av"','class="av" style="width:30px;height:30px;font-size:11px;border-width:0;margin:0;background:'+AVC[k]+'"')} ${esc(e.name)} can help with this <span class="tag edge">expert handoff</span></h5>
+   <div class="muted">${esc(e.role)} · ${esc(e.since)}</div><div style="margin:6px 0;padding:8px;background:var(--soft);border-radius:8px"><b>Summary they'll get</b><br>${esc(i.summary)}</div>
+   <div class="prow">${S.online?`<button class="btn primary" data-handover="${k}" data-sid="${sid}">Bring ${esc(e.name.split(" ")[0])} into this chat</button>`:`<button class="btn primary" data-cb="call">Request a call back</button><button class="btn" data-cb="message">Leave a message</button>`}</div><div class="muted" data-cbs></div></div>`);
+  shownLog.push("handoff("+k+")");
+  return {specialist:e.name,online:S.online,status:"Card shown. The customer decides whether to bring the specialist in."};
+};
+
+function rulesText(){
+  return `You are Thomann's AI advisor inside the shop's Live chat (a concept prototype of the Thomann music shop). All catalogue, stock, order, return-reason and rig data is demo data supplied by this page.
+
+HOW TO WORK
+- Product facts (prices, specs, stock, return reasons, compatibility) come ONLY from the catalogue below and your tools. Never invent products, prices or specs. If something isn't in the catalogue, say so and offer the closest item.
+- This is a chat widget about 380px wide: keep answers short (2-5 sentences or a short list). When you recommend specific items, show them with show_products (or compare_products / build_rig / price_check, which show their own cards). Don't repeat card contents.
+- NEEDS INTERVIEW: the customer came through Live chat to get advice. If a buying request lacks key facts (level, style or genre, budget, what they already own), ask before recommending: call offer_choices with ONE question, then end your turn with at most one short sentence. Max 2 rounds. Skip what My rig, the entry context or the message already answers.
+- SOUND MATCH: translate a described sound, artist or song into gear traits (pickups, amp, effects), search by tags, explain the link briefly.
+- RIG BUILDER: pick items via search_products, then call build_rig with the budget. Leave room for cables.
+- GEAR FIT: before recommending anything that connects to their gear, call check_fit. Report problems plainly and name the fix.
+- TRANSPARENCY: mention notable return reasons when relevant (return_insights). Point out cheaper options and B-Stock (price_check), including house brands like Harley Benton and the sssnake. Never pressure.
+- ADVISE, NEVER BUY: you cannot order or add to the basket; the customer uses the buttons on the cards.
+- ORDERS & RETURNS: 30-day money-back guarantee and 3-year warranty. Before a fault return, offer setup_help first; use orders(start_return) only if they still want to return.
+- HUMAN SPECIALISTS: real Thomann specialists stand behind this chat. The customer can press "Specialist" in the chat header at any time. After you give a recommendation, you may add one short line offering a specialist. For complex or professional setups, budgets over €2,000, installations, repairs, or when they ask for a person, call expert_handoff with a summary the specialist can act on. Specialists are currently ${S.online?"ONLINE and can join this chat now":"OFFLINE until 9:00; offer a call back"}.
+- MY RIG: the customer's owned gear is listed in the context. Use it for upgrades, refills (strings older than about 3 months) and compatibility. If they mention owning or selling gear, call update_rig.
+- Music theory, technique and general gear knowledge: answer from your own knowledge, briefly.
+- Reply in the customer's language. Prices in EUR. Light Markdown only (bold, short lists); no tables.
+
+CATALOGUE (id | name | category | price | tags)
+${P.map(p=>`${p.id} | ${p.n} | ${p.c} | €${p.p}${p.bs?" (B-Stock €"+p.bs+")":""} | ${p.tags.join(", ")}`).join("\n")}`;
+}
+function contextText(){
+  const v=S.viewing&&BY[S.viewing],c=S.chatCtx;
+  return `[Page context, today ${TODAY.toISOString().slice(0,10)}${c?.enquiry?`; entered Live chat via contact form: ${c.enquiry}${c.category?" → "+c.category:""}`:""}${v?`; customer is viewing: ${v.n} (${v.id})`:""}${S.view.q?`; last search: "${S.view.q}"`:""}; specialists ${S.online?"online now":"offline until 9:00"}
+My rig: ${rigItems().map(r=>`${r.name}${r.id?" ("+r.id+")":""}${r.note?" – "+r.note:""}`).join("; ")||"empty"}
+Basket: ${S.basket.map(x=>`${x.qty}× ${BY[x.id].n}`).join("; ")||"empty"}
+Orders: ${ORDERS.map(o=>`${o.id} ${o.status} (${o.items.map(([id])=>BY[id].n).join(", ")})`).join("; ")}]`;
+}
+const ERR={api_unavailable:"The AI advisor isn't set up on this server yet. Tap Talk to a specialist instead.",not_granted:"You didn't allow this page to use your Claude account, so the AI advisor can't answer. Reload the page to be asked again, or tap Talk to a specialist.",sampling_disabled:"Claude isn't available for this account.",rate_limited:"You've reached your Claude usage limit for now, or sent many messages quickly. Wait a little and try again, or tap Talk to a specialist.",session_expired:"You're signed out of Claude. Sign in at claude.ai, then reload this page.",refused:"I can't help with that one. Try rephrasing, or tap Specialist.",empty_completion:"No answer came back. Try asking differently.",prompt_too_large:"This chat got too long. Start a new conversation from the Test guide.",tools_unavailable:"This viewer can't run the shop tools. Try the latest Claude app or claude.ai."};
+async function send(text){
+  text=String(text||"").trim();if(!text||S.busy)return;
+  if(!S.started)startConversation();else setChat("open");
+  if(S.mode==="human")backToAi();
+  userMsg(text);
+  if(!sample){botMsg(`<p>${sampleState==="loading"?"I'm still connecting. Try again in a moment.":noAI()}</p>`);return}
+  const m=botMsg(""),body=m.querySelector(".body"),cards=m.querySelector(".cards");
+  const tb=document.createElement("div");tb.className="b";tb.innerHTML=`<span class="typing"><i></i><i></i><i></i></span>`;body.insertBefore(tb,cards);
+  const st=document.createElement("div");st.className="status";body.insertBefore(st,cards.nextSibling);
+  currentCards=cards;setStatus=t=>{st.textContent=t};shownLog.length=0;
+  S.busy=true;$("#sendb").hidden=true;$("#stopb").hidden=false;
+  const ctl=new AbortController();S.ctl=ctl;
+  const ask={role:"user",content:contextText()+"\n\nCustomer: "+text};
+  const input=S.apiMode?[...S.turns.slice(-16),ask]:[{role:"user",content:rulesText()},...S.turns.slice(-16),ask];
+  let fin="";
+  try{
+    const r=await sample(input,{cache:false,signal:ctl.signal,modelTier:S.tier,tools:toolList,onText:({text:t})=>{fin=t;tb.innerHTML=md(t);st.textContent="";scrollLog()}});
+    fin=r.text;if(r.text.trim())tb.innerHTML=md(r.text);else tb.remove();if(r.truncated)tb.insertAdjacentHTML("beforeend",`<p class="muted">Cut short. Ask for less at a time.</p>`);
+  }catch(e){
+    fin=e?.text||"";
+    if(e?.code==="refused"){tb.innerHTML=`<p>${ERR.refused}</p>`;fin=""}
+    else if(e?.code==="cancelled"){if(fin)tb.innerHTML=md(fin)+`<p class="muted">Stopped.</p>`;else tb.remove()}
+    else tb.innerHTML=(fin?md(fin):"")+`<p class="muted">${esc(ERR[e?.code]||"Something went wrong reaching the advisor. Try again.")}</p>`;
+    if(["not_granted","sampling_disabled","tools_unavailable","session_expired","api_unavailable"].includes(e?.code)){sample=null;sampleState="none";updateAcct()}
+  }finally{st.remove();currentCards=null;S.busy=false;S.ctl=null;$("#sendb").hidden=false;$("#stopb").hidden=true;sendState()}
+  S.turns.push({role:"user",content:text});
+  S.turns.push({role:"assistant",content:(fin||"(no text)")+(shownLog.length?`\n[cards shown: ${shownLog.join("; ")}]`:"")});
+  scrollLog();
+}
+
+/* ---------------- Search autocomplete ---------------- */
+const sq=$("#sq"),ac=$("#ac");
+function renderAc(){
+  const q=sq.value.trim();if(!q){ac.hidden=true;return}
+  const prods=P.map(p=>({p,s:scoreQ(p,q)})).filter(o=>o.s>0).sort((a,b)=>b.s-a.s||b.p.rv-a.p.rv).slice(0,3).map(o=>o.p);
+  const cats=Object.entries(CATS).filter(([k,v])=>q.toLowerCase().split(/\s+/).some(w=>w.length>2&&(v.toLowerCase().includes(w)||P.some(p=>p.c===k&&p.tags.join(" ").includes(w))))).slice(0,3);
+  ac.innerHTML=`<button class="askrow" data-ask="${esc(q)}"><span class="aiav sm">${AISVG}</span><span>Ask the advisor: <b>“${esc(q)}”</b></span></button>
+   ${prods.length?`<div class="grp">Products</div>${prods.map(p=>`<button data-detail="${p.id}">${esc(p.n)}</button>`).join("")}`:""}
+   ${cats.length?`<div class="grp">Categories</div>${cats.map(([k,v])=>`<button data-cat="${k}">${esc(v)}</button>`).join("")}`:""}`;
+  ac.hidden=false;
+}
+sq.addEventListener("input",renderAc);sq.addEventListener("focus",renderAc);
+$("#sform").addEventListener("submit",e=>{e.preventDefault();ac.hidden=true;sq.blur();go({name:"results",q:sq.value.trim()})});
+
+/* ---------------- Global click handling ---------------- */
+document.addEventListener("click",e=>{
+  const t=e.target;
+  if(!t.closest(".searchbox"))ac.hidden=true;
+  ["shop","svc","acc"].forEach(k=>{if(!t.closest("#"+k+"Btn"))$("#"+k+"DD").hidden=true});
+  if(!t.closest("#plus,#plusmenu"))$("#plusmenu").hidden=true;
+  const a=t.closest("[data-go],[data-detail],[data-cat],[data-add],[data-addq],[data-ask],[data-say],[data-open],[data-rig-add],[data-toast],[data-close],[data-step],[data-step-edit],[data-step-reset],[data-method],[data-handover],[data-backai],[data-cb],[data-platform],[data-spec]");
+  if(!a)return;
+  if(a.matches("a"))e.preventDefault();
+  const d=a.dataset;
+  if(d.close!==undefined&&!d.detail)closeDrawer();
+  if(d.go){closeDrawer();go({name:d.go});if(d.go==="results")sq.value=""}
+  else if(d.detail){if(a.closest(".drawer"))closeDrawer();ac.hidden=true;go({name:"product",id:d.detail})}
+  else if(d.cat){ac.hidden=true;sq.value="";go({name:"results",cats:[d.cat]})}
+  else if(d.add)addBasket(d.add);
+  else if(d.addq)addBasket(d.addq,Math.max(1,+($("#qty")?.value||1)));
+  else if(d.ask||d.say){if(a.closest(".drawer"))closeDrawer();ac.hidden=true;$("#plusmenu").hidden=true;
+    if(a.closest(".choices")){if(S.busy)return}
+    send(d.ask||d.say)}
+  else if(d.open){closeDrawer();({rig:openRig,orders:openOrders,basket:openBasket})[d.open]()}
+  else if(d.rigAdd)addRig(d.rigAdd);
+  else if(d.toast)toast(d.toast);
+  else if(d.step){const ctx=d.where==="page"?S.contact:S.helpCtx;ctx[d.step]=d.v;refreshSteps(d.where)}
+  else if(d.stepEdit){const ctx=d.where==="page"?S.contact:S.helpCtx;if(d.stepEdit==="enquiry"){ctx.enquiry=null;ctx.category=null}else ctx.category=null;refreshSteps(d.where)}
+  else if(d.stepReset){S.contact={enquiry:null,category:null};render()}
+  else if(d.method){const ctx=d.where==="page"?{...S.contact}:{...S.helpCtx};
+    if(d.method==="chat"){closeDrawer();if(S.started&&JSON.stringify(ctx)!==JSON.stringify(S.chatCtx)){resetChat()}openChat(ctx)}else methodNote(d.where,d.method)}
+  else if(d.handover){handover(d.handover,window.__sums?.[d.sid]);a.disabled=true}
+  else if(d.backai!==undefined)backToAi();
+  else if(d.cb){const box=a.closest(".card").querySelector("[data-cbs]");box.textContent=d.cb==="call"?"Call back requested (simulated). A specialist will call you after 9:00 with this chat's summary.":"Message saved (simulated). A specialist will reply by email after 9:00.";a.parentElement.querySelectorAll("button").forEach(b=>b.disabled=true)}
+  else if(d.platform!==undefined){closeDrawer();openChat();$("#chatw").classList.add("expanded")}
+  else if(d.spec!==undefined){$("#plusmenu").hidden=true;handover()}
+});
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"){closeDrawer();ac.hidden=true}
+  if(e.key==="Enter"&&e.target.matches(".row"))go({name:"product",id:e.target.dataset.detail});
+});
+function refreshSteps(where){
+  if(where==="page"){$("#stepcard").innerHTML=stepCardHtml(S.contact,"page")+`<div class="stepfoot"><button class="ghost" data-step-reset="page">Cancel</button><span class="dis">Submit</span></div>`}
+  else{$("#hsteps").innerHTML=stepCardHtml(S.helpCtx,where)}
+}
+$("#shopBtn").onclick=()=>{const dd=$("#shopDD");dd.innerHTML=Object.entries(CATS).map(([k,v])=>`<button data-cat="${k}">${esc(v)}</button>`).join("");dd.hidden=!dd.hidden};
+$("#svcBtn").onclick=()=>{$("#svcDD").hidden=!$("#svcDD").hidden};
+$("#accBtn").onclick=()=>{$("#accDD").hidden=!$("#accDD").hidden};
+$("#needhelp").onclick=openHelpDrawer;
+$("#nhav").innerHTML=["recording","guitars","keys"].map(k=>avatar(k)).join("");
+$("#testg").onclick=openGuide;
+$("#chatbubble").onclick=()=>setChat("open");
+$("#startConv").onclick=()=>{resetChat();startConversation(S.chatCtx)};
+$("#specBtn").onclick=()=>handover();
+$("#plus").onclick=()=>{$("#plusmenu").hidden=!$("#plusmenu").hidden};
+$("#chatw").addEventListener("click",e=>{
+  const b=e.target.closest("[data-chat]");if(!b)return;
+  if(b.dataset.chat==="min")setChat("min");
+  if(b.dataset.chat==="expand")$("#chatw").classList.toggle("expanded");
+  if(b.dataset.chat==="back"){if(S.ctl)S.ctl.abort();S.started=false;setChat("open")}
+});
+const cin=$("#cin");
+function sendState(){$("#sendb").classList.toggle("on",!!cin.value.trim())}
+cin.addEventListener("input",()=>{cin.style.height="auto";cin.style.height=Math.min(cin.scrollHeight,120)+"px";sendState()});
+cin.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();$("#cform").requestSubmit()}});
+$("#cform").addEventListener("submit",e=>{e.preventDefault();const t=cin.value;cin.value="";cin.style.height="auto";sendState();send(t)});
+$("#stopb").onclick=()=>S.ctl&&S.ctl.abort();
+
+/* ---------------- Boot ---------------- */
+bcount();updateOnline();updateAcct();render();
+(async()=>{
+  if(window.claude){
+    try{sample=await window.claude.use("sample")}catch(e){sample=null}
+    if(sample){try{const lim=await sample.limits();if(!lim.tools)sample=null;else if(lim.tools.maxCount<TOOLS.length)toolList=TOOLS.slice(0,lim.tools.maxCount)}catch(e){}}
+  }else{
+    try{const h=await fetch("api/health").then(r=>r.ok?r.json():null);if(h?.ok){sample=apiSample;S.apiMode=true}}catch(e){}
+  }
+  sampleState=sample?"ready":"none";updateAcct();
+})();
+</script>
+</body></html>
