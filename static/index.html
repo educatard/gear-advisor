@@ -466,7 +466,7 @@ function sil(c){
 function go(v){if(v.name!=="results")sq.value="";S.view=Object.assign({name:"results",q:"",cats:[],min:"",max:"",stock:false,sort:"rel"},v);if(v.name==="product")S.viewing=v.id;render();window.scrollTo(0,0);if(innerWidth<700&&S.chat==="open")setChat("min")}
 function render(){
   const v=S.view,el=$("#view");
-  $("#needhelp").hidden=v.name==="contact";
+  updateNeedHelp();
   if(v.name==="product") el.innerHTML=productView(BY[v.id]);
   else if(v.name==="contact") el.innerHTML=contactView();
   else if(v.name==="rig") el.innerHTML=rigView();
@@ -821,7 +821,7 @@ const clog=$("#clog");
 function scrollLog(){clog.scrollTop=clog.scrollHeight}
 function setChat(st){
   S.chat=st;const w=$("#chatw");
-  w.hidden=st!=="open";$("#chatbubble").hidden=st!=="min";
+  w.hidden=st!=="open";$("#chatbubble").hidden=st!=="min";updateNeedHelp();
   if(st==="open"){$("#launch").hidden=S.started;$("#conv").hidden=!S.started;if(S.started)setTimeout(()=>$("#cin").focus(),50)}
 }
 function updateOnline(){
@@ -868,7 +868,9 @@ const STARTERS={
  "Order/Return":["Where is my latest order?","I want to return my Scarlett Solo."],
  default:["I want to start playing electric guitar.","Will the Shure SM7B work with my setup?","Build me a podcast setup for two people under €600.","Where is my latest order?"],
 };
+function updateNeedHelp(){$("#needhelp").hidden=S.view.name==="contact"||S.chat!=="closed"}
 function startConversation(ctx){
+  if(S.ctl)S.ctl.abort();clog.innerHTML="";S.turns=[];S.expert=null;S.lastCat=null;
   S.started=true;S.mode="ai";S.chatCtx=ctx||S.chatCtx;setChat("open");renderWho();composer(true);
   const c=S.chatCtx;
   const intro=`<p>Hi! I'm Thomann's <b>AI advisor</b>. I can find the right gear, check it works with what you own, compare prices and B-Stock, and track orders.</p>${c?.enquiry?`<p>You chose <b>${esc(c.enquiry)}${c.category?" · "+esc(c.category):""}</b>. What are you working on?</p>`:"<p>What can I help you with?</p>"}<p class="muted" style="margin-top:6px">Prefer a person? Tap <b>Talk to a specialist</b> above at any time.</p>`;
@@ -885,6 +887,7 @@ function composer(on,msg){$("#cform").hidden=!on;$("#coff").hidden=on;if(msg)$("
 function pickExpert(){
   const c=S.chatCtx;if(c?.category&&DEPT2EXP[c.category])return DEPT2EXP[c.category];
   if(c?.enquiry==="Order/Return")return "service";
+  if(S.lastCat)return DEPT2EXP[DEPT(S.lastCat)];
   if(S.viewing&&BY[S.viewing])return DEPT2EXP[DEPT(BY[S.viewing].c)];
   return "recording";
 }
@@ -983,6 +986,8 @@ async function send(text){
     else tb.innerHTML=(fin?md(fin):"")+`<p class="muted">${esc(ERR[e?.code]||"Something went wrong reaching the advisor. Try again.")}</p>`;
     if(["not_granted","sampling_disabled","tools_unavailable","session_expired","api_unavailable"].includes(e?.code)){sample=null;sampleState="none";updateAcct()}
   }finally{st.remove();currentCards=null;S.busy=false;S.ctl=null;$("#sendb").hidden=false;$("#stopb").hidden=true;sendState()}
+  const lastIds=shownLog.join(",").match(/[a-z]{1,2}\d+/g)?.filter(id=>BY[id]&&BY[id].c!=="accessories");if(lastIds?.length)S.lastCat=BY[lastIds[0]].c;
+  if(["rig","product"].includes(S.view.name))render();
   S.turns.push({role:"user",content:text});
   S.turns.push({role:"assistant",content:(fin||"(no text)")+(shownLog.length?`\n[cards shown: ${shownLog.join("; ")}]`:"")});
   scrollLog();
