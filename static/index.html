@@ -360,6 +360,52 @@ table.cmp th{font-weight:600;color:var(--muted)}
 .feat p{margin:0;font-size:13px;color:var(--muted)}
 .switch{display:flex;align-items:center;gap:10px;font-weight:600}
 .switch input{width:20px;height:20px;accent-color:var(--purple)}
+/* AI picks */
+.ctabs{display:flex;border-bottom:1px solid var(--line);background:var(--bg)}
+.ctabs button{flex:1;padding:9px 8px;font-weight:700;font-size:13.5px;color:var(--muted);border-bottom:2.5px solid transparent;display:flex;gap:6px;align-items:center;justify-content:center}
+.ctabs button[aria-pressed="true"]{color:var(--purple);border-bottom-color:var(--purple)}
+.ctabs .pn{background:var(--purple);color:#fff;font-size:11px;border-radius:9px;min-width:18px;height:18px;display:grid;place-items:center;padding:0 5px}
+#conv.onpicks .cfoot,#conv.onpicks .composer-off{display:none!important}
+#picksPanel{padding:10px 12px 16px}
+.phead{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);margin-bottom:6px}
+.pgroup{margin-top:10px}
+.pgt{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pickrow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 8px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.pickrow .pn{font-weight:600;font-size:13.5px;line-height:1.3}
+.pickrow .sub{font-size:12px;color:var(--muted)}
+.pickrow .price{font-weight:800;font-size:14px}
+.pickrow .pacts{grid-column:2 / -1;display:flex;gap:6px}
+.pstar{font-size:19px;line-height:1;color:var(--muted);width:28px;height:28px;border-radius:50%}
+.pstar.on{color:#e3a008}
+.pstar:hover{background:var(--soft)}
+.pempty{text-align:center;color:var(--muted);padding:24px 12px;font-size:13.5px}
+.pempty b{color:var(--ink);font-size:15px;display:block}
+.pempty.big{padding:32px 16px;margin-top:20px}
+.pempty .aiav{display:grid}
+.pickspage{padding-bottom:90px}
+.pickspage h2.pg{font-size:19px;font-weight:800;margin:26px 0 10px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.cmpbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--soft);border-radius:10px;padding:10px 14px;margin-top:18px;font-size:14px;position:sticky;top:0;z-index:5}
+.cmpbar .btn[disabled]{opacity:.4;cursor:not-allowed}
+.cmpbox{margin-top:14px;border-color:var(--purple)}
+.cmpbox h4{display:flex;align-items:center;gap:8px;margin:0 0 8px}
+.picklist{display:flex;flex-direction:column;gap:10px}
+.pickcard{display:grid;grid-template-columns:auto 84px minmax(0,1fr);gap:12px;align-items:start;border:1px solid var(--line);border-radius:10px;padding:12px}
+.pickcard.sel{border-color:var(--purple);box-shadow:0 0 0 1px var(--purple)}
+.pcheck{padding-top:4px}
+.pcheck input{width:18px;height:18px;accent-color:var(--purple)}
+.pimg{background:var(--soft);border-radius:8px;aspect-ratio:1;display:grid;place-items:center;overflow:hidden}
+.pimg svg{width:80%;height:80%}
+.ptop{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.ptop h4{margin:0;font-size:16px}
+.linkish{text-align:left;font:inherit;font-weight:700}
+.linkish:hover{text-decoration:underline}
+.why{display:flex;gap:6px;align-items:flex-start;margin:4px 0;font-size:14px;color:var(--purple);font-weight:600}
+.why .aiav{flex:none}
+.pickcard .meta{font-size:12.5px;color:var(--muted);display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+.pickcard .acts{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:8px}
+.pickcard .acts .price{font-weight:800;font-size:17px;margin-right:4px}
+.pfit{margin-top:10px;background:var(--soft);border-radius:8px;padding:8px 10px;font-size:13.5px}
+@media (max-width:560px){.pickcard{grid-template-columns:auto 56px minmax(0,1fr)}.cmpbar .muted{margin-left:0!important}}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(24px + env(safe-area-inset-bottom,0px));background:var(--ink);color:#fff;padding:9px 16px;border-radius:8px;font-size:14px;z-index:70}
 
 @media (max-width:980px){
@@ -399,7 +445,7 @@ table.cmp th{font-weight:600;color:var(--muted)}
   <div class="searchbox"><form id="sform" role="search"><input id="sq" type="search" placeholder="What are you looking for?" autocomplete="off" aria-label="Search"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></form><div class="ac" id="ac" hidden></div></div>
   <div class="icons">
     <div style="position:relative"><button class="iconbtn" id="accBtn" aria-label="My account"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3.5"/><path d="M6 19c1.5-2.5 3.5-3.5 6-3.5s4.5 1 6 3.5"/></svg></button>
-      <div class="dd" id="accDD" hidden style="right:-10px"><div class="muted" style="padding:6px 16px 4px">Signed in as Demo customer</div><button data-open="about">About you</button><button data-open="rig">My rig</button><button data-open="orders">Orders</button><button data-open="basket">Basket</button></div></div>
+      <div class="dd" id="accDD" hidden style="right:-10px"><div class="muted" style="padding:6px 16px 4px">Signed in as Demo customer</div><button data-open="about">About you</button><button data-open="rig">My rig</button><button data-open="picks">AI picks<span id="accPickN"></span></button><button data-open="orders">Orders</button><button data-open="basket">Basket</button></div></div>
     <button class="iconbtn" aria-label="Wishlist" data-toast="Wishlist is not part of this prototype"><svg class="i" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></button>
     <button class="iconbtn" aria-label="Basket" data-open="basket"><svg class="i" viewBox="0 0 24 24"><path d="M3 4h2l2.4 11h11l2-8H6.2"/><circle cx="9" cy="19.5" r="1.3"/><circle cx="17" cy="19.5" r="1.3"/></svg><span class="badge-n" id="bcount">0</span></button>
   </div>
@@ -426,7 +472,9 @@ table.cmp th{font-weight:600;color:var(--muted)}
       <button class="hb" data-chat="min" aria-label="Minimise chat"><svg class="i" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
     </div>
     <button class="specbar" id="specBtn"><svg class="i" style="width:16px;height:16px" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>Talk to a person <span id="specsub"></span></button>
+    <div class="ctabs" id="ctabs" role="group" aria-label="Chat or picks"><button data-ctab="chat" aria-pressed="true">Chat</button><button data-ctab="picks" aria-pressed="false">Picks <span class="pn" id="pickn" hidden>0</span></button></div>
     <div class="clog" id="clog" aria-live="polite"></div>
+    <div class="clog" id="picksPanel" hidden></div>
     <form class="cfoot" id="cform">
       <button type="button" class="plus" id="plus" aria-label="More actions"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
       <div class="plusmenu" id="plusmenu" hidden>
@@ -456,6 +504,7 @@ const S={
   view:{name:"results",q:"",cats:[],min:"",max:"",stock:false,sort:"rel",sit:""}, viewing:null,
   contact:{enquiry:null,category:null,need:null,method:null,product:null}, chatCtx:null, turns:[], busy:false, ctl:null,
   chat:"closed", mode:"ai", expert:null, started:false, apiMode:false,
+  picks:store.get("picks",[]), pickSel:[], pickCmp:null, pickFit:null, ctab:"chat", topic:"", newPicks:0,
 };
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -463,7 +512,7 @@ const eur=n=>"€"+(Math.round(n*100)/100).toLocaleString("en-IE",{minimumFracti
 const now=()=>new Date().toTimeString().slice(0,5);
 const rigItems=()=>S.rig.map(r=>r.custom?{...r,key:r.name}:{...r,...BY[r.id],key:r.id,name:BY[r.id]?.n,cat:BY[r.id]?.c}).filter(x=>x.name);
 function toast(t){const el=document.createElement("div");el.className="toast";el.textContent=t;document.body.append(el);setTimeout(()=>el.remove(),2600)}
-function addBasket(id,qty=1){const ex=S.basket.find(x=>x.id===id);if(ex)ex.qty+=qty;else S.basket.push({id,qty});store.set("basket",S.basket);bcount();toast("Added to basket: "+BY[id].n);if(["product","results"].includes(S.view.name))render()}
+function addBasket(id,qty=1){const ex=S.basket.find(x=>x.id===id);if(ex)ex.qty+=qty;else S.basket.push({id,qty});store.set("basket",S.basket);bcount();toast("Added to basket: "+BY[id].n);if(["product","results","picks"].includes(S.view.name))render();if(S.ctab==="picks")renderPicksPanel()}
 function bcount(){$("#bcount").textContent=S.basket.reduce((a,b)=>a+b.qty,0)}
 function addRig(id,extra={}){if(!S.rig.some(r=>r.id===id)){S.rig.push({id,since:TODAY.toISOString().slice(0,7),bought:"elsewhere",...extra});store.set("rig",S.rig);toast("Added to My rig: "+BY[id].n);if(S.view.name==="rig"&&!extra.bought)S.editing=S.rig.length-1;if(["product","rig","results"].includes(S.view.name))render()}}
 function catAvg(c){const l=P.filter(p=>p.c===c);return (l.reduce((a,p)=>a+p.ret.rate,0)/l.length).toFixed(1)}
@@ -519,9 +568,11 @@ function render(){
   if(v.name==="product") el.innerHTML=productView(BY[v.id]);
   else if(v.name==="contact") el.innerHTML=contactView();
   else if(v.name==="rig") el.innerHTML=rigView();
+  else if(v.name==="picks") el.innerHTML=picksView();
   else el.innerHTML=resultsView();
   if(v.name==="results") bindFilters();
   if(v.name==="rig") bindRig();
+  if(v.name==="picks") bindPicks();
 }
 function scoreQ(p,q){
   if(!q)return 1;const words=q.toLowerCase().split(/\s+/).filter(w=>w.length>1&&!["for","the","a","and","with","my","to"].includes(w));
@@ -895,6 +946,76 @@ function bindRig(){
     S.editing=S.rig.length-1;after();toast("Added "+n+". Set when you bought it and its warranty.")};
   $("#rigReset2").onclick=()=>{S.rig=JSON.parse(JSON.stringify(DEFAULT_RIG));S.profile=JSON.parse(JSON.stringify(DEFAULT_PROFILE));saveProfile();S.editing=null;after();toast("Demo rig and About you restored")};
 }
+/* ---------------- AI picks: every product the advisor showed ---------------- */
+const PICK_SRC={suggested:"Suggested",compared:"Compared",cheaper:"Cheaper option",setup:"Part of a setup"};
+function savePicks(){store.set("picks",S.picks);updatePickCount()}
+function addPicks(list,src){
+  const at=new Date().toISOString(),from=S.topic||"Chat with the advisor";
+  for(const {id,why} of [...list].reverse()){
+    if(!BY[id])continue;
+    const old=S.picks.find(x=>x.id===id);
+    S.picks=S.picks.filter(x=>x.id!==id);
+    if(!old)S.newPicks++;
+    const keep=old?.why&&(src!=="suggested"||!why);
+    S.picks.unshift({id,why:keep?old.why:(why||""),from,src:keep?old.src:src,at,star:!!old?.star});
+  }
+  S.picks=S.picks.slice(0,60);savePicks();
+  if(S.ctab==="picks")renderPicksPanel();
+}
+function updatePickCount(){const n=S.picks.length;const b=$("#pickn");if(b){b.textContent=n;b.hidden=!n}const a=$("#accPickN");if(a)a.textContent=n?` (${n})`:""}
+function pickAgo(at){const m=Math.round((Date.now()-new Date(at))/6e4);return m<1?"just now":m<60?m+" min ago":m<1440?Math.round(m/60)+" h ago":Math.round(m/1440)+" d ago"}
+function pickGroups(){
+  const starred=S.picks.filter(p=>p.star),rest=S.picks.filter(p=>!p.star),g=[];
+  if(starred.length)g.push({title:"★ Starred",items:starred});
+  const by=new Map();for(const p of rest){if(!by.has(p.from))by.set(p.from,[]);by.get(p.from).push(p)}
+  for(const [from,items] of by)g.push({title:from,items});
+  return g;
+}
+const starBtn=pk=>`<button class="pstar${pk.star?" on":""}" data-pick-star="${pk.id}" aria-pressed="${pk.star}" aria-label="${pk.star?"Unstar":"Star"} ${esc(BY[pk.id].n)}">${pk.star?"★":"☆"}</button>`;
+function pickFitHtml(id){
+  const c=fitCheck([id]),worst=c.some(x=>x.status==="bad")?"bad":c.some(x=>x.status==="warn")?"warn":"ok";
+  return `<div class="pfit"><b>Fit with My rig:</b> <span class="badge ${worst}">${{ok:"FITS",warn:"FITS WITH NOTES",bad:"PROBLEM"}[worst]}</span>${c.map(x=>`<div class="check"><span class="badge ${x.status}">${x.status.toUpperCase()}</span><span>${esc(x.note)}</span></div>`).join("")}</div>`;
+}
+function pickRowPanel(pk){const p=BY[pk.id];
+  return `<div class="pickrow">${starBtn(pk)}<div class="info"><div class="pn">${esc(p.n)}</div><div class="sub">${esc(pk.why||PICK_SRC[pk.src]||"")}</div></div><span class="price">${eur(p.p)}</span>
+   <div class="pacts"><button class="btn small" data-detail="${p.id}">View</button><button class="btn small primary" data-add="${p.id}">${inBasket(p.id)?"Add again":"Add"}</button></div></div>`}
+function renderPicksPanel(){
+  const el=$("#picksPanel");if(!el)return;
+  if(!S.picks.length){el.innerHTML=`<div class="pempty"><b>No picks yet</b><p>Every product the advisor shows you lands here, so you don't have to scroll back through the chat.</p><button class="btn" data-ctab="chat">Back to the chat</button></div>`;return}
+  el.innerHTML=`<div class="phead"><span>${S.picks.length} product${S.picks.length>1?"s":""} the advisor showed you</span><button class="btn small" data-open="picks">Open full page</button></div>`+
+   pickGroups().map(g=>`<div class="pgroup"><div class="pgt">${g.title.startsWith("★")?esc(g.title):"From: “"+esc(g.title)+"”"}</div>${g.items.map(pickRowPanel).join("")}</div>`).join("");
+}
+function setCtab(tab){
+  S.ctab=tab;$("#conv").classList.toggle("onpicks",tab==="picks");
+  document.querySelectorAll("[data-ctab]").forEach(b=>b.closest("#ctabs")&&b.setAttribute("aria-pressed",b.dataset.ctab===tab));
+  $("#clog").hidden=tab!=="chat";$("#picksPanel").hidden=tab!=="picks";
+  if(tab==="picks")renderPicksPanel();else scrollLog();
+}
+function picksView(){
+  const sel=new Set(S.pickSel),groups=pickGroups();
+  const total=S.picks.reduce((a,x)=>a+BY[x.id].p,0);
+  const row=pk=>{const p=BY[pk.id];return `<div class="pickcard${sel.has(p.id)?" sel":""}">
+    <label class="pcheck"><input type="checkbox" data-pick-sel="${p.id}"${sel.has(p.id)?" checked":""} aria-label="Select ${esc(p.n)} to compare"></label>
+    <div class="pimg">${sil(p.c)}</div>
+    <div class="pbody"><div class="ptop"><h4><button class="linkish" data-detail="${p.id}">${esc(p.n)}</button></h4>${starBtn(pk)}</div>
+     <div class="why"><span class="aiav sm" style="width:20px;height:20px">${AISVG}</span>${esc(pk.why||PICK_SRC[pk.src])}</div>
+     <div class="meta">${stars(p.r)} ${p.r} · ${stockLine(p)} · <span class="tag">${esc(PICK_SRC[pk.src]||"Suggested")}</span> · ${esc(pickAgo(pk.at))}</div>
+     <div class="acts"><span class="price">${eur(p.p)}</span><button class="btn primary" data-add="${p.id}">${inBasket(p.id)?"In basket · add again":"Add to basket"}</button><button class="btn" data-detail="${p.id}">View</button><button class="btn" data-pick-fit="${p.id}" aria-expanded="${S.pickFit===p.id}">${S.pickFit===p.id?"Hide fit check":"Check fit"}</button><button class="btn" data-ask="${esc("Tell me more about the "+p.n+": is it right for me?")}">Ask about it</button><button class="btn" data-pick-rm="${p.id}">Remove</button></div>
+     ${S.pickFit===p.id?pickFitHtml(p.id):""}</div></div>`};
+  const cmp=S.pickCmp&&S.pickCmp.filter(id=>BY[id]);
+  return `<div class="wrap pickspage">
+  <div class="crumbs"><span>⌂</span><span>My account</span><span class="last">AI picks</span></div>
+  <div class="righead"><div><h1 class="page" style="margin:0">AI picks <span class="cnt">${S.picks.length}</span></h1><p class="muted" style="margin:4px 0 0">Every product the AI advisor has shown you, grouped by what you asked. Saved on this device.</p></div>
+   <div class="prow"><button class="cta purple" style="padding:11px 22px" data-ask="Look at my AI picks. Which ones suit me best, and why?">Ask which pick suits me best</button>${S.picks.length?`<button class="btn" data-picks-clear>Clear list</button>`:""}</div></div>
+  ${S.picks.length?`<div class="cmpbar"><span>${sel.size?`<b>${sel.size} selected</b>`:"Tick 2–3 picks to compare them side by side."}</span><button class="btn primary" data-pick-cmp${sel.size<2||sel.size>3?" disabled":""}>Compare${sel.size>=2?" "+sel.size:""}</button>${sel.size?`<button class="btn" data-pick-clearsel>Clear selection</button>`:""}<span class="muted" style="margin-left:auto">Total if you bought them all: ${eur(Math.round(total))}</span></div>`:""}
+  ${cmp&&cmp.length>1?`<section class="box cmpbox"><h4>Comparing ${cmp.length} picks <button class="btn" data-pick-cmpclose style="margin-left:auto">Close</button></h4>${compareTable(cmp.map(id=>BY[id]))}<div class="prow" style="margin-top:10px"><button class="btn" data-ask="${esc("Compare the "+cmp.map(id=>BY[id].n).join(", ")+" for me. Which is best for me?")}">Ask the advisor which is best for me</button></div></section>`:""}
+  ${S.picks.length?groups.map(g=>`<h2 class="pg">${g.title.startsWith("★")?esc(g.title):`<span class="muted" style="font-weight:600">From:</span> “${esc(g.title)}”`} <span class="muted" style="font-weight:400;font-size:14px">${g.items.length}</span></h2><div class="picklist">${g.items.map(row).join("")}</div>`).join("")
+   :`<div class="box pempty big"><span class="aiav" style="margin:0 auto 8px">${AISVG}</span><b>No picks yet</b><p>Ask the advisor for a recommendation. Every product it shows you appears here, grouped by your question.</p><div class="prow" style="justify-content:center"><button class="btn primary" data-say="I want to buy an instrument.">I want to buy an instrument</button><button class="btn" data-say="I want to upgrade my rig. What would make the biggest difference?">I want to upgrade my rig</button></div></div>`}
+  </div>`;
+}
+function bindPicks(){
+  document.querySelectorAll("[data-pick-sel]").forEach(cb=>cb.onchange=()=>{const id=cb.dataset.pickSel;S.pickSel=cb.checked?[...S.pickSel,id]:S.pickSel.filter(x=>x!==id);if(S.pickSel.length>3){S.pickSel=S.pickSel.slice(-3);toast("You can compare up to 3 picks")}render()});
+}
 function jsonLd(p){
   return {"@context":"https://schema.org","@type":"Product",sku:p.id,name:p.n,brand:{"@type":"Brand",name:p.b},category:CATS[p.c],
     additionalProperty:Object.entries(p.specs).map(([k,v])=>({"@type":"PropertyValue",name:k,value:v})),
@@ -1014,6 +1135,8 @@ const FEATURES=[
  {stage:"Beyond site",kind:"edge",n:"ChatGPT app",d:"Same advisor and account inside an AI platform. Shown here as the expanded chat on its own.",action:"platform"},
  {stage:"Open question",kind:"open",n:"Refill purchasing",d:"Advise only: suggests string refills; the customer adds them.",try:"My strings feel dead. What should I do?"},
  {stage:"Trust",kind:"edge",n:"Admits what it doesn't know",d:"Says “I'm not sure” and offers a specialist instead of guessing.",try:"Will my 1972 Fender Twin Reverb work with the Strymon BigSky?"},
+ {stage:"Discover",kind:"edge",n:"Starter buttons",d:"The chat opens with “I want to buy an instrument”, “Upgrade my rig”, “Something isn't working” and “Order question”. It never assumes you're a beginner: it uses About you or asks your level.",try:"I want to buy an instrument."},
+ {stage:"Decide",kind:"edge",n:"AI picks",d:"Every product the advisor shows is saved to the Picks tab in the chat and its own page (account menu → AI picks): grouped by question, with the reason, star, compare, fit check and basket.",try:"Build me a home recording setup for guitar under €500."},
  {stage:"Own",kind:"moat",n:"Warranty in My rig",d:"Warranty and return days left for Thomann purchases; your own dates for gear bought elsewhere.",try:"Which of my gear is still under warranty?"},
 ];
 function openGuide(){
@@ -1024,11 +1147,11 @@ function openGuide(){
    <div class="switch">Advisor speed <select id="tier" class="search"><option value="quick"${S.tier==="quick"?" selected":""}>Fast</option><option value="default"${S.tier!=="quick"?" selected":""}>Thorough (slower)</option></select></div>
    ${FEATURES.map(f=>`<div class="feat"><div class="h"><span class="n">${f.stage}</span>${esc(f.n)} ${lab[f.kind]}</div><p>${esc(f.d)}</p>
     ${f.try?`<div><button class="btn" data-ask="${esc(f.try)}">Try: “${esc(f.try)}”</button></div>`:f.action==="data"?`<div><button class="btn" data-detail="m2" data-close>Open a product page</button></div>`:`<div><button class="btn" data-platform>Open the advisor full screen</button></div>`}</div>`).join("")}
-   <button class="btn" id="resetAll">Reset demo (rig, basket, chat)</button>`,(b)=>{
+   <button class="btn" id="resetAll">Reset demo (rig, basket, picks, chat)</button>`,(b)=>{
     $("#onl").onchange=e=>{S.online=e.target.checked;store.set("online",S.online);updateOnline();if(S.view.name==="contact")render()};
     $("#tier").onchange=e=>{S.tier=e.target.value;store.set("tier",S.tier)};
     $("#pres").onchange=e=>{S.present=e.target.checked;store.set("present",S.present);if(S.view.name==="product")render()};
-    $("#resetAll").onclick=()=>{S.rig=JSON.parse(JSON.stringify(DEFAULT_RIG));S.profile=JSON.parse(JSON.stringify(DEFAULT_PROFILE));S.basket=[];store.set("rig",S.rig);store.set("profile",S.profile);store.set("basket",[]);bcount();resetChat();closeDrawer();render();toast("Demo reset")};
+    $("#resetAll").onclick=()=>{S.rig=JSON.parse(JSON.stringify(DEFAULT_RIG));S.profile=JSON.parse(JSON.stringify(DEFAULT_PROFILE));S.basket=[];S.picks=[];S.pickSel=[];S.pickCmp=null;savePicks();store.set("rig",S.rig);store.set("profile",S.profile);store.set("basket",[]);bcount();resetChat();closeDrawer();render();toast("Demo reset")};
   },null,true);
 }
 
@@ -1128,14 +1251,14 @@ function md(src){
     else if(!l.trim())close(); else{close();out+=`<p>${inl(l)}</p>`}}
   close();return out;
 }
-const INTENTS=[["I'm a beginner","I'm a beginner. Help me find the right gear."],["I want to upgrade","I want to upgrade my gear. What would make the biggest difference?"],["I have a question about an order","I have a question about one of my orders."]];
+const INTENTS=[["I want to buy an instrument","I want to buy an instrument."],["I want to upgrade my rig","I want to upgrade my rig. What would make the biggest difference?"],["Something isn't working","Something in my setup isn't working."],["A question about an order","I have a question about one of my orders."]];
 function updateNeedHelp(){$("#needhelp").hidden=S.view.name==="contact"||S.chat!=="closed"}
 function startConversation(ctx){
-  if(S.ctl)S.ctl.abort();clog.innerHTML="";S.turns=[];S.expert=null;S.lastCat=null;
+  if(S.ctl)S.ctl.abort();clog.innerHTML="";S.turns=[];S.expert=null;S.lastCat=null;S.topic="";setCtab("chat");
   S.started=true;S.mode="ai";S.chatCtx=ctx||S.chatCtx;setChat("open");renderWho();composer(true);
   const c=S.chatCtx;
   const known=c?[c.enquiry,c.category&&c.category!=="skipped"?c.category:"",c.need&&c.need!=="skipped"?c.need:"",c.product?BY[c.product].n:""].filter(Boolean):[];
-  const intro=`<p>Hi! I'm Thomann's <b>AI advisor</b>. I can find the right gear, check it works with what you own, compare prices and B-Stock, and track orders.</p>${known.length?`<p>I already know: <b>${esc(known.join(" · "))}</b>. Tell me more, or pick one:</p>`:"<p>Where would you like to start?</p>"}<p class="muted" style="margin-top:6px">Prefer a person? Tap <b>Talk to a person</b> above at any time.</p>`;
+  const intro=`<p>Hi! I'm Thomann's <b>AI advisor</b>. I can find the right gear, check it works with what you own, compare prices and B-Stock, and track orders.</p>${known.length?`<p>I already know: <b>${esc(known.join(" · "))}</b>. Tell me more, or pick one:</p>`:"<p>Where would you like to start?</p>"}<p class="muted" style="margin-top:6px">Everything I recommend is saved under <b>Picks</b> above. Prefer a person? Tap <b>Talk to a person</b> at any time.</p>`;
   const m=botMsg(intro);
   m.querySelector(".cards").innerHTML=`<div class="intents">${INTENTS.map(([label,say])=>`<button class="intent" data-say="${esc(say)}">${esc(label)}</button>`).join("")}</div>`;
   if(sampleState==="none") m.querySelector(".cards").insertAdjacentHTML("beforeend",`<div class="endnote">${noAI()}</div>`);
@@ -1199,7 +1322,7 @@ function rulesText(){
 HOW TO WORK
 - Product facts (prices, specs, stock, return reasons, compatibility) come ONLY from the catalogue below and your tools. Never invent products, prices or specs. If something isn't in the catalogue, say so and offer the closest item.
 - This is a chat widget about 380px wide: keep answers short (2-5 sentences or a short list). When you recommend specific items, show them with show_products (or compare_products / build_rig / price_check, which show their own cards). Don't repeat card contents.
-- NEEDS INTERVIEW: the customer came through Live chat to get advice. If a buying request lacks key facts (level, style or genre, budget, what they already own), ask before recommending: call offer_choices with ONE question, then end your turn with at most one short sentence. Max 2 rounds. Skip what My rig, the entry context or the message already answers.
+- NEEDS INTERVIEW: the customer came through Live chat to get advice. If a buying request lacks key facts (instrument, level, style or genre, budget, what they already own), ask before recommending: call offer_choices with ONE question, then end your turn with at most one short sentence. Max 2 rounds. Skip what My rig, the entry context or the message already answers.
 - SOUND MATCH: translate a described sound, artist or song into gear traits (pickups, amp, effects), search by tags, explain the link briefly.
 - RIG BUILDER: pick items via search_products, then call build_rig with the budget. Leave room for cables.
 - GEAR FIT: before recommending anything that connects to their gear, call check_fit. Report problems plainly and name the fix.
@@ -1207,7 +1330,9 @@ HOW TO WORK
 - ADVISE, NEVER BUY: you cannot order or add to the basket; the customer uses the buttons on the cards.
 - ORDERS & RETURNS: 30-day money-back guarantee and 3-year warranty. Before a fault return, offer setup_help first; use orders(start_return) only if they still want to return.
 - ABOUT YOU: the customer's About you profile is in the page context; use it (level, where they play, computer, who it's for). Whenever they tell you any of these, call update_profile straight away with just those fields.
-- STARTER BUTTONS: "I'm a beginner" -> run the needs interview with offer_choices (instrument, who it's for, where they play, budget), saving answers with update_profile, then recommend complete, ready-to-play options. "I want to upgrade" -> look at My rig and About you and suggest the one change with the biggest effect. "A question about an order" -> call orders(list) and ask which order.
+- NEVER ASSUME A LEVEL: don't assume the customer is a beginner (or a pro). Use the level in About you. If it isn't filled in and it matters, ask it as one offer_choices question ("How long have you been playing?": Just starting / A few years / Gigging or pro) and save it with update_profile. If About you has a level, confirm it in passing rather than asking again, e.g. "As an intermediate player, ..."; the customer can correct it.
+- STARTER BUTTONS: "I want to buy an instrument" -> interview with offer_choices, ONE question per turn, max 4, skipping anything About you or My rig already answers, in this order: which instrument (Guitar, Bass, Drums, Keys, Mic/recording, Other); level (confirm from About you, or ask as above); budget; where they'll play. Save answers with update_profile. Then recommend 2-3 options with show_products, a short reason for each in notes, matched to their level (complete ready-to-play packages only for people just starting). "I want to upgrade my rig" -> look at My rig and About you and suggest the one change with the biggest effect. "Something isn't working" -> ask which item and what happens (offer_choices with their My rig items), then setup_help. "A question about an order" -> call orders(list) and ask which order.
+- AI PICKS: every product you show (show_products, compare_products, price_check, build_rig) is saved to the customer's Picks list, which they can open from the chat's Picks tab. Its current contents are in the page context; when they refer to "the ones you suggested" or "my picks", use that list. Always pass a short reason per product in show_products notes; it is shown on the Picks list.
 - WARRANTY: items bought at Thomann have a 3-year Thomann warranty from delivery (dates are in My rig); items bought elsewhere only have the warranty date the customer entered, if any. For a fault under warranty, offer setup_help first; if it's still broken, call expert_handoff with department "service".
 - WHEN YOU DON'T KNOW: if the catalogue, your tools and solid general knowledge can't answer (vintage or unlisted gear, compatibility you can't verify, repairs, anything you'd be guessing), say plainly "I'm not sure about that", give the reason in one short sentence, and call expert_handoff. Never guess specs or compatibility.
 - HUMAN SPECIALISTS: real Thomann specialists stand behind this chat. The customer can press "Talk to a person" at the top of the chat at any time. After you give a recommendation, you may add one short line offering a specialist. For complex or professional setups, budgets over €2,000, installations, repairs, or when they ask for a person, call expert_handoff with a summary the specialist can act on. Specialists are currently ${S.online?"ONLINE and can join this chat now":"OFFLINE until 9:00; offer a call back"}.
@@ -1224,6 +1349,7 @@ function contextText(){
 About you: ${Object.entries(PROFILE_FIELDS).map(([k,f])=>{const v=S.profile[k];return v&&(!Array.isArray(v)||v.length)?`${f.label}: ${f.multi?v.map(x=>f.opts[x]).join(", "):f.opts[v]}`:null}).filter(Boolean).join("; ")||"not filled in"}${S.profile.forWhom==="child"&&S.profile.childAge?`; child's age: ${S.profile.childAge}`:""}
 My rig: ${rigItems().map(r=>{const w=warrantyOf(r);return `${r.name}${r.id?" ("+r.id+")":""} – ${r.bought==="thomann"?`bought at Thomann ${String(r.since).slice(0,10)}${r.order?" ("+r.order+")":""}`:`bought elsewhere, owned since ${r.since||"?"}`}${w?`, warranty until ${isoDay(w.end)}${warrantyLeft(w)<=0?" (ended)":""}`:", no warranty date"}${w?.returnDays>0?`, 30-day return open for ${w.returnDays} more days`:""}${r.note?" – "+r.note:""}`}).join("; ")||"empty"}
 Basket: ${S.basket.map(x=>`${x.qty}× ${BY[x.id].n}`).join("; ")||"empty"}
+AI picks (newest first): ${S.picks.slice(0,20).map(x=>`${x.star?"★ ":""}${BY[x.id].n} (${x.id})${x.why?" – "+x.why:""}`).join("; ")||"none yet"}
 Orders: ${ORDERS.map(o=>`${o.id} ${o.status} (${o.items.map(([id])=>BY[id].n).join(", ")})`).join("; ")}]`;
 }
 const ERR={api_unavailable:"The AI advisor isn't set up on this server yet. Tap Talk to a person instead.",not_granted:"You didn't allow this page to use your Claude account, so the AI advisor can't answer. Reload the page to be asked again, or tap Talk to a person.",sampling_disabled:"Claude isn't available for this account.",rate_limited:"You've reached your Claude usage limit for now, or sent many messages quickly. Wait a little and try again, or tap Talk to a person.",session_expired:"You're signed out of Claude. Sign in at claude.ai, then reload this page.",refused:"I can't help with that one. Try rephrasing, or tap Specialist.",empty_completion:"No answer came back. Try asking differently.",prompt_too_large:"This chat got too long. Start a new conversation from the Test guide.",tools_unavailable:"This viewer can't run the shop tools. Try the latest Claude app or claude.ai."};
@@ -1232,6 +1358,7 @@ async function send(text){
   if(!S.started)startConversation();else setChat("open");
   if(S.mode==="human")backToAi();
   userMsg(text);
+  if(text.length>=18||!S.topic)S.topic=text.length>90?text.slice(0,88)+"…":text;S.newPicks=0;
   if(!sample){botMsg(`<p>${sampleState==="loading"?"I'm still connecting. Try again in a moment.":noAI()}</p>`);return}
   const m=botMsg(""),body=m.querySelector(".body"),cards=m.querySelector(".cards");
   const tb=document.createElement("div");tb.className="b";tb.innerHTML=`<span class="typing"><i></i><i></i><i></i></span>`;body.insertBefore(tb,cards);
@@ -1253,7 +1380,8 @@ async function send(text){
     if(["not_granted","sampling_disabled","tools_unavailable","session_expired","api_unavailable"].includes(e?.code)){sample=null;sampleState="none";updateAcct()}
   }finally{st.remove();currentCards=null;S.busy=false;S.ctl=null;$("#sendb").hidden=false;$("#stopb").hidden=true;sendState()}
   const lastIds=shownLog.join(",").match(/[a-z]{1,2}\d+/g)?.filter(id=>BY[id]&&BY[id].c!=="accessories");if(lastIds?.length)S.lastCat=BY[lastIds[0]].c;
-  if(["rig","product"].includes(S.view.name))render();
+  if(S.newPicks)toast(`Added ${S.newPicks} to your Picks`);S.newPicks=0;
+  if(["rig","product","picks"].includes(S.view.name))render();
   S.turns.push({role:"user",content:text});
   S.turns.push({role:"assistant",content:(fin||"(no text)")+(shownLog.length?`\n[cards shown: ${shownLog.join("; ")}]`:"")});
   scrollLog();
@@ -1279,7 +1407,7 @@ document.addEventListener("click",e=>{
   if(!t.closest(".searchbox"))ac.hidden=true;
   ["shop","svc","acc"].forEach(k=>{if(!t.closest("#"+k+"Btn"))$("#"+k+"DD").hidden=true});
   if(!t.closest("#plus,#plusmenu"))$("#plusmenu").hidden=true;
-  const a=t.closest("[data-go],[data-detail],[data-cat],[data-add],[data-addq],[data-ask],[data-say],[data-open],[data-rig-add],[data-toast],[data-close],[data-step],[data-step-edit],[data-step-reset],[data-method],[data-handover],[data-backai],[data-cb],[data-platform],[data-spec],[data-prefill],[data-sit],[data-expert],[data-send-contact]");
+  const a=t.closest("[data-go],[data-detail],[data-cat],[data-add],[data-addq],[data-ask],[data-say],[data-open],[data-rig-add],[data-toast],[data-close],[data-step],[data-step-edit],[data-step-reset],[data-method],[data-handover],[data-backai],[data-cb],[data-platform],[data-spec],[data-prefill],[data-sit],[data-expert],[data-send-contact],[data-ctab],[data-pick-star],[data-pick-rm],[data-pick-fit],[data-pick-cmp],[data-pick-cmpclose],[data-pick-clearsel],[data-picks-clear]");
   if(!a)return;
   if(a.matches("a"))e.preventDefault();
   const d=a.dataset;
@@ -1292,7 +1420,7 @@ document.addEventListener("click",e=>{
   else if(d.ask||d.say){if(a.closest(".drawer"))closeDrawer();ac.hidden=true;$("#plusmenu").hidden=true;
     if(a.closest(".choices")){if(S.busy)return}
     send(d.ask||d.say)}
-  else if(d.open){closeDrawer();if(d.open==="rig")go({name:"rig"});else if(d.open==="about"){go({name:"rig"});setTimeout(()=>$("#about")?.scrollIntoView({behavior:"smooth",block:"start"}),30)}else ({orders:openOrders,basket:openBasket})[d.open]()}
+  else if(d.open){closeDrawer();if(d.open==="rig")go({name:"rig"});else if(d.open==="picks")go({name:"picks"});else if(d.open==="about"){go({name:"rig"});setTimeout(()=>$("#about")?.scrollIntoView({behavior:"smooth",block:"start"}),30)}else ({orders:openOrders,basket:openBasket})[d.open]()}
   else if(d.rigAdd)addRig(d.rigAdd);
   else if(d.toast)toast(d.toast);
   else if(d.step){const c=ctxOf(d.where);c[d.step]=d.v||null;c.summary=null;refreshSteps(d.where)}
@@ -1310,6 +1438,14 @@ document.addEventListener("click",e=>{
   else if(d.platform!==undefined){closeDrawer();openChat();$("#chatw").classList.add("expanded")}
   else if(d.prefill){if(!S.started)startConversation();else setChat("open");cin.value=d.prefill;sendState();setTimeout(()=>{cin.focus();cin.setSelectionRange(cin.value.length,cin.value.length)},60)}
   else if(d.spec!==undefined){$("#plusmenu").hidden=true;handover()}
+  else if(d.ctab)setCtab(d.ctab);
+  else if(d.pickStar){const pk=S.picks.find(x=>x.id===d.pickStar);if(pk){pk.star=!pk.star;savePicks();if(S.ctab==="picks")renderPicksPanel();if(S.view.name==="picks")render()}}
+  else if(d.pickRm){S.picks=S.picks.filter(x=>x.id!==d.pickRm);S.pickSel=S.pickSel.filter(x=>x!==d.pickRm);if(S.pickCmp)S.pickCmp=S.pickCmp.filter(x=>x!==d.pickRm);savePicks();render();renderPicksPanel();toast("Removed from Picks: "+BY[d.pickRm].n)}
+  else if(d.pickFit){S.pickFit=S.pickFit===d.pickFit?null:d.pickFit;render()}
+  else if(d.pickCmp!==undefined){if(S.pickSel.length>=2){S.pickCmp=[...S.pickSel];render();setTimeout(()=>$(".cmpbox")?.scrollIntoView({behavior:"smooth",block:"start"}),30)}}
+  else if(d.pickCmpclose!==undefined){S.pickCmp=null;render()}
+  else if(d.pickClearsel!==undefined){S.pickSel=[];render()}
+  else if(d.picksClear!==undefined){if(confirm("Clear all "+S.picks.length+" picks?")){S.picks=[];S.pickSel=[];S.pickCmp=null;savePicks();render();renderPicksPanel();toast("Picks cleared")}}
 });
 document.addEventListener("keydown",e=>{
   if(e.key==="Escape"){closeDrawer();ac.hidden=true}
@@ -1344,7 +1480,7 @@ $("#cform").addEventListener("submit",e=>{e.preventDefault();const t=cin.value;c
 $("#stopb").onclick=()=>S.ctl&&S.ctl.abort();
 
 /* ---------------- Boot ---------------- */
-bcount();updateOnline();updateAcct();render();
+bcount();updateOnline();updateAcct();updatePickCount();render();
 (async()=>{
   if(window.claude){
     try{sample=await window.claude.use("sample")}catch(e){sample=null}

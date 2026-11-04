@@ -6,11 +6,14 @@ function miniProduct(p,extra=""){
 function stockText(p){return p.st?(p.st<15?p.st+" left":"in stock"):"back in ~"+(p.restock||10)+" days"}
 const card=(title,tags,body)=>`<div class="card"><h5>${esc(title)} ${tags||""}</h5>${body}</div>`;
 const sim='<span class="tag sim">simulated</span>';
+function compareRows(l){const keys=[...new Set(l.flatMap(p=>Object.keys(p.specs)))];return [["Price",l.map(p=>eur(p.p))],["B-Stock",l.map(p=>p.bs?eur(p.bs):"–")],["Rating",l.map(p=>"★ "+p.r)],["Stock",l.map(stockText)],...keys.map(k=>[k,l.map(p=>p.specs[k]||"–")]),["Return rate",l.map(p=>p.ret.rate+"%")]]}
+function compareTable(l){const rows=compareRows(l);return `<div class="tblwrap"><table class="cmp"><thead><tr><th></th>${l.map(p=>`<th>${esc(p.n)}</th>`).join("")}</tr></thead><tbody>${rows.map(([k,v])=>`<tr><th>${esc(k)}</th>${v.map(x=>`<td>${esc(x)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`}
 
 /* ---------------- Tools for Claude ---------------- */
 let currentCards=null, setStatus=()=>{};
 const push=html=>{if(currentCards){const d=document.createElement("div");d.innerHTML=html;currentCards.append(...d.childNodes);scrollLog()}};
 const shownLog=[];
+const pick=(list,src)=>{if(typeof addPicks==="function")addPicks(list,src)};
 const ids=x=>(Array.isArray(x)?x:String(x||"").split(/[\s,]+/)).map(String).filter(i=>BY[i]);
 function need(id){const p=BY[String(id)];if(!p)throw new Error("Unknown product id "+id+". Use ids from the catalogue list.");return p}
 const TOOLS = [
@@ -26,14 +29,13 @@ const TOOLS = [
  {name:"show_products",description:"Display product cards to the customer (with View and Add-to-basket buttons). Use whenever you recommend specific items. Returns 'shown'.",
   inputSchema:{type:"object",properties:{ids:{type:"array",items:{type:"string"}},heading:{type:"string"},notes:{type:"object",description:"optional map id -> short reason (max 8 words)"}},required:["ids"]},
   execute(i){const l=ids(i.ids);if(!l.length)throw new Error("No valid ids");const notes=i.notes||{};
-   push(card(i.heading||"Suggestions","",l.map(id=>miniProduct(BY[id],notes[id]?esc(notes[id]):"")).join("")));shownLog.push("products("+l.join(",")+")");return "shown "+l.length}},
+   push(card(i.heading||"Suggestions","",l.map(id=>miniProduct(BY[id],notes[id]?esc(notes[id]):"")).join("")));shownLog.push("products("+l.join(",")+")");pick(l.map(id=>({id,why:notes[id]?String(notes[id]):""})),"suggested");return "shown "+l.length}},
  {name:"compare_products",description:"Show a side-by-side comparison table of 2-4 products and return the spec matrix so you can explain trade-offs.",
   inputSchema:{type:"object",properties:{ids:{type:"array",items:{type:"string"}}},required:["ids"]},
   execute(i){const l=ids(i.ids).slice(0,4).map(id=>BY[id]);if(l.length<2)throw new Error("Need 2-4 valid ids");setStatus("Comparing…");
-   const keys=[...new Set(l.flatMap(p=>Object.keys(p.specs)))];
-   const rows=[["Price",l.map(p=>eur(p.p))],["B-Stock",l.map(p=>p.bs?eur(p.bs):"–")],["Rating",l.map(p=>"★ "+p.r)],["Stock",l.map(stockText)],...keys.map(k=>[k,l.map(p=>p.specs[k]||"–")]),["Return rate",l.map(p=>p.ret.rate+"%")]];
-   push(card("Comparison",'<span class="tag">basic</span>',`<div class="tblwrap"><table class="cmp"><thead><tr><th></th>${l.map(p=>`<th>${esc(p.n)}</th>`).join("")}</tr></thead><tbody>${rows.map(([k,v])=>`<tr><th>${esc(k)}</th>${v.map(x=>`<td>${esc(x)}</td>`).join("")}</tr>`).join("")}</tbody></table></div><div class="prow" style="justify-content:flex-start;margin-top:6px">${l.map(p=>`<button class="btn small" data-add="${p.id}">Add ${esc(p.b)}</button>`).join("")}</div>`));
-   shownLog.push("compare("+l.map(p=>p.id).join(",")+")");
+   const rows=compareRows(l);
+   push(card("Comparison",'<span class="tag">basic</span>',`${compareTable(l)}<div class="prow" style="justify-content:flex-start;margin-top:6px">${l.map(p=>`<button class="btn small" data-add="${p.id}">Add ${esc(p.b)}</button>`).join("")}</div>`));
+   shownLog.push("compare("+l.map(p=>p.id).join(",")+")");pick(l.map(p=>({id:p.id,why:"Compared with "+l.filter(x=>x!==p).map(x=>x.n).join(" and ")})),"compared");
    return Object.fromEntries(rows.map(([k,v])=>[k,v]))}},
  {name:"price_check",description:"Cheaper similar items, B-Stock price and bundles that include this product. Shows a card. Use for 'cheaper option', 'is this a good price', budget questions.",
   inputSchema:{type:"object",properties:{id:{type:"string"}},required:["id"]},
@@ -41,7 +43,7 @@ const TOOLS = [
    push(card("Price check: "+p.n,'<span class="tag">basic</span>',`${r.bstock?`<div class="mini"><div class="info"><div>B-Stock ${esc(p.n)}</div><div class="sub">Checked returns, full 3-year warranty · save ${eur(p.p-r.bstock)}</div></div><span class="price" style="font-size:14px">${eur(r.bstock)}</span></div>`:'<div class="muted">No B-Stock right now.</div>'}
     ${r.similar.length?`<div class="muted" style="margin-top:6px">Cheaper alternatives</div>${r.similar.map(x=>miniProduct(x)).join("")}`:'<div class="muted">This is already the cheapest of its type.</div>'}
     ${r.bundles.map(b=>`<div class="mini"><div class="info"><div>Bundle: ${esc(b.name)}</div><div class="sub">${esc(b.items.join(" + "))}</div></div><span class="price" style="font-size:14px">${eur(b.price)}</span><span class="muted"><s>${eur(b.full)}</s></span></div>`).join("")}`));
-   shownLog.push("price_check("+p.id+")");
+   shownLog.push("price_check("+p.id+")");pick(r.similar.map(x=>({id:x.id,why:"Cheaper option than the "+p.n})),"cheaper");
    return {price:p.p,bstock:r.bstock,cheaper:r.similar.map(x=>({id:x.id,name:x.n,price:x.p,rating:x.r})),bundles:r.bundles}}},
  {name:"check_fit",description:"Check one or more products against the customer's My rig (power, phantom power, gain, impedance, ports, polarity, cable needs). Shows a card. Pass several ids to check items bought together (e.g. a mic plus a booster).",
   inputSchema:{type:"object",properties:{ids:{type:"array",items:{type:"string"}}},required:["ids"]},
@@ -59,7 +61,7 @@ const TOOLS = [
    const tot=it.reduce((a,x)=>a+x.p.p*x.q,0);const b=+i.budget||0;
    const html=it.map(x=>`<div class="mini"><div class="info"><div>${x.q>1?x.q+"× ":""}${esc(x.p.n)}</div><div class="sub">${esc(x.role)} · ${stockText(x.p)}</div></div><span class="price" style="font-size:14px">${eur(x.p.p*x.q)}</span><button class="btn small" data-detail="${x.p.id}">View</button></div>`).join("")+
     `<div class="total"><span>Total${b?` (budget ${eur(b)})`:""}</span><span style="color:${b&&tot>b?"var(--bad)":"inherit"}">${eur(tot)}</span></div><div class="prow" style="justify-content:flex-start;margin-top:6px"><button class="btn small primary" data-addall='${JSON.stringify(it.map(x=>[x.p.id,x.q]))}'>Add all to basket</button><button class="btn small" data-say="Check that this setup works with my rig: ${esc(it.map(x=>x.p.n).join(", "))}">Check fit</button></div>`;
-   push(card(i.title||"Your setup",'<span class="tag edge">rig builder</span>',html));shownLog.push("rig("+it.map(x=>x.p.id).join(",")+")");
+   push(card(i.title||"Your setup",'<span class="tag edge">rig builder</span>',html));shownLog.push("rig("+it.map(x=>x.p.id).join(",")+")");pick(it.map(x=>({id:x.p.id,why:(x.role?x.role+" in ":"Part of ")+(i.title||"your setup")})),"setup");
    return {total:+tot.toFixed(2),budget:b||null,overBudget:b?tot>b:false}}},
  {name:"stock_and_delivery",description:"Live stock and delivery dates for products to a country (ISO code, default DE). Shows a card.",
   inputSchema:{type:"object",properties:{ids:{type:"array",items:{type:"string"}},country:{type:"string"}},required:["ids"]},
