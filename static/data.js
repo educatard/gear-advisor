@@ -53,8 +53,27 @@ const P = [
  {id:"c1",n:"the sssnake XLR cable 3 m",b:"the sssnake",c:"accessories",p:5.9,r:4.6,rv:8800,st:3000,tags:["cable","xlr","budget"],specs:{Length:"3 m",Connectors:"XLR female to XLR male"},cp:{kind:"cable"},kb:"interface",ret:{rate:0.6,reasons:[["Wrong length",50]],tip:""}},
  {id:"c2",n:"the sssnake instrument cable 3 m",b:"the sssnake",c:"accessories",p:5.9,r:4.5,rv:7600,st:3000,tags:["cable","jack","guitar"],specs:{Length:"3 m",Connectors:"6.3 mm jack, straight"},cp:{kind:"cable"},kb:"guitar",ret:{rate:0.7,reasons:[["Crackling",45]],tip:""}},
  {id:"c3",n:"the sssnake patch cable set (6)",b:"the sssnake",c:"accessories",p:9.9,r:4.4,rv:2100,st:900,tags:["cable","pedalboard","patch"],specs:{Length:"6× 15 cm",Connectors:"Angled 6.3 mm jack"},cp:{kind:"cable"},kb:"pedal",ret:{rate:1.0,reasons:[["Too short",40]],tip:""}},
+ {id:"x1",n:"Varta 9 V block battery",b:"Varta",c:"accessories",p:2.5,r:4.7,rv:5200,st:900,tags:["battery","9v","pedal"],specs:{Type:"9 V alkaline block",Fits:"Most effects pedals"},cp:{kind:"battery"},kb:"pedal",ret:{rate:0.2,reasons:[["Wrong size",60]],tip:""}},
+ {id:"x2",n:"Harley Benton guitar picks, 12 pack",b:"Harley Benton",c:"accessories",p:2.9,r:4.6,rv:3300,st:1200,tags:["picks","guitar","beginner"],specs:{Thickness:"Mixed 0.46-1.0 mm",Pieces:"12"},cp:{kind:"picks"},kb:"guitar",ret:{rate:0.2,reasons:[["Too thin",55]],tip:""}},
+ {id:"x3",n:"the sssnake USB-C to USB-C cable 1.8 m",b:"the sssnake",c:"accessories",p:6.9,r:4.5,rv:900,st:400,tags:["cable","usb","computer"],specs:{Length:"1.8 m",Connectors:"USB-C to USB-C"},cp:{kind:"usbcable",from:"C"},kb:"interface",ret:{rate:0.5,reasons:[["Too short",50]],tip:""}},
+ {id:"x4",n:"the sssnake USB-B to USB-C cable 1.8 m",b:"the sssnake",c:"accessories",p:7.9,r:4.6,rv:1100,st:400,tags:["cable","usb","computer"],specs:{Length:"1.8 m",Connectors:"USB-B to USB-C"},cp:{kind:"usbcable",from:"B"},kb:"interface",ret:{rate:0.5,reasons:[["Too short",50]],tip:""}},
+ {id:"x5",n:"the sssnake Micro-USB to USB-C cable 1 m",b:"the sssnake",c:"accessories",p:5.9,r:4.4,rv:600,st:300,tags:["cable","usb","computer"],specs:{Length:"1 m",Connectors:"Micro-USB to USB-C"},cp:{kind:"usbcable",from:"micro"},kb:"keys",ret:{rate:0.6,reasons:[["Loose fit",45]],tip:""}},
+ {id:"kd1",n:"Harley Benton ST-Junior 3/4 Electric Guitar Pack",b:"Harley Benton",c:"guitars",p:119,r:4.4,rv:980,st:60,tags:["kids","3/4 size","beginner","bundle","complete set","strat-style"],specs:{Size:"3/4, for ages about 7-11",Pickups:"3× single-coil",Includes:"10 W amp with headphone out, cable, picks, gig bag, tuner"},cp:{kind:"electric guitar",bundle:true},kb:"guitar",ret:{rate:3.9,reasons:[["Child lost interest",34],["Size too small",22],["Setup",18]],tip:"Check the size chart: 3/4 suits roughly ages 7-11."}},
+ {id:"kd2",n:"Yamaha PSS-F30 Mini Keyboard",b:"Yamaha",c:"keys",p:59,r:4.5,rv:1400,st:140,tags:["kids","mini keys","portable","beginner"],specs:{Keys:"37 mini keys",Speakers:"Built in",Power:"Batteries or USB power"},cp:{kind:"keys",usb:"micro",sustain:"any",standalone:true},kb:"keys",ret:{rate:2.8,reasons:[["Keys too small",36],["Child lost interest",30]],tip:""}},
+ {id:"kd3",n:"Millenium MPS-150 E-Drum Set",b:"Millenium",c:"drums",p:269,bs:239,r:4.3,rv:2100,st:35,tags:["e-drums","kids","beginner","quiet practice","budget"],specs:{Pads:"Rubber pads",Kits:"10",Outputs:"Headphones, line out"},cp:{kind:"edrums"},kb:"edrum",ret:{rate:4.4,reasons:[["Kick pedal noise",31],["Rack wobbles",24]],tip:""}},
+ {id:"cy1",n:"Zildjian 20 inch K Custom Dark Ride",b:"Zildjian",c:"drums",p:459,r:4.8,rv:140,st:0,restock:63,tags:["cymbal","ride","jazz","dark","pro"],specs:{Size:"20 inch",Type:"Ride, hand-hammered B20 bronze",Availability:"Made to order"},cp:{kind:"cymbal"},kb:"edrum",ret:{rate:2.1,reasons:[["Sound differs from demo",41],["Changed mind",25]],tip:"Every hand-hammered cymbal sounds a little different."}},
+ {id:"cy2",n:"Meinl 18 inch Byzance Jazz Thin Crash",b:"Meinl",c:"drums",p:319,r:4.7,rv:210,st:0,restock:70,tags:["cymbal","crash","jazz","thin"],specs:{Size:"18 inch",Type:"Crash, hand-hammered B20 bronze",Availability:"Made to order"},cp:{kind:"cymbal"},kb:"edrum",ret:{rate:1.9,reasons:[["Too trashy",38],["Changed mind",27]],tip:""}},
 ];
 const BY = Object.fromEntries(P.map(p=>[p.id,p]));
+/* Which situations each product suits (results page "situation" buttons) */
+const SITUATIONS = {home:"For practising at home",band:"For playing in a band",recording:"For recording",child:"For my child"};
+const SIT_IDS = {
+ home:"g1 g2 g3 g4 g5 g6 g7 g8 a1 a3 a4 p1 p2 p3 p4 p5 p7 pw1 h1 h2 h3 k1 k2 k3 k4 d1 d2 kd1 kd2 kd3 st1 st2 st3 c2 x1 x2",
+ band:"g2 g3 g4 g5 g6 g7 a1 a2 a4 p1 p2 p3 p4 p5 p6 pw1 pw2 m1 m5 k2 cy1 cy2 c1 c2 c3 st1 st2 st3 x1 x2",
+ recording:"i1 i2 i3 i4 i5 m1 m2 m3 m4 m5 m6 m7 h1 h2 h3 h4 s1 s2 k1 k3 a1 p7 c1 x3 x4 x5",
+ child:"g1 g6 a3 kd1 kd2 kd3 k3 h1 x2",
+};
+for (const [s, ids] of Object.entries(SIT_IDS)) for (const id of ids.split(" ")) (BY[id].sit ||= []).push(s);
 const BUNDLES = [
  {name:"Home recording starter",ids:["i1","m4","h1","c1"],off:8},
  {name:"Podcast duo",ids:["i2","m1","m1","h1","h1","c1","c1"],off:7},
@@ -101,16 +120,31 @@ const KB = {
  edrum:[{issue:"Pads trigger badly",steps:["Run the module's pad calibration.","Raise the threshold on pads that trigger by themselves.","Check cables are fully inserted."]}],
 };
 const ORDERS = [
+ {id:"O-41877",date:"2025-03-12",status:"Delivered",delivered:"2025-03-14",items:[["g2",1],["a1",1]]},
+ {id:"O-46550",date:"2026-07-17",status:"Delivered",delivered:"2026-07-20",items:[["st1",2]]},
  {id:"O-48213",date:"2026-10-20",status:"Delivered",delivered:"2026-10-22",items:[["i1",1]]},
  {id:"O-49102",date:"2026-10-31",status:"Shipped",carrier:"DHL",tracking:"JJD0002249 7741 03",eta:"2026-11-04",items:[["p2",1],["st1",3]]},
  {id:"O-49377",date:"2026-11-02",status:"Being packed",eta:"2026-11-06",items:[["m2",1]]},
 ];
+/* bought: "thomann" items carry their order and get the 3-year Thomann warranty; "elsewhere" items carry the customer's own dates */
 const DEFAULT_RIG = [
- {id:"g2",since:"2025-03"},
- {id:"a1",since:"2025-03"},
- {id:"p1",since:"2025-08"},
- {id:"i1",since:"2026-10"},
- {id:"h2",since:"2024-11"},
- {id:"st1",since:"2026-07-20",note:"strings last changed 20 Jul 2026"},
- {custom:true,name:"MacBook Air M2",cat:"computer",cp:{kind:"computer",ports:["USB-C"]},since:"2024"},
+ {id:"g2",since:"2025-03-14",bought:"thomann",order:"O-41877"},
+ {id:"a1",since:"2025-03-14",bought:"thomann",order:"O-41877"},
+ {id:"p1",since:"2025-08",bought:"elsewhere"},
+ {id:"i1",since:"2026-10-22",bought:"thomann",order:"O-48213"},
+ {id:"h2",since:"2024-11",bought:"elsewhere",warrantyUntil:"2026-11-30",note:"2-year manufacturer warranty"},
+ {id:"c2",since:"2025-03",bought:"elsewhere"},
+ {id:"st1",since:"2026-07-20",bought:"thomann",order:"O-46550",note:"strings last changed 20 Jul 2026"},
+ {custom:true,name:"MacBook Air M2",cat:"computer",cp:{kind:"computer",ports:["USB-C"]},since:"2024-02",bought:"elsewhere"},
 ];
+/* About you: the shopper's situation, used by filters, labels, fit checks and the advisor */
+const PROFILE_FIELDS = {
+ level:{label:"Your level",multi:false,opts:{beginner:"Beginner",intermediate:"Intermediate",advanced:"Advanced"}},
+ instruments:{label:"Instruments you play",multi:true,opts:{guitar:"Guitar",bass:"Bass",keys:"Keys",drums:"Drums",vocals:"Vocals",production:"Production"}},
+ styles:{label:"Styles",multi:true,opts:{rock:"Rock",blues:"Blues",metal:"Metal",pop:"Pop",jazz:"Jazz",electronic:"Electronic",classical:"Classical",other:"Other"}},
+ place:{label:"Where you play",multi:false,opts:{flat:"Flat (neighbours)",house:"House",rehearsal:"Rehearsal room",stage:"Stage"}},
+ listen:{label:"Headphones or speakers",multi:false,opts:{headphones:"Mostly headphones",both:"Both",speakers:"Speakers or amp"}},
+ computer:{label:"Computer",multi:false,opts:{usbc:"Mac with USB-C",usba:"Mac or PC with USB-A",ipad:"iPad",none:"None"}},
+ forWhom:{label:"Who it's for",multi:false,opts:{me:"Me",child:"My child"}},
+};
+const DEFAULT_PROFILE = {level:"intermediate",instruments:["guitar"],styles:["blues","rock"],place:"flat",listen:"both",computer:"usbc",forWhom:"me",childAge:""};
