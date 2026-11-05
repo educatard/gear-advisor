@@ -8,6 +8,7 @@ The Thomann-style shop prototype with the AI advisor running on **your** Claude 
 
 ## Cost and protection
 
+- The AI summaries above search results use **Claude Haiku 5.5** (`ADVISOR_SUMMARY_MODEL`), roughly **$0.002–0.005 each**, and each search is remembered in the visitor's browser so repeats are free. They count toward the same per-visitor rate limit.
 - Rough cost with Sonnet 5.5: **$0.03–0.05 per message**, so about **$0.50–0.75 per 15-message test session**. Prompt caching is on, which cuts the cost of the repeated instructions and catalogue.
 - Each visitor (by IP address) can make **12 requests a minute and 80 an hour**. One chat message uses 1–4 requests, depending on how many tools the advisor calls. Change this with `RATE_PER_MINUTE` and `RATE_PER_HOUR`.
 - There is **no daily cap and no access code**. Anyone with the link can use the advisor until the rate limit stops them. **Set a monthly spend limit for this key in the Claude Console** (Settings → Limits) before sharing the link.

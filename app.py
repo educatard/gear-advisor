@@ -23,6 +23,7 @@ HERE = pathlib.Path(__file__).parent
 STATIC = HERE / "static"
 
 MODEL = os.environ.get("ADVISOR_MODEL", "claude-sonnet-5-5")
+SUMMARY_MODEL = os.environ.get("ADVISOR_SUMMARY_MODEL", "claude-haiku-5-5")
 RATE_PER_MINUTE = int(os.environ.get("RATE_PER_MINUTE", "12"))
 RATE_PER_HOUR = int(os.environ.get("RATE_PER_HOUR", "80"))
 MOCK = os.environ.get("ADVISOR_MOCK") == "1"  # local testing only: answers without calling Claude
@@ -77,6 +78,9 @@ def build_catalogue() -> str:
         raise RuntimeError(f"Catalogue parse found only {len(lines)} products; check data.js format")
     return "\n".join(lines)
 
+
+SUMMARY_RULES = "You write the short AI summary shown above search results in Thomann's online shop (a concept prototype; all data is demo data). Use ONLY the facts given: never invent products, prices, specs or review content. Write for the customer described in the facts, in plain words a non-expert understands, and never assume they are a beginner unless the facts say so. Hard limit: 70 words. No preamble, no headings, no closing question. Use exactly the shape asked for, in light Markdown (bold labels, '- ' bullets). Prices in EUR."
+MAX_FACTS_CHARS = 12_000
 
 SYSTEM_PROMPT = RULES + "\nCATALOGUE (id | name | category | price | tags)\n" + build_catalogue()
 
@@ -195,6 +199,48 @@ async def chat(request: Request):
     print(json.dumps({"usage": {k: u.get(k) for k in ("input_tokens", "output_tokens", "cache_read_input_tokens", "cache_creation_input_tokens")},
                       "stop": data.get("stop_reason"), "model": data.get("model")}), flush=True)
     return JSONResponse({"content": data["content"], "stop_reason": data.get("stop_reason")})
+
+
+@app.post("/api/summary")
+async def summary(request: Request):
+    """Short search-result summary written by the cheaper, faster model."""
+    raw = await request.body()
+    if len(raw) > MAX_FACTS_CHARS + 2000:
+        return bad("facts too long", 413)
+    try:
+        facts = json.loads(raw).get("facts")
+    except (ValueError, AttributeError):
+        return bad("body must be JSON with a facts string")
+    if not isinstance(facts, str) or not facts.strip() or len(facts) > MAX_FACTS_CHARS:
+        return bad("facts must be a non-empty string")
+    if not facts.startswith(("CATEGORY SUMMARY", "PRODUCT SUMMARY")):
+        return bad("unsupported summary request")
+
+    wait = rate_limited(client_ip(request))
+    if wait:
+        return JSONResponse({"error": "rate_limited", "retry_after": wait}, status_code=429, headers={"Retry-After": str(wait)})
+
+    if MOCK:
+        return JSONResponse({"text": "**(Mock AI summary)** Written by the summary model.\n- **Good to know:** the real text comes from Claude Haiku.\n- Cached per search in the browser.\n**For you:** this line is personalised."})
+
+    try:
+        resp = await client.messages.create(
+            model=SUMMARY_MODEL,
+            max_tokens=400,
+            system=[{"type": "text", "text": SUMMARY_RULES, "cache_control": {"type": "ephemeral"}}],
+            messages=[{"role": "user", "content": facts}],
+        )
+    except anthropic.AuthenticationError:
+        return JSONResponse({"error": "not_configured"}, status_code=503)
+    except anthropic.RateLimitError:
+        return JSONResponse({"error": "rate_limited", "retry_after": 30}, status_code=429)
+    except anthropic.APIError as e:
+        print("summary error:", type(e).__name__, flush=True)
+        return JSONResponse({"error": "upstream_error"}, status_code=502)
+
+    text = "".join(b.text for b in resp.content if b.type == "text").strip()
+    print(json.dumps({"summary_usage": {"input_tokens": resp.usage.input_tokens, "output_tokens": resp.usage.output_tokens}, "model": resp.model}), flush=True)
+    return JSONResponse({"text": text})
 
 
 def mock_reply(messages, tools):

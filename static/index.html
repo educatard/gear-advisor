@@ -104,6 +104,17 @@ h1.page .cnt{font-size:20px;color:var(--muted);font-weight:700}
 .row .big{font-size:22px;font-weight:800;white-space:nowrap}
 .row .acts{display:flex;gap:12px}
 .flag{background:var(--purple);color:#fff;font-size:11px;font-weight:800;padding:2px 7px;border-radius:3px;text-transform:uppercase}
+.aisum{border:1.5px solid var(--purple);background:linear-gradient(180deg,var(--purple-soft),var(--bg) 70%);border-radius:12px;padding:12px 16px;margin:6px 0 14px;font-size:14.5px;max-width:900px}
+.aisum-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.aisum-h b{color:var(--purple)}
+.sumst{font-size:12.5px;color:var(--purple);animation:sumpulse 1.2s ease-in-out infinite}
+@keyframes sumpulse{50%{opacity:.4}}
+@media (prefers-reduced-motion:reduce){.sumst{animation:none}}
+.sumhide{margin-left:auto;font-size:12.5px;color:var(--muted);text-decoration:underline}
+.aisum-b{margin-top:6px;line-height:1.5}
+.aisum-b p{margin:0 0 4px}.aisum-b ul{margin:4px 0;padding-left:20px}.aisum-b li{margin:2px 0}
+.aisum-f{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px;font-size:12px}
+.sumshow{display:inline-flex;gap:6px;align-items:center;font-size:13px;font-weight:700;color:var(--purple);margin:4px 0 10px}
 .askstrip{border:1.5px dashed var(--purple);background:var(--purple-soft);border-radius:10px;padding:12px 14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 .askstrip p{margin:0;flex:1;min-width:200px;font-size:14px}
 .filterbtn{display:none}
@@ -504,7 +515,7 @@ table.cmp th{font-weight:600;color:var(--muted)}
 const store={get(k,d){try{const v=localStorage.getItem("ga3_"+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem("ga3_"+k,JSON.stringify(v))}catch(e){}}};
 const S={
   rig:store.get("rig",JSON.parse(JSON.stringify(DEFAULT_RIG))), basket:store.get("basket",[]), tier:store.get("tier","quick"), online:store.get("online",true),
-  profile:store.get("profile",JSON.parse(JSON.stringify(DEFAULT_PROFILE))), present:store.get("present",false), editing:null,
+  profile:store.get("profile",JSON.parse(JSON.stringify(DEFAULT_PROFILE))), present:store.get("present",false), editing:null, sumHidden:store.get("sumHidden",false), sumNow:null, sumCtx:null,
   view:{name:"results",q:"",cats:[],min:"",max:"",stock:false,sort:"rel",sit:""}, viewing:null,
   contact:{enquiry:null,category:null,need:null,method:null,product:null}, chatCtx:null, turns:[], busy:false, ctl:null,
   chat:"closed", mode:"ai", expert:null, started:false, apiMode:false,
@@ -574,7 +585,7 @@ function render(){
   else if(v.name==="rig") el.innerHTML=rigView();
   else if(v.name==="picks") el.innerHTML=picksView();
   else el.innerHTML=resultsView();
-  if(v.name==="results") bindFilters();
+  if(v.name==="results"){bindFilters();kickSummary()}
   if(v.name==="rig") bindRig();
   if(v.name==="picks") bindPicks();
 }
@@ -608,14 +619,98 @@ function rowLabels(p){
   if(rigItems().length&&!fit.some(c=>c.status!=="ok"))out.push(`<span class="lbl fit">Fits your gear</span>`);
   return out.length?`<div class="lbls">${out.join("")}</div>`:"";
 }
+/* ---------------- AI summary above search results ---------------- */
+const SUMMARY_RULES="You write the short AI summary shown above search results in Thomann's online shop (a concept prototype; all data is demo data). Use ONLY the facts given: never invent products, prices, specs or review content. Write for the customer described in the facts, in plain words a non-expert understands, and never assume they are a beginner unless the facts say so. Hard limit: 70 words. No preamble, no headings, no closing question. Use exactly the shape asked for, in light Markdown (bold labels, '- ' bullets). Prices in EUR.";
+const CAT_INFO={
+ guitars:{what:"Electric guitars, from budget Strat-style models to premium instruments.",tips:["**Single coils** sound bright and clear; **humbuckers** are thicker and hum less with distortion.","Every electric guitar also needs an **amp** (or headphone amp) and a **cable**."]},
+ amps:{what:"Guitar and bass amps, from small practice combos to stage amps.",tips:["**Modelling amps** give many sounds at low volume; **tube amps** need volume to shine.","For a flat, look for a **headphone output** and low wattage."]},
+ pedals:{what:"Effects pedals that shape your guitar sound: drive, fuzz, delay and reverb.",tips:["**Overdrive** is a warm push, **distortion** is heavier, **fuzz** is wild and woolly.","Most pedals need a **9 V centre-negative** power supply, not always included."]},
+ power:{what:"Power supplies for running several pedals quietly.",tips:["**Isolated outputs** stop hum between pedals.","Add up each pedal's **mA** draw and check the supply has enough."]},
+ interfaces:{what:"Audio interfaces connect mics and instruments to your computer for recording.",tips:["Count your **inputs**: one for solo recording, two for guitar plus vocals.","Check the **connector** matches your computer (USB-C or USB-A)."]},
+ mics:{what:"Microphones for vocals, podcasts, instruments and streaming.",tips:["**Dynamic** mics ignore room noise; **condensers** are detailed but hear everything.","Condensers need **48 V phantom power**; quiet dynamics need lots of gain."]},
+ headphones:{what:"Headphones for practice, recording and mixing.",tips:["**Closed-back** blocks sound (recording); **open-back** sounds more natural (mixing).","High-**ohm** models may need a headphone amp to get loud enough."]},
+ monitors:{what:"Studio monitors: speakers built to play music back honestly for mixing.",tips:["**5-inch** suits small rooms; bigger woofers give more bass.","Place them at ear height, forming a triangle with your head."]},
+ keys:{what:"Digital pianos, stage pianos and keyboards.",tips:["**Weighted, hammer-action** keys feel like a real piano.","Check for **headphone** and **USB-MIDI** if you practise quietly or record."]},
+ drums:{what:"E-drum kits and cymbals.",tips:["**Mesh heads** are quieter and feel closer to acoustic drums than rubber pads.","E-kits still make **thumping noise**: neighbours may hear the kick pedal."]},
+ accessories:{what:"Strings, cables and small parts that keep your gear running.",tips:["Change strings every **2–3 months** if you play often.","Match the **cable type**: jack for instruments, XLR for mics."]},
+};
+const CAT_WORDS={guitars:["guitar","guitars","electric guitar","electric guitars","strat","stratocaster"],amps:["amp","amps","amplifier","amplifiers","guitar amp","combo"],pedals:["pedal","pedals","effect","effects","distortion","overdrive","fuzz","delay","reverb","effects pedal","guitar pedal"],power:["power supply","power supplies","psu"],interfaces:["interface","interfaces","audio interface","audio interfaces","sound card"],mics:["mic","mics","microphone","microphones","vocal mic"],headphones:["headphone","headphones","studio headphones"],monitors:["monitor","monitors","studio monitors","speakers","studio speakers"],keys:["keyboard","keyboards","piano","digital piano","keys","stage piano"],drums:["drum","drums","e-drum","e-drums","drum kit","electronic drums","cymbal","cymbals"],accessories:["strings","string","cable","cables","accessories"]};
+const SUM_STOP=["for","the","a","an","and","with","my","to","in","of","best","cheap","good","new"];
+function sumTarget(v){
+  if(v.q){
+    const q=v.q.toLowerCase().trim().replace(/\s+/g," "),core=q.split(" ").filter(w=>!SUM_STOP.includes(w)).join(" ");
+    const cat=Object.keys(CAT_WORDS).find(c=>CAT_WORDS[c].includes(core));
+    if(cat)return {kind:"category",id:cat,label:CATS[cat]};
+    const words=core.split(" ").filter(w=>w.length>1);
+    const hits=words.length?P.filter(p=>{const n=(p.n+" "+p.b).toLowerCase();return words.every(w=>n.includes(w))}):[];
+    if(hits.length===1)return {kind:"product",id:hits[0].id,label:hits[0].n};
+    return null;
+  }
+  if(v.cats.length===1&&!v.sit)return {kind:"category",id:v.cats[0],label:CATS[v.cats[0]]};
+  return null;
+}
+const sumSig=()=>{const s=JSON.stringify([S.profile,S.rig.map(r=>r.id||r.name)]);let x=0;for(const c of s)x=(x*31+c.charCodeAt(0))|0;return (x>>>0).toString(36)};
+const sumKey=t=>t.kind+":"+t.id+":"+sumSig();
+const sumCache=store.get("sums",{}),sumInflight=new Set();
+function cacheSum(k,txt){sumCache[k]=txt;const ks=Object.keys(sumCache);if(ks.length>40)delete sumCache[ks[0]];store.set("sums",sumCache)}
+function localCatSummary(c){
+  const l=P.filter(p=>p.c===c),info=CAT_INFO[c]||{what:CATS[c]+".",tips:[]};
+  const lo=l.reduce((a,p)=>p.p<a.p?p:a,l[0]),hi=l.reduce((a,p)=>p.p>a.p?p:a,l[0]),top=[...l].sort((a,b)=>b.r-a.r||b.rv-a.rv)[0];
+  const fits=rigItems().length?l.filter(p=>!fitCheck([p.id]).some(x=>x.status==="bad")&&!missingFor(p).length).length:0;
+  return `${info.what} ${l.length} models from ${eur(lo.p)} to ${eur(hi.p)}; best rated: **${top.n}** (★ ${top.r}).\n${info.tips.map(t=>"- "+t).join("\n")}\n**For you:** ${fits?`${fits} of them work with your gear without extra parts.`:"set up About you and My rig and I'll point out what fits."}`;
+}
+function localProductSummary(p){
+  const tg=p.tags.filter(x=>!["beginner","budget","pro"].includes(x)).slice(0,3),list=tg.length>1?tg.slice(0,-1).join(", ")+" and "+tg.at(-1):tg[0]||CATS[p.c].toLowerCase();
+  const who=(p.tags.includes("beginner")?"Starting out or on a budget; ":p.p>800?"Experienced players; ":"")+"made for "+list;
+  const spec=Object.entries(p.specs)[0];
+  const r0=p.ret.reasons[0],t0=String(p.ret.tip||""),tip=t0.length>130?t0.slice(0,t0.lastIndexOf(" ",127))+"…":t0;
+  const fc=rigItems().length?fitCheck([p.id]):[],bad=fc.find(x=>x.status==="bad")||fc.find(x=>x.status==="warn");
+  return `- **Who it's for:** ${who[0].toUpperCase()+who.slice(1)}.\n- **Strength:** ★ ${p.r} from ${p.rv.toLocaleString("en")} reviews${spec?`; ${spec[0].toLowerCase()}: ${spec[1]}`:""}.\n- **Watch out:** ${r0?`${r0[1]}% of returns were “${r0[0].toLowerCase()}”. ${tip}`:"few returns."}\n- **With your gear:** ${bad?bad.note:fc.length?"fits what you own.":"add your gear in My rig to check."}`;
+}
+function sumFacts(t){
+  const prof=Object.entries(PROFILE_FIELDS).map(([k,f])=>{const v=S.profile[k];return v&&(!Array.isArray(v)||v.length)?`${f.label}: ${f.multi?v.map(x=>f.opts[x]).join(", "):f.opts[v]}`:null}).filter(Boolean).join("; ")||"not filled in";
+  const rig=rigItems().map(r=>r.name).join(", ")||"nothing listed";
+  const line=p=>`${p.n} | €${p.p}${p.bs?` (B-Stock €${p.bs})`:""} | ★${p.r} (${p.rv} reviews) | ${p.st?"in stock":"out of stock"} | ${p.tags.join(", ")} | specs: ${Object.entries(p.specs).map(([k,v])=>k+" "+v).join(", ")} | return rate ${p.ret.rate}%`;
+  if(t.kind==="category"){const l=P.filter(p=>p.c===t.id);
+    return `CATEGORY SUMMARY for "${CATS[t.id]}". Shape: one sentence on what this category is and how the ${l.length} products differ (price range, types); then two '- ' bullets of buying advice that matter for this customer; then one line starting **For you:** that names 1-2 specific products from the list that suit their profile and gear, with a reason.\nCustomer — About you: ${prof}. Owns: ${rig}.\nGeneral notes: ${(CAT_INFO[t.id]?.tips||[]).join(" ").replace(/\*\*/g,"")}\nProducts:\n${l.map(line).join("\n")}`}
+  const p=BY[t.id],fc=fitCheck([p.id]);
+  return `PRODUCT SUMMARY for "${p.n}". Shape: exactly four '- ' bullets with these bold labels: **Who it's for:**, **Strength:**, **Watch out:** (the top return reason and what helped), **With your gear:** (from the fit check below; say plainly if something extra is needed).\nCustomer — About you: ${prof}. Owns: ${rig}.\nProduct: ${line(p)}\nReturn reasons: ${p.ret.reasons.map(([w,n])=>w+" "+n+"%").join(", ")}. What helped: ${p.ret.tip}\nFit check with their gear: ${fc.map(x=>x.status+": "+x.note).join(" / ")||"no gear listed"}`;
+}
+async function aiSummaryText(t){
+  const facts=sumFacts(t);
+  if(S.apiMode){const r=await fetch("api/summary",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({facts})});if(!r.ok)throw new Error("summary "+r.status);return (await r.json()).text}
+  if(sample){const r=await sample(SUMMARY_RULES+"\n\n"+facts,{modelTier:"quick",cache:false});return r.text}
+  throw new Error("no ai");
+}
+function sumBoxHtml(t,txt,state){
+  return `<div class="aisum-h"><span class="aiav sm">${AISVG}</span><b>AI summary</b><span class="muted">· ${esc(t.label)}</span>${state==="loading"?`<span class="sumst">Personalising for you…</span>`:""}<button class="sumhide" data-sumhide aria-label="Hide AI summary">Hide</button></div>
+   <div class="aisum-b">${md(txt)}</div>
+   <div class="aisum-f"><button class="btn" data-sumask>Ask a follow-up</button><span class="muted">Based on Thomann's catalogue, reviews and returns (demo data). ${state==="ai"?"Written by AI for you. ":""}Can be wrong.</span></div>`;
+}
+function sumSection(t){
+  if(S.sumHidden)return `<button class="sumshow" data-sumshow><span class="aiav sm" style="width:20px;height:20px">${AISVG}</span>Show AI summary</button>`;
+  const k=sumKey(t),c=sumCache[k];
+  const local=t.kind==="category"?localCatSummary(t.id):localProductSummary(BY[t.id]);
+  S.sumNow={t,k,txt:c||local};
+  return `<section class="aisum" id="aisum" aria-live="polite">${sumBoxHtml(t,c||local,c?"ai":(sample&&sampleState==="ready"?"loading":"local"))}</section>`;
+}
+async function kickSummary(){
+  const n=S.sumNow;if(!n||S.sumHidden||sumCache[n.k]||sumInflight.has(n.k)||!sample||sampleState!=="ready")return;
+  sumInflight.add(n.k);
+  try{const txt=(await aiSummaryText(n.t)||"").trim();if(txt){cacheSum(n.k,txt);const box=$("#aisum");if(box&&S.sumNow?.k===n.k){S.sumNow.txt=txt;box.innerHTML=sumBoxHtml(n.t,txt,"ai")}}}
+  catch(e){const st=$("#aisum .sumst");if(st&&S.sumNow?.k===n.k)st.remove()}
+  finally{sumInflight.delete(n.k)}
+}
 function resultsView(){
   const v=S.view,l=resultsList();
   const base=P.filter(p=>scoreQ(p,v.q)>0&&(!v.sit||p.sit?.includes(v.sit)));
   const catCounts=Object.keys(CATS).map(c=>[c,base.filter(p=>p.c===c).length]).filter(x=>x[1]);
   const title=v.q?esc(v.q):v.sit?SITUATIONS[v.sit]:v.cats.length===1?CATS[v.cats[0]]:"All products";
+  const st=sumTarget(v);S.sumNow=null;
   return `<div class="wrap">
   <div class="crumbs"><span>⌂</span><span class="last">${v.q?`“${esc(v.q)}”`:esc(title)}</span></div>
   <h1 class="page">${title}<span class="cnt">${l.length}</span></h1>
+  ${st?sumSection(st):""}
   <div class="toolbar"><button class="pill filterbtn" id="fbtn" style="padding:6px 14px">Filter</button><span></span>
     <label class="muted">Sort <select id="sort" aria-label="Sort">${[["rel","Relevance"],["pop","Popularity"],["low","Price: low to high"],["high","Price: high to low"],["rated","Best rated first"]].map(([k,t])=>`<option value="${k}"${v.sort===k?" selected":""}>${t}</option>`).join("")}</select></label></div>
   <div class="sitbar" role="group" aria-label="What is it for?">${Object.entries(SITUATIONS).map(([k,t])=>`<button class="sit" data-sit="${k}" aria-pressed="${v.sit===k}">${SIT_ICON[k]}<span>${t}</span></button>`).join("")}</div>
@@ -626,7 +721,7 @@ function resultsView(){
     <div class="blk"><h3>Availability</h3><label><input type="checkbox" id="fstock"${v.stock?" checked":""}>In stock</label></div>
    </aside>
    <div class="list">
-    ${v.q||v.sit?`<div class="askstrip"><span class="aiav sm">${AISVG}</span><p><b>Not sure which one fits?</b> The AI advisor can ask what you need, check it works with your gear and compare options.</p><button class="cta purple" style="padding:9px 18px" data-ask="${esc(v.q||SITUATIONS[v.sit]+": what do you recommend for me?")}">Ask the advisor</button></div>`:""}
+    ${(v.q||v.sit)&&!(st&&!S.sumHidden)?`<div class="askstrip"><span class="aiav sm">${AISVG}</span><p><b>Not sure which one fits?</b> The AI advisor can ask what you need, check it works with your gear and compare options.</p><button class="cta purple" style="padding:9px 18px" data-ask="${esc(v.q||SITUATIONS[v.sit]+": what do you recommend for me?")}">Ask the advisor</button></div>`:""}
     ${l.map(p=>`<article class="row" data-detail="${p.id}" tabindex="0">
       ${sil(p.c)}
       <div style="min-width:0"><h2><b>${esc(p.b)}</b> ${esc(p.n.replace(p.b+" ",""))}</h2>
@@ -1158,6 +1253,7 @@ const FEATURES=[
  {stage:"Trust",kind:"edge",n:"Admits what it doesn't know",d:"Says “I'm not sure” and offers a specialist instead of guessing.",try:"Will my 1972 Fender Twin Reverb work with the Strymon BigSky?"},
  {stage:"Discover",kind:"edge",n:"Starter buttons",d:"The chat opens with “I want to buy an instrument”, “Upgrade my rig”, “Something isn't working” and “Order question”. It never assumes you're a beginner: it uses About you or asks your level.",try:"I want to buy an instrument."},
  {stage:"Decide",kind:"edge",n:"Saved products",d:"Nothing is saved automatically. Tap ☆ Save on the advisor's cards (or ♡ on product pages and search results) to keep a product with the advisor's reason. See them in the chat's Saved tab or on their own page (♡ in the header): grouped by question, with star, compare, fit check and basket. The advisor saves only when you ask it to.",try:"Build me a home recording setup for guitar under €500."},
+ {stage:"Discover",kind:"edge",n:"AI summary in search",d:"Search a category (“guitar”, “audio interface”) or one product (“SM58”), or click a category: a short AI summary appears above the results, personalised with About you and My rig. An instant summary from the catalogue shows first; the AI version (Haiku) replaces it and is remembered.",action:"summary"},
  {stage:"Own",kind:"moat",n:"Warranty in My rig",d:"Warranty and return days left for Thomann purchases; your own dates for gear bought elsewhere.",try:"Which of my gear is still under warranty?"},
 ];
 function openGuide(){
@@ -1167,7 +1263,7 @@ function openGuide(){
    <label class="switch"><input type="checkbox" id="pres"${S.present?" checked":""}> Presentation mode: show how AI tools read each product (AI-ready data) on product pages</label>
    <div class="switch">Advisor speed <select id="tier" class="search"><option value="quick"${S.tier==="quick"?" selected":""}>Fast</option><option value="default"${S.tier!=="quick"?" selected":""}>Thorough (slower)</option></select></div>
    ${FEATURES.map(f=>`<div class="feat"><div class="h"><span class="n">${f.stage}</span>${esc(f.n)} ${lab[f.kind]}</div><p>${esc(f.d)}</p>
-    ${f.try?`<div><button class="btn" data-ask="${esc(f.try)}">Try: “${esc(f.try)}”</button></div>`:f.action==="data"?`<div><button class="btn" data-detail="m2" data-close>Open a product page</button></div>`:`<div><button class="btn" data-platform>Open the advisor full screen</button></div>`}</div>`).join("")}
+    ${f.try?`<div><button class="btn" data-ask="${esc(f.try)}">Try: “${esc(f.try)}”</button></div>`:f.action==="data"?`<div><button class="btn" data-detail="m2" data-close>Open a product page</button></div>`:f.action==="summary"?`<div class="prow"><button class="btn" data-cat="guitars" data-close>Try: Guitars</button><button class="btn" data-sumq="SM58" data-close>Try: “SM58”</button></div>`:`<div><button class="btn" data-platform>Open the advisor full screen</button></div>`}</div>`).join("")}
    <button class="btn" id="resetAll">Reset demo (rig, basket, saved, chat)</button>`,(b)=>{
     $("#onl").onchange=e=>{S.online=e.target.checked;store.set("online",S.online);updateOnline();if(S.view.name==="contact")render()};
     $("#tier").onchange=e=>{S.tier=e.target.value;store.set("tier",S.tier)};
@@ -1376,7 +1472,8 @@ About you: ${Object.entries(PROFILE_FIELDS).map(([k,f])=>{const v=S.profile[k];r
 My rig: ${rigItems().map(r=>{const w=warrantyOf(r);return `${r.name}${r.id?" ("+r.id+")":""} – ${r.bought==="thomann"?`bought at Thomann ${String(r.since).slice(0,10)}${r.order?" ("+r.order+")":""}`:`bought elsewhere, owned since ${r.since||"?"}`}${w?`, warranty until ${isoDay(w.end)}${warrantyLeft(w)<=0?" (ended)":""}`:", no warranty date"}${w?.returnDays>0?`, 30-day return open for ${w.returnDays} more days`:""}${r.note?" – "+r.note:""}`}).join("; ")||"empty"}
 Basket: ${S.basket.map(x=>`${x.qty}× ${BY[x.id].n}`).join("; ")||"empty"}
 Saved products (saved by the customer, newest first): ${S.picks.slice(0,20).map(x=>`${x.star?"★ ":""}${BY[x.id].n} (${x.id})${x.why?" – "+x.why:""}`).join("; ")||"none yet"}
-Orders: ${ORDERS.map(o=>`${o.id} ${o.status} (${o.items.map(([id])=>BY[id].n).join(", ")})`).join("; ")}]`;
+Orders: ${ORDERS.map(o=>`${o.id} ${o.status} (${o.items.map(([id])=>BY[id].n).join(", ")})`).join("; ")}${S.sumCtx?`
+The customer just read this AI summary of ${S.sumCtx.label} on the results page: ${S.sumCtx.txt.replace(/\n/g," ")}`:""}]`;
 }
 const ERR={api_unavailable:"The AI advisor isn't set up on this server yet. Tap Talk to a person instead.",not_granted:"You didn't allow this page to use your Claude account, so the AI advisor can't answer. Reload the page to be asked again, or tap Talk to a person.",sampling_disabled:"Claude isn't available for this account.",rate_limited:"You've reached your Claude usage limit for now, or sent many messages quickly. Wait a little and try again, or tap Talk to a person.",session_expired:"You're signed out of Claude. Sign in at claude.ai, then reload this page.",refused:"I can't help with that one. Try rephrasing, or tap Specialist.",empty_completion:"No answer came back. Try asking differently.",prompt_too_large:"This chat got too long. Start a new conversation from the Test guide.",tools_unavailable:"This viewer can't run the shop tools. Try the latest Claude app or claude.ai."};
 async function send(text){
@@ -1432,7 +1529,7 @@ document.addEventListener("click",e=>{
   if(!t.closest(".searchbox"))ac.hidden=true;
   ["shop","svc","acc"].forEach(k=>{if(!t.closest("#"+k+"Btn"))$("#"+k+"DD").hidden=true});
   if(!t.closest("#plus,#plusmenu"))$("#plusmenu").hidden=true;
-  const a=t.closest("[data-go],[data-detail],[data-cat],[data-add],[data-addq],[data-ask],[data-say],[data-open],[data-rig-add],[data-toast],[data-close],[data-step],[data-step-edit],[data-step-reset],[data-method],[data-handover],[data-backai],[data-cb],[data-platform],[data-spec],[data-prefill],[data-sit],[data-expert],[data-send-contact],[data-ctab],[data-pick-star],[data-pick-rm],[data-pick-fit],[data-pick-cmp],[data-pick-cmpclose],[data-pick-clearsel],[data-picks-clear],[data-save],[data-save-all]");
+  const a=t.closest("[data-go],[data-detail],[data-cat],[data-add],[data-addq],[data-ask],[data-say],[data-open],[data-rig-add],[data-toast],[data-close],[data-step],[data-step-edit],[data-step-reset],[data-method],[data-handover],[data-backai],[data-cb],[data-platform],[data-spec],[data-prefill],[data-sit],[data-expert],[data-send-contact],[data-ctab],[data-pick-star],[data-pick-rm],[data-pick-fit],[data-pick-cmp],[data-pick-cmpclose],[data-pick-clearsel],[data-picks-clear],[data-save],[data-save-all],[data-sumhide],[data-sumshow],[data-sumask],[data-sumq]");
   if(!a)return;
   if(a.matches("a"))e.preventDefault();
   const d=a.dataset;
@@ -1465,6 +1562,10 @@ document.addEventListener("click",e=>{
   else if(d.spec!==undefined){$("#plusmenu").hidden=true;handover()}
   else if(d.save){isSaved(d.save)?unsavePick(d.save):savePick(d.save)}
   else if(d.saveAll){const l=JSON.parse(d.saveAll);let n=0;for(const id of l)if(savePick(id,true))n++;toast(n?`Saved ${n} item${n>1?"s":""} from this setup`:"This setup is already saved");a.textContent="★ Setup saved";a.setAttribute("aria-pressed","true")}
+  else if(d.sumq){S.sumHidden=false;store.set("sumHidden",false);sq.value=d.sumq;go({name:"results",q:d.sumq})}
+  else if(d.sumhide!==undefined){S.sumHidden=true;store.set("sumHidden",true);render()}
+  else if(d.sumshow!==undefined){S.sumHidden=false;store.set("sumHidden",false);render()}
+  else if(d.sumask!==undefined){const n=S.sumNow;if(n)S.sumCtx={label:n.t.label,txt:n.txt};if(!S.started)startConversation();else setChat("open");setCtab("chat");cin.value=n?`About ${n.t.label}: `:"";sendState();setTimeout(()=>{cin.focus();cin.setSelectionRange(cin.value.length,cin.value.length)},60)}
   else if(d.ctab)setCtab(d.ctab);
   else if(d.pickStar){const pk=S.picks.find(x=>x.id===d.pickStar);if(pk){pk.star=!pk.star;savePicks();if(S.ctab==="picks")renderPicksPanel();if(S.view.name==="picks")render()}}
   else if(d.pickRm)unsavePick(d.pickRm);
