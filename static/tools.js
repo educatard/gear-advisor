@@ -1,7 +1,7 @@
 /* Page functions the AI advisor can call, and the cards they render into the chat. */
 /* ---------------- Card renderers ---------------- */
 function miniProduct(p,extra=""){
-  return `<div class="mini"><div class="info"><div>${esc(p.n)}</div><div class="sub">★ ${p.r} · ${stockText(p)}${extra?" · "+extra:""}</div></div><span class="price" style="font-size:14px">${eur(p.p)}</span><button class="btn small" data-detail="${p.id}">View</button><button class="btn small primary" data-add="${p.id}">Add</button></div>`;
+  return `<div class="mini"><div class="info"><div>${esc(p.n)}</div><div class="sub">★ ${p.r} · ${stockText(p)}${extra?" · "+extra:""}</div></div><span class="price" style="font-size:14px">${eur(p.p)}</span><button class="btn small" data-detail="${p.id}">View</button><button class="btn small primary" data-add="${p.id}">Add</button>${typeof saveBtn==="function"?saveBtn(p.id):""}</div>`;
 }
 function stockText(p){return p.st?(p.st<15?p.st+" left":"in stock"):"back in ~"+(p.restock||10)+" days"}
 const card=(title,tags,body)=>`<div class="card"><h5>${esc(title)} ${tags||""}</h5>${body}</div>`;
@@ -13,7 +13,7 @@ function compareTable(l){const rows=compareRows(l);return `<div class="tblwrap">
 let currentCards=null, setStatus=()=>{};
 const push=html=>{if(currentCards){const d=document.createElement("div");d.innerHTML=html;currentCards.append(...d.childNodes);scrollLog()}};
 const shownLog=[];
-const pick=(list,src)=>{if(typeof addPicks==="function")addPicks(list,src)};
+const pick=(list,src)=>{if(typeof recordOffer==="function")recordOffer(list,src)};
 const ids=x=>(Array.isArray(x)?x:String(x||"").split(/[\s,]+/)).map(String).filter(i=>BY[i]);
 function need(id){const p=BY[String(id)];if(!p)throw new Error("Unknown product id "+id+". Use ids from the catalogue list.");return p}
 const TOOLS = [
@@ -34,7 +34,7 @@ const TOOLS = [
   inputSchema:{type:"object",properties:{ids:{type:"array",items:{type:"string"}}},required:["ids"]},
   execute(i){const l=ids(i.ids).slice(0,4).map(id=>BY[id]);if(l.length<2)throw new Error("Need 2-4 valid ids");setStatus("Comparing…");
    const rows=compareRows(l);
-   push(card("Comparison",'<span class="tag">basic</span>',`${compareTable(l)}<div class="prow" style="justify-content:flex-start;margin-top:6px">${l.map(p=>`<button class="btn small" data-add="${p.id}">Add ${esc(p.b)}</button>`).join("")}</div>`));
+   push(card("Comparison",'<span class="tag">basic</span>',`${compareTable(l)}<div class="prow" style="justify-content:flex-start;margin-top:6px">${l.map(p=>`<button class="btn small" data-add="${p.id}">Add ${esc(p.b)}</button>${saveBtn(p.id,esc(p.b))}`).join("")}</div>`));
    shownLog.push("compare("+l.map(p=>p.id).join(",")+")");pick(l.map(p=>({id:p.id,why:"Compared with "+l.filter(x=>x!==p).map(x=>x.n).join(" and ")})),"compared");
    return Object.fromEntries(rows.map(([k,v])=>[k,v]))}},
  {name:"price_check",description:"Cheaper similar items, B-Stock price and bundles that include this product. Shows a card. Use for 'cheaper option', 'is this a good price', budget questions.",
@@ -59,8 +59,8 @@ const TOOLS = [
   inputSchema:{type:"object",properties:{title:{type:"string"},budget:{type:"number"},items:{type:"array",items:{type:"object",properties:{id:{type:"string"},qty:{type:"number"},role:{type:"string"}},required:["id"]}}},required:["items"]},
   execute(i){const it=(i.items||[]).filter(x=>BY[String(x.id)]).map(x=>({p:BY[String(x.id)],q:Math.max(1,+x.qty||1),role:String(x.role||"")}));if(!it.length)throw new Error("No valid items");
    const tot=it.reduce((a,x)=>a+x.p.p*x.q,0);const b=+i.budget||0;
-   const html=it.map(x=>`<div class="mini"><div class="info"><div>${x.q>1?x.q+"× ":""}${esc(x.p.n)}</div><div class="sub">${esc(x.role)} · ${stockText(x.p)}</div></div><span class="price" style="font-size:14px">${eur(x.p.p*x.q)}</span><button class="btn small" data-detail="${x.p.id}">View</button></div>`).join("")+
-    `<div class="total"><span>Total${b?` (budget ${eur(b)})`:""}</span><span style="color:${b&&tot>b?"var(--bad)":"inherit"}">${eur(tot)}</span></div><div class="prow" style="justify-content:flex-start;margin-top:6px"><button class="btn small primary" data-addall='${JSON.stringify(it.map(x=>[x.p.id,x.q]))}'>Add all to basket</button><button class="btn small" data-say="Check that this setup works with my rig: ${esc(it.map(x=>x.p.n).join(", "))}">Check fit</button></div>`;
+   const html=it.map(x=>`<div class="mini"><div class="info"><div>${x.q>1?x.q+"× ":""}${esc(x.p.n)}</div><div class="sub">${esc(x.role)} · ${stockText(x.p)}</div></div><span class="price" style="font-size:14px">${eur(x.p.p*x.q)}</span><button class="btn small" data-detail="${x.p.id}">View</button>${saveBtn(x.p.id)}</div>`).join("")+
+    `<div class="total"><span>Total${b?` (budget ${eur(b)})`:""}</span><span style="color:${b&&tot>b?"var(--bad)":"inherit"}">${eur(tot)}</span></div><div class="prow" style="justify-content:flex-start;margin-top:6px"><button class="btn small primary" data-addall='${JSON.stringify(it.map(x=>[x.p.id,x.q]))}'>Add all to basket</button><button class="btn small" data-save-all='${JSON.stringify(it.map(x=>x.p.id))}'>☆ Save whole setup</button><button class="btn small" data-say="Check that this setup works with my rig: ${esc(it.map(x=>x.p.n).join(", "))}">Check fit</button></div>`;
    push(card(i.title||"Your setup",'<span class="tag edge">rig builder</span>',html));shownLog.push("rig("+it.map(x=>x.p.id).join(",")+")");pick(it.map(x=>({id:x.p.id,why:(x.role?x.role+" in ":"Part of ")+(i.title||"your setup")})),"setup");
    return {total:+tot.toFixed(2),budget:b||null,overBudget:b?tot>b:false}}},
  {name:"stock_and_delivery",description:"Live stock and delivery dates for products to a country (ISO code, default DE). Shows a card.",
