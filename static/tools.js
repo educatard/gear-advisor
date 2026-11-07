@@ -7,14 +7,16 @@ function miniProduct(p,extra=""){
 function stockText(p){if(p.tv)return p.tv.availEn;return p.st?(p.st<15?p.st+" left":"in stock"):"back in ~"+(p.restock||10)+" days"}
 const card=(title,tags,body)=>`<div class="card"><h5>${esc(title)} ${tags||""}</h5>${body}</div>`;
 const sim='<span class="tag sim">simulated</span>';
-function compareRows(l){const keys=[...new Set(l.flatMap(p=>Object.keys(p.specs)))];return [["Price",l.map(p=>eur(p.p))],["B-Stock",l.map(p=>p.bs?eur(p.bs):"–")],["Rating",l.map(p=>p.r?"★ "+p.r:"no data")],["Stock",l.map(stockText)],...keys.map(k=>[k,l.map(p=>p.specs[k]||"–")]),["Return rate",l.map(p=>p.ret?p.ret.rate+"%":"no data")],["Source",l.map(p=>p.tv?"thomann.de, verified "+p.tv.verified:"demo data")]]}
-function compareTable(l){const rows=compareRows(l);return `<div class="tblwrap"><table class="cmp"><thead><tr><th></th>${l.map(p=>`<th>${esc(p.n)}</th>`).join("")}</tr></thead><tbody>${rows.map(([k,v])=>`<tr><th>${esc(k)}</th>${v.map(x=>`<td>${esc(x)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`}
+const USE_SPECS={studio:/input|eingäng|phantom|abtast|sample|bit|gain|noise|rausch|impedan|usb|frequen|charakter|pattern|type/i,live:/watt|leistung|spl|schalldruck|weight|gewicht|battery|batter|robust|charakter|feedback|channels|kanäle/i,home:/headphone|kopfhörer|bluetooth|watt|leistung|speaker|lautsprecher|weight|gewicht|size|abmess/i,producing:/usb|midi|software|version|input|eingäng|pad|key|tasten/i,teaching:/key|tasten|sounds|metronom|speaker|lautsprecher/i,rehearsal:/watt|leistung|speaker|lautsprecher|channels|kanäle/i};
+let CMP_USE="";
+function compareRows(l){let keys=[...new Set(l.flatMap(p=>Object.keys({...p.specs,...(p.tv&&p.vonly?{}:p.tv?.specs||{})})))];const re=USE_SPECS[CMP_USE];if(re)keys=[...keys.filter(k=>re.test(k)),...keys.filter(k=>!re.test(k))];return [["Price",l.map(p=>eur(p.p))],["B-Stock",l.map(p=>p.bs?eur(p.bs):"–")],["Rating",l.map(p=>p.r?"★ "+p.r:"no data")],["Stock",l.map(stockText)],...keys.map(k=>[(re&&re.test(k)?"★ ":"")+k,l.map(p=>p.specs[k]||p.tv?.specs?.[k]||"–")]),["Return rate",l.map(p=>p.ret?p.ret.rate+"%":"no data")],["Source",l.map(p=>p.tv?"thomann.de, verified "+p.tv.verified:"demo data")]]}
+function compareTable(l){const rows=compareRows(l);/* rows already ordered */return `<div class="tblwrap"><table class="cmp"><thead><tr><th></th>${l.map(p=>`<th>${esc(p.n)}</th>`).join("")}</tr></thead><tbody>${rows.map(([k,v])=>`<tr><th>${esc(k)}</th>${v.map(x=>`<td>${esc(x)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`}
 
 /* ---------------- Tools for Claude ---------------- */
 let currentCards=null, setStatus=()=>{};
 const push=html=>{if(currentCards){const d=document.createElement("div");d.innerHTML=html;currentCards.append(...d.childNodes);scrollLog()}};
 const shownLog=[];
-const pick=(list,src)=>{if(typeof recordOffer==="function")recordOffer(list,src)};
+const pick=(list,src)=>{if(typeof recordOffer==="function")recordOffer(list,src);if(typeof track==="function"){const n=list.map(x=>x.id).filter(id=>!sessionRecs.has(id));n.forEach(id=>sessionRecs.add(id));if(n.length)track("product_recommended",{ids:n,src})}};
 const ids=x=>(Array.isArray(x)?x:String(x||"").split(/[\s,]+/)).map(String).filter(i=>BY[i]);
 function need(id){const p=BY[String(id)];if(!p)throw new Error("Unknown product id "+id+". Use ids from the catalogue list.");return p}
 const TOOLS = [
@@ -41,12 +43,12 @@ const TOOLS = [
   inputSchema:{type:"object",properties:{ids:{type:"array",items:{type:"string"}},heading:{type:"string"},notes:{type:"object",description:"optional map id -> short reason (max 8 words)"}},required:["ids"]},
   execute(i){const l=ids(i.ids);if(!l.length)throw new Error("No valid ids");const notes=i.notes||{};
    push(card(i.heading||"Suggestions","",l.map(id=>miniProduct(BY[id],notes[id]?esc(notes[id]):"")).join("")));shownLog.push("products("+l.join(",")+")");pick(l.map(id=>({id,why:notes[id]?String(notes[id]):""})),"suggested");return "shown "+l.length}},
- {name:"compare_products",description:"Show a side-by-side comparison table of 2-4 products and return the spec matrix so you can explain trade-offs.",
-  inputSchema:{type:"object",properties:{ids:{type:"array",items:{type:"string"}}},required:["ids"]},
-  execute(i){const l=ids(i.ids).slice(0,4).map(id=>BY[id]);if(l.length<2)throw new Error("Need 2-4 valid ids");setStatus("Comparing…");
+ {name:"compare_products",description:"Show a side-by-side comparison table of 2-4 products and return the spec matrix so you can explain trade-offs. Pass use_case so the specs that matter for it come first and are highlighted.",
+  inputSchema:{type:"object",properties:{ids:{type:"array",items:{type:"string"}},use_case:{type:"string",enum:["home","live","studio","teaching","producing","rehearsal","other"]}},required:["ids"]},
+  execute(i){const l=ids(i.ids).slice(0,4).map(id=>BY[id]);if(l.length<2)throw new Error("Need 2-4 valid ids");setStatus("Comparing…");CMP_USE=i.use_case||"";if(typeof track==="function")track("product_compared",{ids:l.map(p=>p.id)});
    const rows=compareRows(l);
-   push(card("Comparison",'<span class="tag">basic</span>',`${compareTable(l)}<div class="prow" style="justify-content:flex-start;margin-top:6px">${l.map(p=>`<button class="btn small" data-add="${p.id}">Add ${esc(p.b)}</button>${saveBtn(p.id,esc(p.b))}`).join("")}</div>`));
-   shownLog.push("compare("+l.map(p=>p.id).join(",")+")");pick(l.map(p=>({id:p.id,why:"Compared with "+l.filter(x=>x!==p).map(x=>x.n).join(" and ")})),"compared");
+   push(card("Comparison"+(i.use_case?" for "+(MP_USES[i.use_case]||i.use_case).toLowerCase():""),'<span class="tag">basic</span>'+(i.use_case?' <span class="muted" style="font-weight:400">★ = matters for this use</span>':""),`${compareTable(l)}<div class="prow" style="justify-content:flex-start;margin-top:6px">${l.map(p=>`<button class="btn small" data-add="${p.id}">Add ${esc(p.b)}</button>${saveBtn(p.id,esc(p.b))}`).join("")}</div>`));
+   CMP_USE="";shownLog.push("compare("+l.map(p=>p.id).join(",")+")");pick(l.map(p=>({id:p.id,why:"Compared with "+l.filter(x=>x!==p).map(x=>x.n).join(" and ")})),"compared");
    return Object.fromEntries(rows.map(([k,v])=>[k,v]))}},
  {name:"price_check",description:"Cheaper similar items, B-Stock price and bundles that include this product. Shows a card. Use for 'cheaper option', 'is this a good price', budget questions.",
   inputSchema:{type:"object",properties:{id:{type:"string"}},required:["id"]},
@@ -59,7 +61,7 @@ const TOOLS = [
    return {price:p.p,verifiedPrice:!!p.tv,deal:deal?{type:deal.type,saving:deal.saving,checked:deal.checked}:null,bstock:bst?{id:bst.productId,price:bst.price,condition:bst.condition,warranty:bst.warranty}:(r.bstock?{price:r.bstock,note:"demo price, not a verified offer"}:null),cheaper:r.similar.map(x=>({id:x.id,name:x.n,price:x.p,verified:!!x.tv})),bundles:r.bundles.map(b=>({name:b.name,price:b.price,label:bundleLabel(b)}))}}},
  {name:"check_fit",description:"Check one or more products against the customer's My rig (power, phantom power, gain, impedance, ports, polarity, cable needs). Shows a card. Pass several ids to check items bought together (e.g. a mic plus a booster).",
   inputSchema:{type:"object",properties:{ids:{type:"array",items:{type:"string"}}},required:["ids"]},
-  execute(i){const l=ids(i.ids);if(!l.length)throw new Error("No valid ids");setStatus("Checking against your rig…");const c=fitCheck(l);
+  execute(i){const l=ids(i.ids);if(!l.length)throw new Error("No valid ids");setStatus("Checking against your rig…");const c=fitCheck(l);if(typeof track==="function")track("compatibility_checked",{ids:l});
    const worst=c.some(x=>x.status==="bad")?"bad":c.some(x=>x.status==="warn")?"warn":"ok";
    const label={ok:"Fits",warn:"Fits with notes",bad:"Problem"};
    push(card("Fit check: "+l.map(id=>BY[id].n).join(" + "),'<span class="tag moat">moat</span> <span class="badge '+worst+'">'+label[worst]+'</span>',c.map(x=>`<div class="check"><span class="badge ${x.status}">${x.status.toUpperCase()}</span><span>${esc(x.note)}</span></div>`).join("")+`<div class="muted">Checked against ${rigItems().length} items in My rig.</div>`));

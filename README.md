@@ -5,6 +5,14 @@ The Thomann-style shop prototype with the AI advisor running on **your** Claude 
 - `app.py`: a small Python server. It serves the shop page and forwards each step of the advisor's conversation to Claude (`claude-sonnet-5-5`). The server owns the model, the advisor's instructions and the limits, so the key can only be used as the shop advisor.
 - `static/`: the shop page, built from `../gear-advisor.html` by `../build_site.py`. Don't edit these files directly.
 - `render.yaml`: one-click setup for Render.
+- `catalogue/`: the product data pipeline. `verified_raw.jsonl` holds 103 records read from thomann.de product pages (German store, EUR) on 2026-11-07, at least 6 for each of Thomann's 17 top-level categories; `offers_raw.json` holds Hot Deals, a bargain, a B-Stock item and official bundles from the same day. `python3 catalogue/build_catalogue.py` validates both and writes `static/catalogue.js`; `coverage_report.md` lists the count per category. New or updated records can also be imported in the page (All categories → Catalogue coverage and import); those stay in the visitor's browser.
+
+## What is real and what is demo data
+
+- Verified: product names, brands, article numbers, prices, reference prices (labelled UVP or 30-day best price), availability text, breadcrumbs and listed specs of the catalogue records; the listed offers; the parts and prices of the Scarlett Solo 3rd + NT1-A bundle.
+- Demo: the original 61 demo products' ratings, reviews, return statistics and fit-check model (10 of them are linked to their verified record and show the verified price), orders, specialists and handoffs.
+- Not available: checkout, real purchases, customer accounts, scheduled price monitoring, email or push notifications. Price alerts only react to imported verified prices or to the clearly labelled demo mode. The performance dashboard reports conversion, order value and repeat-purchase metrics as not measurable and labels proxies.
+- Privacy: the Music Profile, My rig, saved products, projects, alerts and anonymous usage events are stored in the visitor's browser only; profile details are sent to Claude only as part of chat messages.
 
 ## Cost and protection
 
