@@ -2,12 +2,12 @@
 /* ---------------- Card renderers ---------------- */
 function miniProduct(p,extra=""){
   const own=typeof ownedNote==="function"?ownedNote(p):"";if(own)extra=(extra?extra+" · ":"")+`<b class="ownnote">${esc(own)}</b>`;
-  return `<div class="mini"><div class="info"><div>${esc(p.n)}</div><div class="sub">★ ${p.r} · ${stockText(p)}${extra?" · "+extra:""}</div></div><span class="price" style="font-size:14px">${eur(p.p)}</span><button class="btn small" data-detail="${p.id}">View</button><button class="btn small primary" data-add="${p.id}">Add</button>${typeof saveBtn==="function"?saveBtn(p.id):""}</div>`;
+  return `<div class="mini"><div class="info"><div>${esc(p.n)}</div><div class="sub">${p.r?"★ "+p.r+" · ":""}${stockText(p)}${p.tv?` · <span class="vtag">verified ${esc(p.tv.verified)}</span>`:" · demo"}${extra?" · "+extra:""}</div></div><span class="price" style="font-size:14px">${eur(p.p)}</span><button class="btn small" data-detail="${p.id}">View</button><button class="btn small primary" data-add="${p.id}">Add</button>${typeof saveBtn==="function"?saveBtn(p.id):""}</div>`;
 }
-function stockText(p){return p.st?(p.st<15?p.st+" left":"in stock"):"back in ~"+(p.restock||10)+" days"}
+function stockText(p){if(p.tv)return p.tv.availEn;return p.st?(p.st<15?p.st+" left":"in stock"):"back in ~"+(p.restock||10)+" days"}
 const card=(title,tags,body)=>`<div class="card"><h5>${esc(title)} ${tags||""}</h5>${body}</div>`;
 const sim='<span class="tag sim">simulated</span>';
-function compareRows(l){const keys=[...new Set(l.flatMap(p=>Object.keys(p.specs)))];return [["Price",l.map(p=>eur(p.p))],["B-Stock",l.map(p=>p.bs?eur(p.bs):"–")],["Rating",l.map(p=>"★ "+p.r)],["Stock",l.map(stockText)],...keys.map(k=>[k,l.map(p=>p.specs[k]||"–")]),["Return rate",l.map(p=>p.ret.rate+"%")]]}
+function compareRows(l){const keys=[...new Set(l.flatMap(p=>Object.keys(p.specs)))];return [["Price",l.map(p=>eur(p.p))],["B-Stock",l.map(p=>p.bs?eur(p.bs):"–")],["Rating",l.map(p=>p.r?"★ "+p.r:"no data")],["Stock",l.map(stockText)],...keys.map(k=>[k,l.map(p=>p.specs[k]||"–")]),["Return rate",l.map(p=>p.ret?p.ret.rate+"%":"no data")],["Source",l.map(p=>p.tv?"thomann.de, verified "+p.tv.verified:"demo data")]]}
 function compareTable(l){const rows=compareRows(l);return `<div class="tblwrap"><table class="cmp"><thead><tr><th></th>${l.map(p=>`<th>${esc(p.n)}</th>`).join("")}</tr></thead><tbody>${rows.map(([k,v])=>`<tr><th>${esc(k)}</th>${v.map(x=>`<td>${esc(x)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`}
 
 /* ---------------- Tools for Claude ---------------- */
@@ -18,15 +18,25 @@ const pick=(list,src)=>{if(typeof recordOffer==="function")recordOffer(list,src)
 const ids=x=>(Array.isArray(x)?x:String(x||"").split(/[\s,]+/)).map(String).filter(i=>BY[i]);
 function need(id){const p=BY[String(id)];if(!p)throw new Error("Unknown product id "+id+". Use ids from the catalogue list.");return p}
 const TOOLS = [
- {name:"search_products",description:"Search the demo catalogue. Returns up to 8 compact matches with id, name, price, rating, stock and tags. Use for sound match (search by tone/artist tags) and to find candidates.",
-  inputSchema:{type:"object",properties:{query:{type:"string",description:"words to match in name, brand or tags"},category:{type:"string",enum:Object.keys(CATS)},max_price:{type:"number"},min_price:{type:"number"}}},
-  execute(i){setStatus("Searching the catalogue…");const q=String(i.query||"").toLowerCase().split(/\s+/).filter(Boolean);
-   let l=P.filter(p=>(!i.category||p.c===i.category)&&(!i.max_price||p.p<=+i.max_price)&&(!i.min_price||p.p>=+i.min_price));
-   l=l.map(p=>{const hay=(p.n+" "+p.b+" "+p.tags.join(" ")).toLowerCase();return {p,s:q.reduce((a,w)=>a+(hay.includes(w)?1:0),0)}}).filter(o=>!q.length||o.s>0).sort((a,b)=>b.s-a.s||b.p.r-a.p.r).slice(0,8);
-   return l.map(({p})=>({id:p.id,name:p.n,category:p.c,price:p.p,rating:p.r,stock:stockText(p),tags:p.tags}))}},
+ {name:"search_products",description:"Search the shop catalogue (verified Thomann records and demo products). Hard constraints are applied as filters, not guesses: max_price/min_price, top_category, in_stock, source, and requires (every term must appear in the product's specs, name or tags, e.g. ['USB-C'] or ['Phantom Power: Ja']). Returns up to 10 matches with id, name, category, price, source and verification date.",
+  inputSchema:{type:"object",properties:{query:{type:"string",description:"words to match in name, brand, subcategory or tags; may be empty when filtering"},top_category:{type:"string",enum:Object.keys(TOPS)},category:{type:"string",enum:Object.keys(CATS),description:"legacy demo product type"},max_price:{type:"number"},min_price:{type:"number"},in_stock:{type:"boolean"},source:{type:"string",enum:["any","verified","demo"]},requires:{type:"array",items:{type:"string"}},sort:{type:"string",enum:["relevance","price_low","price_high"]}}},
+  execute(i){setStatus("Searching the catalogue…");const q=String(i.query||"").toLowerCase().split(/\s+/).filter(w=>w.length>1);
+   const hay=p=>(p.n+" "+p.b+" "+p.tags.join(" ")+" "+(p.sub||"")+" "+(TOPS[p.top]?.en||"")).toLowerCase();
+   const specHay=p=>(p.n+" "+p.tags.join(" ")+" "+Object.entries({...p.specs,...(p.tv?.specs||{})}).map(([k,v])=>k+": "+v).join(" | ")).toLowerCase();
+   let l=P.filter(p=>(!i.category||p.c===i.category)&&(!i.top_category||p.top===i.top_category)&&(!i.max_price||p.p<=+i.max_price)&&(!i.min_price||p.p>=+i.min_price)&&(!i.in_stock||p.st>0)
+     &&(!i.source||i.source==="any"||(i.source==="verified"?!!p.tv:!p.tv))&&(i.requires||[]).every(r=>specHay(p).includes(String(r).toLowerCase())));
+   l=l.map(p=>{const h=hay(p);return {p,s:q.reduce((a,w)=>a+(h.includes(w)?1:0),0)}}).filter(o=>!q.length||o.s>0);
+   l.sort(i.sort==="price_low"?(a,b)=>a.p.p-b.p.p:i.sort==="price_high"?(a,b)=>b.p.p-a.p.p:(a,b)=>b.s-a.s||(b.p.tv?1:0)-(a.p.tv?1:0)||(b.p.r||0)-(a.p.r||0));
+   const res=l.slice(0,10).map(({p})=>({id:p.id,name:p.n,top:TOPS[p.top]?.en,sub:p.sub,price:p.p,source:p.tv?"verified on thomann.de "+p.tv.verified:"demo data",stock:stockText(p),rating:p.r||null,tags:p.tags.slice(0,8)}));
+   return res.length?res:{results:[],note:"No product in the catalogue matches these constraints. Say so; don't invent one. Offer to relax a constraint or ask a specialist."}}},
  {name:"get_product_details",description:"Full specs, B-Stock price, stock and compatibility data for one product id.",
   inputSchema:{type:"object",properties:{id:{type:"string"}},required:["id"]},
-  execute(i){const p=need(i.id);setStatus("Reading "+p.n+"…");return {id:p.id,name:p.n,brand:p.b,price:p.p,bstock:p.bs||null,rating:p.r,reviews:p.rv,stock:stockText(p),specs:p.specs,tags:p.tags,compat:p.cp,returnRatePct:p.ret.rate}}},
+  execute(i){const p=need(i.id);setStatus("Reading "+p.n+"…");
+   const base={id:p.id,name:p.n,brand:p.b,price:p.p,top:TOPS[p.top]?.en,sub:p.sub,stock:stockText(p),specs:p.specs,tags:p.tags};
+   if(p.tv)Object.assign(base,{source:"thomann.de product page",url:p.tv.url,article:p.tv.article,verifiedOn:p.tv.verified,priceReference:p.tv.ref?{basis:p.tv.ref.label,value:p.tv.ref.value}:null,availability:p.tv.availEn,bundleContents:p.tv.bundle?.contents||null,compatibilityFacts:p.tv.compat});
+   if(p.vonly)Object.assign(base,{notVerified:["ratings and reviews","return data","compatibility beyond the listed specs","stock quantity","images"]});
+   else Object.assign(base,{demoData:{rating:p.r,reviews:p.rv,bstock:p.bs||null,returnRatePct:p.ret?.rate,compat:p.cp},demoNote:"rating, reviews, return data and compatibility model are simulated demo data"+(p.tv?"; price, article and availability are verified":"")});
+   return base}},
  {name:"show_products",description:"Display product cards to the customer (with View and Add-to-basket buttons). Use whenever you recommend specific items. Returns 'shown'.",
   inputSchema:{type:"object",properties:{ids:{type:"array",items:{type:"string"}},heading:{type:"string"},notes:{type:"object",description:"optional map id -> short reason (max 8 words)"}},required:["ids"]},
   execute(i){const l=ids(i.ids);if(!l.length)throw new Error("No valid ids");const notes=i.notes||{};
@@ -55,7 +65,7 @@ const TOOLS = [
    shownLog.push("fit("+l.join(",")+")");return c}},
  {name:"return_insights",description:"Thomann's (simulated) return data for a product: return rate vs category, top return reasons with shares, and what helped customers who kept it. Shows a card.",
   inputSchema:{type:"object",properties:{id:{type:"string"}},required:["id"]},
-  execute(i){const p=need(i.id);setStatus("Reading return data…");push(card("Why customers returned the "+p.n,'<span class="tag moat">moat</span> '+sim,returnHtml(p)));shownLog.push("returns("+p.id+")");return {ratePct:p.ret.rate,categoryAvgPct:+catAvg(p.c),reasons:p.ret.reasons,whatHelped:p.ret.tip}}},
+  execute(i){const p=need(i.id);if(!p.ret)throw new Error("No return data exists for "+p.n+" in this prototype. Tell the customer it cannot be verified.");setStatus("Reading return data…");push(card("Why customers returned the "+p.n,'<span class="tag moat">moat</span> '+sim,returnHtml(p)));shownLog.push("returns("+p.id+")");return {ratePct:p.ret.rate,categoryAvgPct:+catAvg(p.c),reasons:p.ret.reasons,whatHelped:p.ret.tip}}},
  {name:"build_rig",description:"Show a complete setup as one card with roles, reasons and the total against the budget. Use for 'build me a setup' requests after you have chosen items via search.",
   inputSchema:{type:"object",properties:{title:{type:"string"},budget:{type:"number"},items:{type:"array",items:{type:"object",properties:{id:{type:"string"},qty:{type:"number"},role:{type:"string"}},required:["id"]}}},required:["items"]},
   execute(i){const it=(i.items||[]).filter(x=>BY[String(x.id)]).map(x=>({p:BY[String(x.id)],q:Math.max(1,+x.qty||1),role:String(x.role||"")}));if(!it.length)throw new Error("No valid items");

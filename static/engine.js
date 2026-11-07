@@ -101,7 +101,7 @@ function fitCheck(prodIds){
     if(cp.kind==="edrums") add("ok","Connects to your computer by USB for recording and lessons apps; headphones plug into the module.");
     if(cp.kind==="usbcable"&&comp) add(comp.cp.ports.includes("USB-C")?"ok":"warn",comp.cp.ports.includes("USB-C")?`USB-C end fits your ${comp.name}.`:`Your ${comp.name} has USB-A ports; this cable has a USB-C end.`,undefined,"computer");
   }
-  if(!checks.some(c=>c.type==="fit"||c.type==="computer")) add("ok","No known conflicts with your rig.");
+  if(!checks.some(c=>c.type==="fit"||c.type==="computer")&&!cands.every(c=>c.vonly)) add("ok","No known conflicts with your rig.");
   for(const c of cands) checks.push(...moreChecks(c));
   return checks;
 }
@@ -130,6 +130,8 @@ function missingFor(c){
   return out;
 }
 function moreChecks(c){
+  if(c.vonly)return [{status:"warn",note:"Compatibility and completeness aren't checked for this product in the prototype: only its listed specs are verified. Ask a specialist if anything is unclear.",type:"fit"},
+    {status:c.tv.inStock?"ok":"warn",note:`${c.tv.availEn} (as listed on thomann.de on ${c.tv.verified}).`,type:"delivery"}];
   const out=[],pr=PROFILE(),cp=c.cp;
   const miss=missingFor(c);
   for(const m of miss)out.push({status:"warn",note:`To start playing you also need ${m.what}.`,fix:m.fix,type:"ready"});
@@ -151,7 +153,7 @@ function moreChecks(c){
 function priceCheck(id){
   const p=BY[id];
   const tagset=new Set(p.tags);
-  const similar=P.filter(x=>x.c===p.c&&x.id!==id&&x.p<p.p&&x.cp.kind===p.cp.kind).map(x=>({x,score:x.tags.filter(t=>tagset.has(t)).length+x.r})).sort((a,b)=>b.score-a.score).slice(0,3).map(o=>o.x);
+  const similar=P.filter(x=>x.c===p.c&&x.id!==id&&x.p<p.p&&x.cp.kind===p.cp.kind).map(x=>({x,score:x.tags.filter(t=>tagset.has(t)).length+(x.r||0)})).sort((a,b)=>b.score-a.score).slice(0,3).map(o=>o.x);
   const bundles=BUNDLES.filter(b=>b.ids.includes(id)).map(b=>{const full=b.ids.reduce((a,i)=>a+BY[i].p,0);return {name:b.name,items:b.ids.map(i=>BY[i].n),full,price:+(full*(1-b.off/100)).toFixed(2)}});
   return {product:p,similar,bstock:p.bs||null,bundles};
 }

@@ -42,6 +42,7 @@ MAX_BODY_CHARS = 400_000
 RULES = """You are Thomann's AI advisor inside the shop's Live chat (a concept prototype of the Thomann music shop). All catalogue, stock, order, return-reason and rig data is demo data supplied by the page's tools.
 
 HOW TO WORK
+- CATALOGUE AND EVIDENCE: recommend only products that exist in the catalogue below or come back from search_products; never invent products, prices or specs. Use search_products filters for hard constraints (max_price, in_stock, top_category, requires such as ['USB-C'] or ['Phantom Power: Ja']). Products marked VERIFIED were read from thomann.de on the date shown: when you recommend one, give its price and that date. DEMO products have simulated ratings, return data and stock. For every recommendation say why it matches this customer, one key feature and one limitation, compatibility with what they own (check_fit works for demo products; for verified-only products only their listed specs count), and one alternative with a real trade-off. If something can't be verified from the data (ratings, compatibility, stock for verified-only items), say so plainly and offer a specialist when it matters.
 - Product facts (prices, specs, stock, return reasons, compatibility) come ONLY from the catalogue below and your tools. Never invent products, prices or specs. If something isn't in the catalogue, say so and offer the closest item.
 - This is a chat widget about 380px wide: keep answers short (2-5 sentences or a short list). When you recommend specific items, show them with show_products (or compare_products / build_rig / price_check, which show their own cards). Don't repeat card contents.
 - NEEDS INTERVIEW: the customer came through Live chat to get advice. If a buying request lacks key facts (instrument, level, style or genre, budget, what they already own), ask before recommending: call offer_choices with ONE question, then end your turn with at most one short sentence. Max 2 rounds. Skip what My rig, the entry context or the message already answers.
@@ -67,6 +68,11 @@ HOW TO WORK
 """
 
 
+def load_verified() -> dict:
+    src = (STATIC / "catalogue.js").read_text(encoding="utf8")
+    return json.loads(src[src.index("{"):src.rindex("}") + 1])
+
+
 def build_catalogue() -> str:
     """Catalogue lines (id | name | category | price | tags) read from the page's data.js."""
     src = (STATIC / "data.js").read_text(encoding="utf8")
@@ -78,13 +84,34 @@ def build_catalogue() -> str:
         lines.append(f"{pid} | {name} | {cat} | EUR {price}{b} | {tag_list}")
     if len(lines) < 40:
         raise RuntimeError(f"Catalogue parse found only {len(lines)} products; check data.js format")
-    return "\n".join(lines)
+    data = load_verified()
+    by_art = {r["article"]: r for r in data["records"]}
+    links = data.get("demoLinks", {})
+    tops = {t["id"]: t["en"] for t in data["taxonomy"]}
+    out = []
+    for ln in lines:
+        pid = ln.split(" | ")[0]
+        if pid in links and links[pid] in by_art:
+            r = by_art[links[pid]]
+            parts = ln.split(" | ")
+            parts[3] = f"EUR {r['price']}"
+            ln = " | ".join(parts[:4]) + f" | VERIFIED {r['verified']} | " + " | ".join(parts[4:])
+        else:
+            parts = ln.split(" | ")
+            ln = " | ".join(parts[:4]) + " | DEMO | " + " | ".join(parts[4:])
+        out.append(ln)
+    linked = set(links.values())
+    for r in data["records"]:
+        if r["article"] in linked:
+            continue
+        out.append(f"{r['id']} | {r['name']} | {tops[r['top']]} > {r['subEn']} | EUR {r['price']} | VERIFIED {r['verified']} | {r['brand'].lower()}, {r['subEn'].lower()}")
+    return "\n".join(out)
 
 
 SUMMARY_RULES = "You write the short AI summary shown above search results in Thomann's online shop (a concept prototype; all data is demo data). Use ONLY the facts given: never invent products, prices, specs or review content. Write for the customer described in the facts, in plain words a non-expert understands, and never assume they are a beginner unless the facts say so. Hard limit: 70 words. No preamble, no headings, no closing question. Use exactly the shape asked for, in light Markdown (bold labels, '- ' bullets). Prices in EUR."
 MAX_FACTS_CHARS = 12_000
 
-SYSTEM_PROMPT = RULES + "\nCATALOGUE (id | name | category | price | tags)\n" + build_catalogue()
+SYSTEM_PROMPT = RULES + "\nCATALOGUE (id | name | category | price | source | tags)\n" + build_catalogue()
 
 client = anthropic.AsyncAnthropic(max_retries=2) if not MOCK else None
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
