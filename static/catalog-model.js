@@ -101,12 +101,12 @@ function importCatalogue(text) {
     const ex = P.find(p => p.tv && p.tv.article === rec.article);
     if (ex) {
       if (rec.verified < ex.tv.verified) { out.errors.push(`Row ${i + 1}: older than the stored record (${ex.tv.verified}); skipped`); return; }
-      const old = ex.p;
+      const old = ex.p, oldVerified = ex.tv.verified;
       ex.tv = Object.assign({}, ex.tv, {price: rec.price, priceText: rec.priceText, verified: rec.verified, avail: rec.avail, availEn: rec.availEn, inStock: rec.inStock, ref: rec.ref || ex.tv.ref});
       ex.p = rec.price; ex.st = rec.inStock ? Math.max(ex.st || 0, 50) : 0;
       const k = imported.findIndex(x => x.article === rec.article); if (k >= 0) imported[k] = Object.assign(imported[k], rec);
       else imported.push(Object.assign({}, rec, {updateOnly: true}));
-      out.updated.push({id: ex.id, name: ex.n, old, new: rec.price, verified: rec.verified});
+      out.updated.push({id: ex.id, name: ex.n, old, oldVerified, new: rec.price, verified: rec.verified});
       return;
     }
     imported.push(rec); const p = productFromRecord(rec, "imported"); P.push(p); BY[p.id] = p; out.added++;

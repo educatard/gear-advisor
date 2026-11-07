@@ -20,8 +20,8 @@ Verified on thomann.de (German store, EUR) on 2026-11-07. A category is complete
 | Sheet Music | 6 | complete |
 | Cases, Racks and Bags | 6 | complete |
 | Cables and Connectors | 6 | complete |
-| Accessories and Headphones | 6 | complete |
+| Accessories and Headphones | 7 | complete |
 
-**Total: 102 verified records.**
+**Total: 103 verified records.**
 
 Not stored for any record (not verified): ratings, review counts, return data, stock counts, product images. Bundles are only marked when the page lists the contents. Price references keep Thomann's label (UVP = manufacturer's list price; 30-Tage-Bestpreis = lowest price in the last 30 days).

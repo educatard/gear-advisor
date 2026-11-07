@@ -1,0 +1,27 @@
+{
+ "checked": "2026-11-07",
+ "sources": {"hotdeals": "https://www.thomann.de/de/hotdeals.html", "blowouts": "https://www.thomann.de/de/blowouts.html"},
+ "hotDeals": [
+  {"article": "352195", "listed": "375 €", "ref": null},
+  {"article": "174334", "listed": "139 €", "ref": "30-Tage-Bestpreis: 149 €"},
+  {"article": "511732", "listed": "888 €", "ref": "30-Tage-Bestpreis: 999 €"},
+  {"article": "457271", "listed": "398 €", "ref": "UVP: 671 €"},
+  {"article": "464015", "listed": "444 €", "ref": "30-Tage-Bestpreis: 498 €"}
+ ],
+ "bargains": [
+  {"article": "381027", "listed": "59 €", "ref": "30-Tage-Bestpreis: 70 €", "section": "Top bewertet"}
+ ],
+ "bstock": [
+  {"article": "284361", "name": "Shure SE215 Pro CL B-Stock", "brand": "Shure", "price": "98 €", "avail": "Sofort lieferbar",
+   "condition": "B-Stock mit voller Garantie Versandrückläufer, ggf. mit leichten Gebrauchsspuren", "warranty": "B-Stock mit voller Garantie; 3 Jahre Thomann Garantie",
+   "url": "shure_se215_cl_b_stock_2.htm", "newArticle": "262382"}
+ ],
+ "bundles": [
+  {"article": "652654", "name": "Focusrite Scarlett Solo 3rd NT1 A Bundle", "brand": "Focusrite", "price": "249 €", "ref": "UVP: 398,99 €", "avail": "Sofort lieferbar",
+   "url": "focusrite_scarlett_solo_3rd_nt1_a_bundle.htm", "top": "studio", "parts": ["235937", "468428", "133136"],
+   "contents": "Rode NT1-A Complete Vocal Recording (NT1-A microphone, SM6 shock mount with pop filter, 6 m XLR cable, dust bag); Focusrite Scarlett Solo 3rd Gen with USB cable and software; Millenium MS 2003 boom stand"},
+  {"article": "235937", "name": "Rode NT1-A Complete Vocal Recording", "price": "149 €", "parts": null,
+   "contents": "Rode NT1-A microphone, SM6 shock mount with pop filter, 6 m XLR cable, dust bag",
+   "note": "The NT1-A microphone isn't listed on its own on thomann.de (search on 2026-11-07), so savings against separate parts can't be verified."}
+ ]
+}

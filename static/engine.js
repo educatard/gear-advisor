@@ -154,7 +154,7 @@ function priceCheck(id){
   const p=BY[id];
   const tagset=new Set(p.tags);
   const similar=P.filter(x=>x.c===p.c&&x.id!==id&&x.p<p.p&&x.cp.kind===p.cp.kind).map(x=>({x,score:x.tags.filter(t=>tagset.has(t)).length+(x.r||0)})).sort((a,b)=>b.score-a.score).slice(0,3).map(o=>o.x);
-  const bundles=BUNDLES.filter(b=>b.ids.includes(id)).map(b=>{const full=b.ids.reduce((a,i)=>a+BY[i].p,0);return {name:b.name,items:b.ids.map(i=>BY[i].n),full,price:+(full*(1-b.off/100)).toFixed(2)}});
+  const bundles=(typeof offersFor==="function"?offersFor(id):[]).filter(o=>o.type==="bundle");
   return {product:p,similar,bstock:p.bs||null,bundles};
 }
 function delivery(p,country){
