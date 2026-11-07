@@ -1,6 +1,7 @@
 /* Page functions the AI advisor can call, and the cards they render into the chat. */
 /* ---------------- Card renderers ---------------- */
 function miniProduct(p,extra=""){
+  const own=typeof ownedNote==="function"?ownedNote(p):"";if(own)extra=(extra?extra+" · ":"")+`<b class="ownnote">${esc(own)}</b>`;
   return `<div class="mini"><div class="info"><div>${esc(p.n)}</div><div class="sub">★ ${p.r} · ${stockText(p)}${extra?" · "+extra:""}</div></div><span class="price" style="font-size:14px">${eur(p.p)}</span><button class="btn small" data-detail="${p.id}">View</button><button class="btn small primary" data-add="${p.id}">Add</button>${typeof saveBtn==="function"?saveBtn(p.id):""}</div>`;
 }
 function stockText(p){return p.st?(p.st<15?p.st+" left":"in stock"):"back in ~"+(p.restock||10)+" days"}

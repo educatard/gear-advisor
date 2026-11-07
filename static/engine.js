@@ -111,7 +111,7 @@ function missingFor(c){
   const hasKind=k=>o.some(x=>x.cp.kind===k),hasId=id=>o.some(x=>x.id===id),pr=PROFILE(),out=[],k=c.cp.kind;
   if(c.cp.bundle)return out;
   if(k==="electric guitar"){
-    if(!hasKind("amp")&&!o.some(x=>x.cp.headphoneOut))out.push({what:"an amp",fix:pr.level==="beginner"||pr.forWhom==="child"?"a3":"a1"});
+    if(!hasKind("amp")&&!o.some(x=>x.cp.headphoneOut))out.push({what:"an amp",fix:(typeof levelFor==="function"?levelFor("guitar"):pr.level)==="beginner"||pr.forWhom==="child"?"a3":"a1"});
     if(!hasId("c2"))out.push({what:"an instrument cable",fix:"c2"});
     if(!hasKind("electric guitar")&&!hasKind("acoustic guitar")&&!hasKind("picks"))out.push({what:"picks",fix:"x2"});
   }

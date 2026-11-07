@@ -371,6 +371,42 @@ table.cmp th{font-weight:600;color:var(--muted)}
 .feat p{margin:0;font-size:13px;color:var(--muted)}
 .switch{display:flex;align-items:center;gap:10px;font-weight:600}
 .switch input{width:20px;height:20px;accent-color:var(--purple)}
+/* Music Profile */
+.mppage{padding-bottom:90px}
+.privacy{background:var(--soft);border-radius:10px;padding:10px 14px;font-size:13.5px;margin:16px 0 4px;line-height:1.6}
+.privacy button{text-decoration:underline;color:var(--purple);font-weight:600}
+.focusrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:14px 0 0;font-size:14px}
+.mph{font-size:21px;font-weight:800;margin:26px 0 10px;display:flex;gap:8px;align-items:baseline}
+.mph .muted{font-size:14px;font-weight:400}
+.mpgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:14px}
+.inscard{border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.inscard.focus{border-color:var(--purple);box-shadow:0 0 0 1px var(--purple)}
+.inscard.addins{border-style:dashed;justify-content:center}
+.inscard h3{margin:0;font-size:18px}
+.inshead{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.inshead h3{margin-right:auto}
+.inscard .chip,.mpgeneral .chip{font-size:12.5px;padding:3px 10px}
+.inscard details summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--purple)}
+.inscard details[open]{display:flex;flex-direction:column;gap:8px}
+.mpf{display:flex;flex-direction:column;gap:3px;font-size:12.5px;font-weight:700}
+.mpf input,.mpf textarea,.gearform input,.gearform select,.inscard select{border:1px solid var(--ink);border-radius:6px;padding:6px 8px;font:inherit;font-weight:400;font-size:14px;background:var(--bg);color:var(--ink);min-width:0}
+.gfgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.gearform{background:var(--soft);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:8px;font-size:13.5px}
+.gearform .row2,.inscard .row2{display:flex;gap:8px}
+.gearform .row2 input,.gearform .row2 select,.inscard .row2 select{flex:1}
+.mpgear{display:flex;flex-direction:column;gap:6px}
+.gearmini{display:flex;gap:8px;align-items:center;background:var(--soft);border-radius:8px;padding:7px 10px}
+.gearmini .info{flex:1;min-width:0}
+.gearmini .info div:first-child{font-weight:600;font-size:14px}
+.gearmini .sub{font-size:12px;color:var(--muted)}
+.mpgeneral{display:flex;flex-direction:column;gap:8px}
+.chip.static{cursor:default}
+.focusbar{display:flex;gap:8px;align-items:center;padding:6px 12px;border-bottom:1px solid var(--line);font-size:13px;background:var(--bg)}
+.focusbar select{flex:1;min-width:0;border:1px solid var(--line);border-radius:6px;padding:3px 6px;font:inherit;background:var(--bg);color:var(--ink)}
+#conv.onpicks .focusbar{display:none}
+.lbl.own{background:#fff4d6;color:#7a5200}
+.ownnote{color:#7a5200;font-weight:700}
+.propcard ul{margin:4px 0;padding-left:18px}
 /* Saved products */
 .savebtn[aria-pressed="true"]{border-color:#e3a008;color:#9a6700;background:#fff8e1}
 .savebig{border:1.5px solid var(--ink);border-radius:24px;padding:0 16px;font-weight:700;font-size:15px;background:var(--bg);white-space:nowrap}
@@ -460,7 +496,7 @@ table.cmp th{font-weight:600;color:var(--muted)}
   <div class="searchbox"><form id="sform" role="search"><input id="sq" type="search" placeholder="What are you looking for?" autocomplete="off" aria-label="Search"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></form><div class="ac" id="ac" hidden></div></div>
   <div class="icons">
     <div style="position:relative"><button class="iconbtn" id="accBtn" aria-label="My account"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3.5"/><path d="M6 19c1.5-2.5 3.5-3.5 6-3.5s4.5 1 6 3.5"/></svg></button>
-      <div class="dd" id="accDD" hidden style="right:-10px"><div class="muted" style="padding:6px 16px 4px">Signed in as Demo customer</div><button data-open="about">About you</button><button data-open="rig">My rig</button><button data-open="picks">Saved products<span id="accPickN"></span></button><button data-open="orders">Orders</button><button data-open="basket">Basket</button></div></div>
+      <div class="dd" id="accDD" hidden style="right:-10px"><div class="muted" style="padding:6px 16px 4px">Signed in as Demo customer</div><button data-open="profile">My Music Profile</button><button data-open="rig">My rig</button><button data-open="picks">Saved products<span id="accPickN"></span></button><button data-open="orders">Orders</button><button data-open="basket">Basket</button></div></div>
     <button class="iconbtn" aria-label="Saved products" data-open="picks"><svg class="i" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><span class="badge-n" id="savedN" hidden>0</span></button>
     <button class="iconbtn" aria-label="Basket" data-open="basket"><svg class="i" viewBox="0 0 24 24"><path d="M3 4h2l2.4 11h11l2-8H6.2"/><circle cx="9" cy="19.5" r="1.3"/><circle cx="17" cy="19.5" r="1.3"/></svg><span class="badge-n" id="bcount">0</span></button>
   </div>
@@ -488,6 +524,7 @@ table.cmp th{font-weight:600;color:var(--muted)}
     </div>
     <button class="specbar" id="specBtn"><svg class="i" style="width:16px;height:16px" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>Talk to a person <span id="specsub"></span></button>
     <div class="ctabs" id="ctabs" role="group" aria-label="Chat or saved products"><button data-ctab="chat" aria-pressed="true">Chat</button><button data-ctab="picks" aria-pressed="false">Saved <span class="pn" id="pickn" hidden>0</span></button></div>
+    <div class="focusbar" id="focusbar" hidden><label for="focusSel">Talking about</label><select id="focusSel"></select></div>
     <div class="clog" id="clog" aria-live="polite"></div>
     <div class="clog" id="picksPanel" hidden></div>
     <form class="cfoot" id="cform">
@@ -515,7 +552,7 @@ table.cmp th{font-weight:600;color:var(--muted)}
 const store={get(k,d){try{const v=localStorage.getItem("ga3_"+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem("ga3_"+k,JSON.stringify(v))}catch(e){}}};
 const S={
   rig:store.get("rig",JSON.parse(JSON.stringify(DEFAULT_RIG))), basket:store.get("basket",[]), tier:store.get("tier","quick"), online:store.get("online",true),
-  profile:store.get("profile",JSON.parse(JSON.stringify(DEFAULT_PROFILE))), present:store.get("present",false), editing:null, sumHidden:store.get("sumHidden",false), sumNow:null, sumCtx:null,
+  profile:{}, music:null, gearFormFor:null, present:store.get("present",false), editing:null, sumHidden:store.get("sumHidden",false), sumNow:null, sumCtx:null,
   view:{name:"results",q:"",cats:[],min:"",max:"",stock:false,sort:"rel",sit:""}, viewing:null,
   contact:{enquiry:null,category:null,need:null,method:null,product:null}, chatCtx:null, turns:[], busy:false, ctl:null,
   chat:"closed", mode:"ai", expert:null, started:false, apiMode:false,
@@ -584,6 +621,7 @@ function render(){
   else if(v.name==="contact") el.innerHTML=contactView();
   else if(v.name==="rig") el.innerHTML=rigView();
   else if(v.name==="picks") el.innerHTML=picksView();
+  else if(v.name==="profile") el.innerHTML=profileView();
   else el.innerHTML=resultsView();
   if(v.name==="results"){bindFilters();kickSummary()}
   if(v.name==="rig") bindRig();
@@ -616,7 +654,8 @@ function rowLabels(p){
     if(!miss.length)out.push(`<span class="lbl ok">Complete – ready to play</span>`);
     else out.push(`<span class="lbl warn">Needs extra parts: ${esc(miss.map(m=>m.what.replace(/^an? /,"").replace(/ \(.*\)$/,"").replace(/ with .*$/,"").replace(/ to chain.*$/,"")).join(" + "))}</span>`);
   }
-  if(rigItems().length&&!fit.some(c=>c.status!=="ok"))out.push(`<span class="lbl fit">Fits your gear</span>`);
+  const own=ownedNote(p);if(own)out.unshift(`<span class="lbl own">${esc(own)}</span>`);
+  if(rigItems().length&&!own&&!fit.some(c=>c.status!=="ok"))out.push(`<span class="lbl fit">Fits your gear</span>`);
   return out.length?`<div class="lbls">${out.join("")}</div>`:"";
 }
 /* ---------------- AI summary above search results ---------------- */
@@ -649,7 +688,7 @@ function sumTarget(v){
   if(v.cats.length===1&&!v.sit)return {kind:"category",id:v.cats[0],label:CATS[v.cats[0]]};
   return null;
 }
-const sumSig=()=>{const s=JSON.stringify([S.profile,S.rig.map(r=>r.id||r.name)]);let x=0;for(const c of s)x=(x*31+c.charCodeAt(0))|0;return (x>>>0).toString(36)};
+const sumSig=()=>{const s=JSON.stringify([S.music,S.rig.map(r=>r.id||r.name)]);let x=0;for(const c of s)x=(x*31+c.charCodeAt(0))|0;return (x>>>0).toString(36)};
 const sumKey=t=>t.kind+":"+t.id+":"+sumSig();
 const sumCache=store.get("sums",{}),sumInflight=new Set();
 function cacheSum(k,txt){sumCache[k]=txt;const ks=Object.keys(sumCache);if(ks.length>40)delete sumCache[ks[0]];store.set("sums",sumCache)}
@@ -668,13 +707,13 @@ function localProductSummary(p){
   return `- **Who it's for:** ${who[0].toUpperCase()+who.slice(1)}.\n- **Strength:** ★ ${p.r} from ${p.rv.toLocaleString("en")} reviews${spec?`; ${spec[0].toLowerCase()}: ${spec[1]}`:""}.\n- **Watch out:** ${r0?`${r0[1]}% of returns were “${r0[0].toLowerCase()}”. ${tip}`:"few returns."}\n- **With your gear:** ${bad?bad.note:fc.length?"fits what you own.":"add your gear in My rig to check."}`;
 }
 function sumFacts(t){
-  const prof=Object.entries(PROFILE_FIELDS).map(([k,f])=>{const v=S.profile[k];return v&&(!Array.isArray(v)||v.length)?`${f.label}: ${f.multi?v.map(x=>f.opts[x]).join(", "):f.opts[v]}`:null}).filter(Boolean).join("; ")||"not filled in";
+  const prof=musicText().replace(/\n/g," ");
   const rig=rigItems().map(r=>r.name).join(", ")||"nothing listed";
   const line=p=>`${p.n} | €${p.p}${p.bs?` (B-Stock €${p.bs})`:""} | ★${p.r} (${p.rv} reviews) | ${p.st?"in stock":"out of stock"} | ${p.tags.join(", ")} | specs: ${Object.entries(p.specs).map(([k,v])=>k+" "+v).join(", ")} | return rate ${p.ret.rate}%`;
   if(t.kind==="category"){const l=P.filter(p=>p.c===t.id);
-    return `CATEGORY SUMMARY for "${CATS[t.id]}". Shape: one sentence on what this category is and how the ${l.length} products differ (price range, types); then two '- ' bullets of buying advice that matter for this customer; then one line starting **For you:** that names 1-2 specific products from the list that suit their profile and gear, with a reason.\nCustomer — About you: ${prof}. Owns: ${rig}.\nGeneral notes: ${(CAT_INFO[t.id]?.tips||[]).join(" ").replace(/\*\*/g,"")}\nProducts:\n${l.map(line).join("\n")}`}
+    return `CATEGORY SUMMARY for "${CATS[t.id]}". Shape: one sentence on what this category is and how the ${l.length} products differ (price range, types); then two '- ' bullets of buying advice that matter for this customer; then one line starting **For you:** that names 1-2 specific products from the list that suit their profile and gear, with a reason.\nCustomer — ${prof}. Owns: ${rig}.\nGeneral notes: ${(CAT_INFO[t.id]?.tips||[]).join(" ").replace(/\*\*/g,"")}\nProducts:\n${l.map(line).join("\n")}`}
   const p=BY[t.id],fc=fitCheck([p.id]);
-  return `PRODUCT SUMMARY for "${p.n}". Shape: exactly four '- ' bullets with these bold labels: **Who it's for:**, **Strength:**, **Watch out:** (the top return reason and what helped), **With your gear:** (from the fit check below; say plainly if something extra is needed).\nCustomer — About you: ${prof}. Owns: ${rig}.\nProduct: ${line(p)}\nReturn reasons: ${p.ret.reasons.map(([w,n])=>w+" "+n+"%").join(", ")}. What helped: ${p.ret.tip}\nFit check with their gear: ${fc.map(x=>x.status+": "+x.note).join(" / ")||"no gear listed"}`;
+  return `PRODUCT SUMMARY for "${p.n}". Shape: exactly four '- ' bullets with these bold labels: **Who it's for:**, **Strength:**, **Watch out:** (the top return reason and what helped), **With your gear:** (from the fit check below; say plainly if something extra is needed).\nCustomer — ${prof}. Owns: ${rig}.\nProduct: ${line(p)}\nReturn reasons: ${p.ret.reasons.map(([w,n])=>w+" "+n+"%").join(", ")}. What helped: ${p.ret.tip}\nFit check with their gear: ${fc.map(x=>x.status+": "+x.note).join(" / ")||"no gear listed"}`;
 }
 async function aiSummaryText(t){
   const facts=sumFacts(t);
@@ -754,7 +793,7 @@ function fitLinesHtml(fit){
   return FIT_GROUPS.map(([t,label])=>{const g=fit.filter(x=>x.type===t);if(!g.length)return "";
     return `<div class="fitgroup">${label}</div>`+g.map(x=>`<div class="fitline"><span class="badge ${x.status}">${x.status.toUpperCase()}</span><span style="flex:1">${esc(x.note)}${fixBtn(x)?"<br>"+fixBtn(x):""}</span></div>`).join("")}).join("");
 }
-/* "What this means for you": spec values turned into plain sentences, using About you */
+/* "What this means for you": spec values turned into plain sentences, using the Music Profile */
 function plainWords(p){
   const pr=S.profile,cp=p.cp,L=[],flat=pr.place==="flat";
   const sp=p.specs,watts=parseFloat(String(sp.Power||"").replace(",","."));
@@ -946,10 +985,189 @@ function rigSuggestions(){
   }
   return out;
 }
-function profileHtml(){
-  const pr=S.profile;
-  return `<section class="box about" id="about"><h4>About you <span class="muted" style="font-weight:400;font-size:13px">Used for the situation filters, product labels, fit checks and the advisor's answers. Everything is optional.</span></h4>
-   <div class="pgrid">${Object.entries(PROFILE_FIELDS).map(([k,f])=>`<div><div class="pfl">${esc(f.label)}${f.multi?' <span class="muted" style="font-weight:400">(pick any)</span>':""}</div><div class="chips">${Object.entries(f.opts).map(([v,t])=>`<button class="chip" data-prof="${k}" data-v="${v}" aria-pressed="${f.multi?!!pr[k]?.includes(v):pr[k]===v}">${esc(t)}</button>`).join("")}</div>${k==="forWhom"&&pr.forWhom==="child"?`<input id="childAge" inputmode="numeric" placeholder="Child's age" value="${esc(pr.childAge||"")}" aria-label="Child's age">`:""}</div>`).join("")}</div></section>`;
+/* ---------------- My Music Profile ---------------- */
+const clone=o=>JSON.parse(JSON.stringify(o));
+const newInsId=()=>"ins-"+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+const EMPTY_MUSIC=()=>({v:1,active:null,general:{genres:[],artists:[],place:"",listen:"",computer:"",forWhom:"me",childAge:"",interests:[],notes:""},instruments:[]});
+function migrateMusic(){
+  const m=store.get("music",null);
+  if(m&&m.v===1&&Array.isArray(m.instruments)){m.general=Object.assign(EMPTY_MUSIC().general,m.general||{});return m}
+  const old=store.get("profile",null);if(!old)return clone(DEFAULT_MUSIC);
+  // carry the old single-instrument "About you" over
+  const kinds=(old.instruments||[]).map(k=>({guitar:"guitar",bass:"bass",keys:"piano",drums:"drums",vocals:"vocals",production:"production"})[k]).filter(Boolean);
+  const uses={flat:["home"],house:["home"],rehearsal:["rehearsal"],stage:["live"]}[old.place]||[];
+  return {v:1,active:null,general:Object.assign(EMPTY_MUSIC().general,{genres:(old.styles||[]).filter(g=>g in MP_GENRES),place:old.place||"",listen:old.listen||"",computer:old.computer||"",forWhom:old.forWhom||"me",childAge:old.childAge||""}),
+    instruments:kinds.map((k,i)=>({id:i?newInsId():"ins-"+k,kind:k,label:"",level:old.level||"",uses:[...uses],genres:[],artists:[],budget:"",goals:"",notes:""}))};
+}
+const insName=i=>i.label||MP_KINDS[i.kind]||"Instrument";
+/* level for a given instrument kind (the advisor focus wins when it is that kind) */
+function levelFor(kind){const m=S.music,a=activeIns();if(a&&a.kind===kind&&a.level)return a.level;return m.instruments.find(i=>i.kind===kind&&i.level)?.level||S.profile.level||""}
+const activeIns=()=>S.music.instruments.find(i=>i.id===S.music.active)||null;
+function autoLinkGear(){
+  let changed=false;
+  for(const r of S.rig){if(Array.isArray(r.inst))continue;
+    const kind=r.custom?r.cp?.kind:BY[r.id]?.cp?.kind;
+    const ins=S.music.instruments.find(i=>(MP_GEAR_FOR[i.kind]||[]).includes(kind));
+    r.inst=ins?[ins.id]:[];changed=true}
+  if(changed)store.set("rig",S.rig);
+}
+function syncLegacy(){
+  // the fit-check engine, labels and contact form read this flat view
+  const m=S.music,act=activeIns()||m.instruments[0];
+  S.profile={level:act?.level||"",instruments:[...new Set(m.instruments.map(i=>MP_LEGACY[i.kind]).filter(Boolean))],styles:m.general.genres.filter(g=>g in PROFILE_FIELDS.styles.opts),
+    place:m.general.place,listen:m.general.listen,computer:m.general.computer,forWhom:m.general.forWhom||"me",childAge:m.general.childAge};
+}
+function saveMusic(){store.set("music",S.music);syncLegacy();updateFocusBar()}
+const gearOf=id=>rigItems().filter(x=>x.inst?.includes(id));
+const labList=(map,arr)=>(arr||[]).map(x=>map[x]||x).join(", ");
+function musicText(){
+  const m=S.music,g=m.general,act=activeIns();
+  const ins=m.instruments.map(i=>`- ${insName(i)}${act?.id===i.id?" [ADVISOR FOCUS]":""}: level ${MP_LEVELS[i.level]||"not given"}; uses ${labList(MP_USES,i.uses)||"not given"}${i.genres.length?"; genres "+labList(MP_GENRES,i.genres):""}${i.artists.length?"; artists "+i.artists.join(", "):""}${i.budget?"; budget €"+i.budget:""}${i.goals?"; goal: "+i.goals:""}${i.notes?"; notes: "+i.notes:""}; gear: ${gearOf(i.id).map(x=>x.name).join(", ")||"none listed"}`);
+  const shared=rigItems().filter(x=>!x.inst?.length).map(x=>x.name);
+  return `Music Profile (optional, entered by the customer, stored on their device):
+Instruments: ${ins.length?"\n"+ins.join("\n"):"none given"}
+Shared gear not tied to one instrument: ${shared.join(", ")||"none"}
+General: genres ${labList(MP_GENRES,g.genres)||"not given"}; favourite artists ${g.artists.join(", ")||"not given"}; plays in ${PROFILE_FIELDS.place.opts[g.place]||"not given"}; listens on ${PROFILE_FIELDS.listen.opts[g.listen]||"not given"}; computer ${PROFILE_FIELDS.computer.opts[g.computer]||"not given"}; buying for ${g.forWhom==="child"?"their child"+(g.childAge?" aged "+g.childAge:""):"themselves"}; shopping interests ${labList(MP_INTERESTS,g.interests)||"not given"}${g.notes?"; notes: "+g.notes:""}
+Advisor focus: ${act?insName(act):m.instruments.length>1?"none chosen (plays several instruments)":"not set"}`;
+}
+/* owned-gear notes so the shop never pushes duplicates */
+const DUP_KINDS={headphones:"headphones",interface:"an audio interface",amp:"an amp",monitors:"studio monitors",edrums:"an e-drum kit",keys:"a keyboard",psu:"a pedal power supply"};
+function ownedNote(p){
+  if(!p)return "";
+  if(S.rig.some(r=>r.id===p.id))return "You own this";
+  const k=p.cp?.kind;if(!DUP_KINDS[k])return "";
+  const same=rigItems().find(x=>x.cp?.kind===k||(x.custom&&x.cat===p.c));
+  return same?`You already have ${DUP_KINDS[k]}: ${same.name}`:"";
+}
+function mpChips(scope,field,map,cur,multi){
+  return `<div class="chips">${Object.entries(map).map(([v,txt])=>`<button class="chip" data-mp-chip="${scope}|${field}|${v}" aria-pressed="${multi?!!cur?.includes(v):cur===v}">${esc(txt)}</button>`).join("")}</div>`;
+}
+function insCardHtml(i){
+  const gear=S.rig.map((r,idx)=>({r,idx})).filter(x=>x.r.inst?.includes(i.id));
+  const other=S.rig.map((r,idx)=>({r,idx})).filter(x=>!x.r.inst?.includes(i.id));
+  const nm=x=>x.r.custom?x.r.name:BY[x.r.id]?.n;
+  const specLine=x=>x.r.custom?[CUSTOM_KINDS[Object.keys(CUSTOM_KINDS).find(k=>CUSTOM_KINDS[k][1]===x.r.cat)]?.[0],x.r.specs].filter(Boolean).join(" · "):[CATS[BY[x.r.id].c],...Object.entries(BY[x.r.id].specs).slice(0,2).map(([k,v])=>k+": "+v)].join(" · ");
+  const form=S.gearFormFor===i.id?`<div class="gearform">
+     <b>Add equipment for ${esc(insName(i))}</b>
+     <div class="row2"><input id="gf-cat" list="gf-list" placeholder="Search the catalogue, e.g. Katana" aria-label="Search the catalogue"><datalist id="gf-list">${P.map(p=>`<option value="${esc(p.n)}">`).join("")}</datalist><button class="btn primary" data-mp-act="addcat:${i.id}">Add</button></div>
+     <div class="muted">Not in the catalogue? Describe it:</div>
+     <div class="gfgrid"><input id="gf-brand" placeholder="Brand, e.g. Gibson" aria-label="Brand"><input id="gf-model" placeholder="Model, e.g. SG Standard" aria-label="Model">
+      <select id="gf-kind" aria-label="Category">${Object.entries(CUSTOM_KINDS).map(([k,v])=>`<option value="${k}">${v[0]}</option>`).join("")}</select>
+      <input id="gf-specs" placeholder="Key specs, e.g. humbuckers, 24 frets" aria-label="Key specifications"></div>
+     <div class="prow"><button class="btn" data-mp-act="addcustom:${i.id}">Add described gear</button><button class="btn" data-mp-act="gearform:">Cancel</button></div>
+     ${other.length?`<div class="row2"><select id="gf-link" aria-label="Link gear you already listed"><option value="">Or link gear already in My rig…</option>${other.map(x=>`<option value="${x.idx}">${esc(nm(x))}</option>`).join("")}</select><button class="btn" data-mp-act="link:${i.id}">Link</button></div>`:""}
+    </div>`:"";
+  return `<article class="inscard${S.music.active===i.id?" focus":""}" aria-label="${esc(insName(i))}">
+   <div class="inshead"><h3>${esc(insName(i))}</h3>${S.music.active===i.id?'<span class="tag edge">advisor focus</span>':""}
+    <button class="btn small" data-mp-act="focus:${S.music.active===i.id?"":i.id}">${S.music.active===i.id?"Clear focus":"Set as advisor focus"}</button>
+    <button class="btn small" data-mp-act="rmins:${i.id}" aria-label="Remove ${esc(insName(i))}">Remove</button></div>
+   <label class="mpf">Name (optional)<input data-mp-in="${i.id}|label" value="${esc(i.label)}" placeholder="${esc(MP_KINDS[i.kind])}"></label>
+   <div class="pfl">Level</div>${mpChips(i.id,"level",MP_LEVELS,i.level,false)}
+   <div class="pfl">What you use it for <span class="muted">(pick any)</span></div>${mpChips(i.id,"uses",MP_USES,i.uses,true)}
+   <details${i.genres.length||i.artists.length||i.budget||i.goals||i.notes?" open":""}><summary>Genres, artists, budget and goals for this instrument</summary>
+    <div class="pfl">Genres <span class="muted">(only if different from your general genres)</span></div>${mpChips(i.id,"genres",MP_GENRES,i.genres,true)}
+    <div class="gfgrid"><label class="mpf">Favourite artists<input data-mp-in="${i.id}|artists" value="${esc(i.artists.join(", "))}" placeholder="e.g. John Mayer, Tash Sultana"></label>
+     <label class="mpf">Budget for this instrument (€)<input data-mp-in="${i.id}|budget" inputmode="numeric" value="${esc(i.budget)}" placeholder="optional"></label></div>
+    <label class="mpf">Upgrade goal<input data-mp-in="${i.id}|goals" value="${esc(i.goals)}" placeholder="e.g. play gigs, record demos at home"></label>
+    <label class="mpf">Anything else<textarea data-mp-in="${i.id}|notes" rows="2" placeholder="Needs that don't fit the options above">${esc(i.notes)}</textarea></label>
+   </details>
+   <div class="pfl">Equipment <span class="muted">${gear.length} item${gear.length===1?"":"s"}</span></div>
+   ${gear.length?`<div class="mpgear">${gear.map(x=>`<div class="gearmini"><div class="info"><div>${esc(nm(x))}</div><div class="sub">${esc(specLine(x))}</div></div><button class="btn small" data-mp-act="editgear:${x.idx}">Edit</button><button class="btn small" data-mp-act="unlink:${i.id}:${x.idx}" aria-label="Remove ${esc(nm(x))} from ${esc(insName(i))}">Unlink</button></div>`).join("")}</div>`:`<div class="muted" style="font-size:13px">No equipment yet.</div>`}
+   ${form||`<button class="btn" data-mp-act="gearform:${i.id}">+ Add equipment</button>`}
+  </article>`;
+}
+function profileView(){
+  autoLinkGear();
+  const m=S.music,g=m.general,F=PROFILE_FIELDS,shared=S.rig.map((r,idx)=>({r,idx})).filter(x=>!x.r.inst?.length);
+  return `<div class="wrap mppage">
+  <div class="crumbs"><span>⌂</span><span>My account</span><span class="last">My Music Profile</span></div>
+  <div class="righead"><div><h1 class="page" style="margin:0">My Music Profile</h1>
+   <p class="muted" style="margin:4px 0 0">Everything here is optional. Add as much or as little as you like; the AI advisor uses it to tailor advice, and you can change or delete it any time.</p></div>
+   <button class="cta purple" style="padding:11px 22px" data-ask="Look at my Music Profile. What would help me most right now?">Ask the advisor</button></div>
+  <div class="privacy"><b>Stored on this device only</b> (your browser's local storage). It isn't sent anywhere, except as part of your messages when you chat with the AI advisor. <button data-mp-act="delprofile">Delete my profile</button> · <button data-mp-act="delall">Delete all my data on this device</button> · <button data-mp-act="demo">Load the demo profile</button></div>
+  ${m.instruments.length>1?`<div class="focusrow"><b>Advisor focus:</b>${[{id:"",n:"All instruments"},...m.instruments.map(i=>({id:i.id,n:insName(i)}))].map(o=>`<button class="chip" data-mp-act="focus:${o.id}" aria-pressed="${(m.active||"")===o.id}">${esc(o.n)}</button>`).join("")}<span class="muted">The advisor assumes questions are about this instrument unless you say otherwise.</span></div>`:""}
+  <h2 class="mph">Instruments <span class="muted">${m.instruments.length}</span></h2>
+  ${m.instruments.length?"":`<p class="muted">No instruments yet. You can still use the shop and the advisor normally; adding one helps the advisor tailor its advice.</p>`}
+  <div class="mpgrid">${m.instruments.map(insCardHtml).join("")}
+   <div class="inscard addins"><h3>Add an instrument</h3><div class="row2"><select id="newKind" aria-label="Instrument">${Object.entries(MP_KINDS).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select><button class="btn primary" data-mp-act="addins">Add instrument</button></div>
+    <div class="muted" style="font-size:13px">Play several? Add each one with its own level, uses and gear.</div></div>
+  </div>
+  <h2 class="mph">General preferences</h2>
+  <section class="box mpgeneral">
+   <div class="pfl">Genres you play or love <span class="muted">(pick any)</span></div>${mpChips("general","genres",MP_GENRES,g.genres,true)}
+   <label class="mpf">Favourite artists<input data-mp-in="general|artists" value="${esc(g.artists.join(", "))}" placeholder="e.g. John Mayer, Nils Frahm"></label>
+   <div class="pgrid">
+    <div><div class="pfl">${F.place.label}</div>${mpChips("general","place",F.place.opts,g.place,false)}</div>
+    <div><div class="pfl">${F.listen.label}</div>${mpChips("general","listen",F.listen.opts,g.listen,false)}</div>
+    <div><div class="pfl">${F.computer.label}</div>${mpChips("general","computer",F.computer.opts,g.computer,false)}</div>
+    <div><div class="pfl">${F.forWhom.label}</div>${mpChips("general","forWhom",F.forWhom.opts,g.forWhom,false)}${g.forWhom==="child"?`<input data-mp-in="general|childAge" inputmode="numeric" placeholder="Child's age" value="${esc(g.childAge)}" aria-label="Child's age" style="width:120px;margin-top:6px">`:""}</div>
+   </div>
+   <div class="pfl">Shopping interests <span class="muted">(pick any)</span></div>${mpChips("general","interests",MP_INTERESTS,g.interests,true)}
+   <label class="mpf">Anything else the advisor should know<textarea data-mp-in="general|notes" rows="2" placeholder="e.g. small hands, saving for a gig in March, budget for a home studio project">${esc(g.notes)}</textarea></label>
+  </section>
+  <h2 class="mph">Shared gear <span class="muted">used across instruments</span></h2>
+  <div class="mpgear">${shared.map(x=>`<div class="gearmini"><div class="info"><div>${esc(x.r.custom?x.r.name:BY[x.r.id]?.n)}</div><div class="sub">${esc(x.r.custom?(x.r.specs||"described by you"):CATS[BY[x.r.id].c])}</div></div><button class="btn small" data-mp-act="editgear:${x.idx}">Edit</button></div>`).join("")||`<div class="muted">None. Audio interfaces, headphones and computers usually live here.</div>`}</div>
+  <p class="muted" style="margin-top:8px">All your gear, with dates and warranty, is in <button class="linkish" data-open="rig" style="text-decoration:underline">My rig</button>.</p>
+  </div>`;
+}
+function profileSummaryHtml(){
+  const m=S.music;
+  return `<section class="box about" id="about"><h4>My Music Profile <button class="btn small" data-open="profile" style="margin-left:8px">Edit profile</button></h4>
+   ${m.instruments.length?`<div class="chips">${m.instruments.map(i=>`<span class="chip static">${esc(insName(i))}${i.level?" · "+MP_LEVELS[i.level]:""}${i.uses.length?" · "+esc(labList(MP_USES,i.uses)):""}</span>`).join("")}</div>`:`<p class="muted" style="margin:6px 0 0">No instruments yet. <button class="linkish" data-open="profile" style="text-decoration:underline">Add one</button> so the advisor can tailor its advice.</p>`}</section>`;
+}
+function setField(scope,field,val){
+  const tgt=scope==="general"?S.music.general:S.music.instruments.find(i=>i.id===scope);if(!tgt)return;
+  if(["artists"].includes(field))tgt[field]=String(val).split(",").map(s=>s.trim()).filter(Boolean).slice(0,12);
+  else if(field==="budget")tgt[field]=String(val).replace(/[^\d]/g,"").slice(0,6);
+  else if(field==="childAge")tgt[field]=String(val).replace(/\D/g,"").slice(0,2);
+  else tgt[field]=String(val).slice(0,400);
+  saveMusic();
+}
+function mpChip(scope,field,v){
+  const tgt=scope==="general"?S.music.general:S.music.instruments.find(i=>i.id===scope);if(!tgt)return;
+  if(Array.isArray(tgt[field])){const s=new Set(tgt[field]);s.has(v)?s.delete(v):s.add(v);tgt[field]=[...s]}
+  else tgt[field]=tgt[field]===v&&field!=="forWhom"?"":v;
+  saveMusic();render();
+}
+function addCustomGear(insId,{brand,model,kind,specs}){
+  const [,cat,ck]=CUSTOM_KINDS[kind]||CUSTOM_KINDS.other;const name=[brand,model].filter(Boolean).join(" ").trim();if(!name)return false;
+  S.rig.push({custom:true,name,brand:brand||"",model:model||"",specs:specs||"",cat,cp:ck==="computer"?{kind:ck,ports:["USB-C"]}:ck==="electric guitar"?{kind:ck}:{kind:"custom-"+ck},since:TODAY.toISOString().slice(0,7),bought:"elsewhere",inst:insId?[insId]:[]});
+  store.set("rig",S.rig);return true;
+}
+document.addEventListener("change",e=>{
+  const el=e.target.closest("[data-mp-in]");if(!el)return;
+  const [scope,field]=el.dataset.mpIn.split("|");setField(scope,field,el.value);toast("Saved to your Music Profile");
+});
+document.addEventListener("click",e=>{
+  const c=e.target.closest("[data-mp-chip]");if(c){const [s,f,v]=c.dataset.mpChip.split("|");mpChip(s,f,v);return}
+  const b=e.target.closest("[data-mp-act]");if(!b)return;
+  const [act,x,y]=b.dataset.mpAct.split(":");const m=S.music;
+  if(act==="addins"){const k=$("#newKind").value;const same=m.instruments.filter(i=>i.kind===k).length;
+    m.instruments.push({id:newInsId(),kind:k,label:same?MP_KINDS[k]+" "+(same+1):"",level:"",uses:[],genres:[],artists:[],budget:"",goals:"",notes:""});saveMusic();render();toast("Added "+MP_KINDS[k]+". Everything else is optional.")}
+  else if(act==="rmins"){const i=m.instruments.find(z=>z.id===x);if(!i||!confirm(`Remove ${insName(i)} from your profile? Its gear stays in My rig.`))return;
+    m.instruments=m.instruments.filter(z=>z.id!==x);if(m.active===x)m.active=null;S.rig.forEach(r=>{if(r.inst)r.inst=r.inst.filter(z=>z!==x)});store.set("rig",S.rig);saveMusic();render();toast("Removed "+insName(i))}
+  else if(act==="focus"){m.active=x||null;saveMusic();render();if(S.started)sysLine("Advisor focus: "+(activeIns()?insName(activeIns()):"all instruments"))}
+  else if(act==="gearform"){S.gearFormFor=x||null;render();setTimeout(()=>$("#gf-cat")?.focus(),30)}
+  else if(act==="addcat"){const v=$("#gf-cat").value.trim().toLowerCase();const p=P.find(z=>z.n.toLowerCase()===v)||(v.length>2&&P.find(z=>z.n.toLowerCase().includes(v)));
+    if(!p){toast("Not found in the catalogue. Describe it below instead.");return}
+    const ex=S.rig.find(r=>r.id===p.id);if(ex){ex.inst=[...new Set([...(ex.inst||[]),x])]}else S.rig.push({id:p.id,since:TODAY.toISOString().slice(0,7),bought:"elsewhere",inst:[x]});
+    store.set("rig",S.rig);S.gearFormFor=null;saveMusic();render();toast("Added "+p.n)}
+  else if(act==="addcustom"){if(!addCustomGear(x,{brand:$("#gf-brand").value.trim(),model:$("#gf-model").value.trim(),kind:$("#gf-kind").value,specs:$("#gf-specs").value.trim()})){toast("Type a brand or model first");return}
+    S.gearFormFor=null;saveMusic();render();toast("Equipment added. Set dates and warranty in My rig.")}
+  else if(act==="link"){const idx=$("#gf-link").value;if(idx===""){toast("Pick an item first");return}const r=S.rig[+idx];r.inst=[...new Set([...(r.inst||[]),x])];store.set("rig",S.rig);S.gearFormFor=null;saveMusic();render()}
+  else if(act==="unlink"){const r=S.rig[+y];if(r){r.inst=(r.inst||[]).filter(z=>z!==x);store.set("rig",S.rig);saveMusic();render();toast("Unlinked. It's still in My rig.")}}
+  else if(act==="editgear"){go({name:"rig"});S.editing=+x;render();setTimeout(()=>$(".editform")?.scrollIntoView({block:"center"}),30)}
+  else if(act==="delprofile"){if(!confirm("Delete your Music Profile (instruments and preferences)? Your gear in My rig is kept."))return;S.music=EMPTY_MUSIC();S.rig.forEach(r=>{r.inst=[]});store.set("rig",S.rig);saveMusic();render();toast("Music Profile deleted")}
+  else if(act==="delall"){if(!confirm("Delete everything this prototype stored on this device: Music Profile, My rig, basket, saved products and summaries?"))return;
+    try{Object.keys(localStorage).filter(k=>k.startsWith("ga3_")).forEach(k=>localStorage.removeItem(k))}catch(err){}
+    S.music=EMPTY_MUSIC();S.rig=[];S.basket=[];S.picks=[];bcount();savePicks();store.set("rig",[]);saveMusic();render();toast("All data on this device deleted")}
+  else if(act==="demo"){S.music=clone(DEFAULT_MUSIC);S.rig.forEach(r=>{delete r.inst});autoLinkGear();saveMusic();render();toast("Demo profile loaded")}
+});
+/* chat: which instrument the advisor should assume */
+function updateFocusBar(){
+  const bar=$("#focusbar");if(!bar||!S.music)return;const m=S.music;
+  bar.hidden=m.instruments.length<2;
+  $("#focusSel").innerHTML=`<option value="">All instruments (ask me)</option>${m.instruments.map(i=>`<option value="${i.id}"${m.active===i.id?" selected":""}>${esc(insName(i))}</option>`).join("")}`;
 }
 function gearCardHtml(r,i){
   const x=rigItems().find(y=>y.key===(r.custom?r.name:r.id));if(!x)return "";
@@ -970,7 +1188,7 @@ function gearCardHtml(r,i){
   }
   const warAsk=w&&left>0?`My ${x.name} has a fault. It's covered by ${w.src} until ${isoDay(w.end)}. Can you help?`:"";
   return `<div class="gear">${sil(silCat)}
-   <div style="min-width:0"><h4>${esc(x.name)}</h4><div class="meta">${esc(type)} · ${esc(ownedFor(r.since))}${!x.custom?` · now ${eur(x.p)}`:""}${r.note?` · ${esc(r.note)}`:""}</div>
+   <div style="min-width:0"><h4>${esc(x.name)}</h4><div class="meta">${esc(type)}${r.specs?" · "+esc(r.specs):""}${r.inst?.length?" · for "+esc(r.inst.map(id=>S.music.instruments.find(i=>i.id===id)).filter(Boolean).map(insName).join(", ")):""} · ${esc(ownedFor(r.since))}${!x.custom?` · now ${eur(x.p)}`:""}${r.note?` · ${esc(r.note)}`:""}</div>
     <div class="wtags">${warrantyTags(r)}</div>
     <div class="acts">${!x.custom?`<button class="btn" data-detail="${x.id}">View</button>`:""}<button class="btn" data-edit="${i}">Edit</button>${warAsk?`<button class="btn" data-ask="${esc(warAsk)}">Use warranty</button>`:""}<button class="btn" data-prefill="My ${esc(x.name)} has a problem: ">Having a problem?</button><button class="btn" data-ask="Is there a worthwhile upgrade for my ${esc(x.name)}?">Upgrade?</button><button class="btn" data-rig-rm="${i}" aria-label="Remove ${esc(x.name)}">Remove</button></div></div></div>`;
 }
@@ -987,7 +1205,7 @@ function rigView(){
   <div class="crumbs"><span>⌂</span><span>My account</span><span class="last">My rig</span></div>
   <div class="righead"><div><h1 class="page" style="margin:0">My rig</h1><p class="muted" style="margin:4px 0 0">Signed in as Demo customer · the AI advisor checks new gear against this list <span class="tag moat">moat</span> <span class="tag sim">demo data</span></p></div>
    <button class="cta purple" style="padding:11px 22px" data-ask="Look at my whole rig. What should I upgrade first, and why?">Ask the advisor about my rig</button></div>
-  ${profileHtml()}
+  ${profileSummaryHtml()}
   <div class="stats">
    <div class="stat"><b>${items.length}</b><span>items you own · ${underWar} under warranty</span></div>
    <div class="stat"><b>${eur(Math.round(value))}</b><span>value at today's shop prices</span></div>
@@ -1014,16 +1232,8 @@ function rigView(){
    </aside>
   </div></div>`;
 }
-function saveProfile(){store.set("profile",S.profile)}
 function bindRig(){
   const after=()=>{store.set("rig",S.rig);render()};
-  document.querySelectorAll("[data-prof]").forEach(b=>b.onclick=()=>{
-    const k=b.dataset.prof,v=b.dataset.v,f=PROFILE_FIELDS[k];
-    if(f.multi){const cur=new Set(S.profile[k]||[]);cur.has(v)?cur.delete(v):cur.add(v);S.profile[k]=[...cur]}
-    else S.profile[k]=S.profile[k]===v&&k!=="forWhom"?"":v;
-    saveProfile();render();
-  });
-  const age=$("#childAge");if(age)age.onchange=()=>{S.profile.childAge=age.value.replace(/\D/g,"").slice(0,2);saveProfile()};
   document.querySelectorAll("[data-rig-rm]").forEach(b=>b.onclick=()=>{const [gone]=S.rig.splice(+b.dataset.rigRm,1);S.editing=null;after();toast("Removed "+(gone.custom?gone.name:BY[gone.id].n)+" from My rig")});
   document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>{S.editing=+b.dataset.edit;render()});
   document.querySelectorAll("[data-ef-cancel]").forEach(b=>b.onclick=()=>{S.editing=null;render()});
@@ -1043,7 +1253,7 @@ function bindRig(){
     const [,cat,kind]=CUSTOM_KINDS[$("#rigKind").value];
     S.rig.push({custom:true,name:n,cat,cp:kind==="computer"?{kind,ports:["USB-C"]}:kind==="electric guitar"?{kind}:{kind:"custom-"+kind},since:TODAY.toISOString().slice(0,7),bought:"elsewhere"});
     S.editing=S.rig.length-1;after();toast("Added "+n+". Set when you bought it and its warranty.")};
-  $("#rigReset2").onclick=()=>{S.rig=JSON.parse(JSON.stringify(DEFAULT_RIG));S.profile=JSON.parse(JSON.stringify(DEFAULT_PROFILE));saveProfile();S.editing=null;after();toast("Demo rig and About you restored")};
+  $("#rigReset2").onclick=()=>{S.rig=JSON.parse(JSON.stringify(DEFAULT_RIG));S.music=clone(DEFAULT_MUSIC);autoLinkGear();saveMusic();S.editing=null;after();toast("Demo rig and Music Profile restored")};
 }
 /* ---------------- Saved products: only what the customer saves ---------------- */
 const PICK_SRC={suggested:"Suggested by the advisor",compared:"Compared by the advisor",cheaper:"Cheaper option from the advisor",setup:"Part of an advisor setup",you:"Saved by you"};
@@ -1164,7 +1374,7 @@ function contactSummary(c){
   L.push(`Enquiry: ${c.enquiry}${c.category&&c.category!=="skipped"?" · "+c.category:""}`);
   if(c.product)L.push(`About: ${BY[c.product].n}`);
   if(c.need&&c.need!=="skipped")L.push(`Needs help with: ${c.need}`);
-  L.push(`Customer: ${[F.level.opts[pr.level],pr.instruments?.length?"plays "+pr.instruments.map(i=>F.instruments.opts[i]).join(", "):"",F.place.opts[pr.place]?"plays in a "+F.place.opts[pr.place].toLowerCase():""].filter(Boolean).join(" · ")||"not given"}`);
+  L.push(`Customer: ${[S.music.instruments.map(i=>insName(i)+(i.level?" ("+MP_LEVELS[i.level].toLowerCase()+")":"")).join(", "),F.place.opts[pr.place]?"plays in a "+F.place.opts[pr.place].toLowerCase():""].filter(Boolean).join(" · ")||"not given"}`);
   L.push(`Owns: ${rigItems().filter(x=>!["strings","cable"].includes(x.cp?.kind)).map(x=>x.name).join(", ")||"nothing listed"}`);
   L.push(`Question: `);
   L.push(`Contact by: ${METHOD_NAME[c.method]}`);
@@ -1251,9 +1461,10 @@ const FEATURES=[
  {stage:"Beyond site",kind:"edge",n:"ChatGPT app",d:"Same advisor and account inside an AI platform. Shown here as the expanded chat on its own.",action:"platform"},
  {stage:"Open question",kind:"open",n:"Refill purchasing",d:"Advise only: suggests string refills; the customer adds them.",try:"My strings feel dead. What should I do?"},
  {stage:"Trust",kind:"edge",n:"Admits what it doesn't know",d:"Says “I'm not sure” and offers a specialist instead of guessing.",try:"Will my 1972 Fender Twin Reverb work with the Strymon BigSky?"},
- {stage:"Discover",kind:"edge",n:"Starter buttons",d:"The chat opens with “I want to buy an instrument”, “Upgrade my rig”, “Something isn't working” and “Order question”. It never assumes you're a beginner: it uses About you or asks your level.",try:"I want to buy an instrument."},
+ {stage:"Discover",kind:"edge",n:"Starter buttons",d:"The chat opens with “I want to buy an instrument”, “Upgrade my rig”, “Something isn't working” and “Order question”. It never assumes you're a beginner: it uses your Music Profile or asks your level.",try:"I want to buy an instrument."},
  {stage:"Decide",kind:"edge",n:"Saved products",d:"Nothing is saved automatically. Tap ☆ Save on the advisor's cards (or ♡ on product pages and search results) to keep a product with the advisor's reason. See them in the chat's Saved tab or on their own page (♡ in the header): grouped by question, with star, compare, fit check and basket. The advisor saves only when you ask it to.",try:"Build me a home recording setup for guitar under €500."},
  {stage:"Discover",kind:"edge",n:"AI summary in search",d:"Search a category (“guitar”, “audio interface”) or one product (“SM58”), or click a category: a short AI summary appears above the results, personalised with About you and My rig. An instant summary from the catalogue shows first; the AI version (Haiku) replaces it and is remembered.",action:"summary"},
+ {stage:"Own",kind:"moat",n:"Music Profile",d:"Account menu → My Music Profile: several instruments, each with its own level, uses, genres, budget, goal and gear, plus general preferences. Optional and stored on this device. The advisor uses it, asks which instrument when unclear, avoids gear you own, and only saves changes after you confirm.",try:"I play piano at an advanced level and I just started guitar. What should I get next?"},
  {stage:"Own",kind:"moat",n:"Warranty in My rig",d:"Warranty and return days left for Thomann purchases; your own dates for gear bought elsewhere.",try:"Which of my gear is still under warranty?"},
 ];
 function openGuide(){
@@ -1264,30 +1475,76 @@ function openGuide(){
    <div class="switch">Advisor speed <select id="tier" class="search"><option value="quick"${S.tier==="quick"?" selected":""}>Fast</option><option value="default"${S.tier!=="quick"?" selected":""}>Thorough (slower)</option></select></div>
    ${FEATURES.map(f=>`<div class="feat"><div class="h"><span class="n">${f.stage}</span>${esc(f.n)} ${lab[f.kind]}</div><p>${esc(f.d)}</p>
     ${f.try?`<div><button class="btn" data-ask="${esc(f.try)}">Try: “${esc(f.try)}”</button></div>`:f.action==="data"?`<div><button class="btn" data-detail="m2" data-close>Open a product page</button></div>`:f.action==="summary"?`<div class="prow"><button class="btn" data-cat="guitars" data-close>Try: Guitars</button><button class="btn" data-sumq="SM58" data-close>Try: “SM58”</button></div>`:`<div><button class="btn" data-platform>Open the advisor full screen</button></div>`}</div>`).join("")}
-   <button class="btn" id="resetAll">Reset demo (rig, basket, saved, chat)</button>`,(b)=>{
+   <button class="btn" id="resetAll">Reset demo (profile, rig, basket, saved, chat)</button>`,(b)=>{
     $("#onl").onchange=e=>{S.online=e.target.checked;store.set("online",S.online);updateOnline();if(S.view.name==="contact")render()};
     $("#tier").onchange=e=>{S.tier=e.target.value;store.set("tier",S.tier)};
     $("#pres").onchange=e=>{S.present=e.target.checked;store.set("present",S.present);if(S.view.name==="product")render()};
-    $("#resetAll").onclick=()=>{S.rig=JSON.parse(JSON.stringify(DEFAULT_RIG));S.profile=JSON.parse(JSON.stringify(DEFAULT_PROFILE));S.basket=[];S.picks=[];S.offered={};S.pickSel=[];S.pickCmp=null;savePicks();store.set("rig",S.rig);store.set("profile",S.profile);store.set("basket",[]);bcount();resetChat();closeDrawer();render();toast("Demo reset")};
+    $("#resetAll").onclick=()=>{S.rig=JSON.parse(JSON.stringify(DEFAULT_RIG));S.music=clone(DEFAULT_MUSIC);autoLinkGear();saveMusic();S.basket=[];S.picks=[];S.offered={};S.pickSel=[];S.pickCmp=null;savePicks();store.set("rig",S.rig);store.set("basket",[]);bcount();resetChat();closeDrawer();render();toast("Demo reset")};
   },null,true);
 }
 
 /* ---------------- Chat widget ---------------- */
-TOOLS.push({name:"update_profile",description:"Save what the customer tells you about themselves to their About you profile: level, instruments, styles, where they play, headphones or speakers, computer, who it's for (and the child's age). Call it as soon as they mention any of these; pass only the fields you learned. Shows a small 'Saved to About you' note.",
- inputSchema:{type:"object",properties:Object.assign(Object.fromEntries(Object.entries(PROFILE_FIELDS).map(([k,f])=>[k,f.multi?{type:"array",items:{type:"string",enum:Object.keys(f.opts)}}:{type:"string",enum:Object.keys(f.opts)}])),{childAge:{type:"string"}})},
+const arrEnum=map=>({type:"array",items:{type:"string",enum:Object.keys(map)}});
+TOOLS.push({name:"update_profile",description:"Propose a change to the customer's Music Profile when they tell you something worth saving (an instrument, its level, what they use it for, genres, artists, budget, goal, or general preferences). This only shows a confirmation card: nothing is saved unless the customer taps Save. Pass only what they told you. One instrument per call.",
+ inputSchema:{type:"object",properties:{
+  instrument:{type:"object",description:"The instrument this is about. Matches the customer's instrument of that kind, or proposes adding it.",properties:{kind:{type:"string",enum:Object.keys(MP_KINDS)},level:{type:"string",enum:Object.keys(MP_LEVELS)},uses:arrEnum(MP_USES),genres:arrEnum(MP_GENRES),artists:{type:"array",items:{type:"string"}},budget:{type:"number"},goals:{type:"string"}},required:["kind"]},
+  general:{type:"object",properties:{genres:arrEnum(MP_GENRES),artists:{type:"array",items:{type:"string"}},place:{type:"string",enum:Object.keys(PROFILE_FIELDS.place.opts)},listen:{type:"string",enum:Object.keys(PROFILE_FIELDS.listen.opts)},computer:{type:"string",enum:Object.keys(PROFILE_FIELDS.computer.opts)},forWhom:{type:"string",enum:["me","child"]},childAge:{type:"string"},interests:arrEnum(MP_INTERESTS)}},
+  reason:{type:"string"}}},
  execute(i){
-  const changed=[];
-  for(const [k,f] of Object.entries(PROFILE_FIELDS)){
-    if(i[k]===undefined||i[k]===null)continue;
-    const v=f.multi?(Array.isArray(i[k])?i[k]:[i[k]]).map(String).filter(x=>x in f.opts):String(i[k]);
-    if(f.multi?!v.length:!(v in f.opts))continue;
-    S.profile[k]=v;changed.push(f.label+": "+(f.multi?v.map(x=>f.opts[x]).join(", "):f.opts[v]));
-  }
-  if(i.childAge){S.profile.childAge=String(i.childAge).replace(/\D/g,"").slice(0,2);changed.push("Child's age: "+S.profile.childAge)}
-  if(!changed.length)throw new Error("Nothing valid to save");
-  store.set("profile",S.profile);
-  push(`<div class="savednote">✓ Saved to About you: ${esc(changed.join(" · "))} · <button data-open="about">change</button></div>`);
-  return {saved:changed};
+  const ch=[],P2={ins:null,gen:{}};
+  const ins=i.instrument&&MP_KINDS[i.instrument.kind]?i.instrument:null;
+  if(ins){const x={kind:ins.kind};
+    if(MP_LEVELS[ins.level]){x.level=ins.level;ch.push("Level: "+MP_LEVELS[ins.level])}
+    for(const [f,map] of [["uses",MP_USES],["genres",MP_GENRES]]){const v=(ins[f]||[]).filter(z=>z in map);if(v.length){x[f]=v;ch.push((f==="uses"?"Uses: ":"Genres: ")+labList(map,v))}}
+    if(ins.artists?.length){x.artists=ins.artists.map(String).slice(0,8);ch.push("Artists: "+x.artists.join(", "))}
+    if(+ins.budget>0){x.budget=String(Math.round(+ins.budget));ch.push("Budget: €"+x.budget)}
+    if(ins.goals){x.goals=String(ins.goals).slice(0,200);ch.push("Goal: "+x.goals)}
+    P2.ins=x}
+  const g=i.general||{};
+  for(const [f,map] of [["genres",MP_GENRES],["interests",MP_INTERESTS]]){const v=(g[f]||[]).filter(z=>z in map);if(v.length){P2.gen[f]=v;ch.push((f==="genres"?"Genres: ":"Interests: ")+labList(map,v))}}
+  for(const f of ["place","listen","computer","forWhom"]){const map=PROFILE_FIELDS[f].opts;if(g[f]&&map[g[f]]){P2.gen[f]=g[f];ch.push(PROFILE_FIELDS[f].label+": "+map[g[f]])}}
+  if(g.artists?.length){P2.gen.artists=g.artists.map(String).slice(0,8);ch.push("Favourite artists: "+P2.gen.artists.join(", "))}
+  if(g.childAge){P2.gen.childAge=String(g.childAge).replace(/\D/g,"").slice(0,2);ch.push("Child's age: "+P2.gen.childAge)}
+  if(!ch.length&&!P2.ins)throw new Error("Nothing valid to propose");
+  const existing=P2.ins&&(S.music.instruments.find(z=>z.id===S.music.active&&z.kind===P2.ins.kind)||S.music.instruments.find(z=>z.kind===P2.ins.kind));
+  const head=P2.ins?(existing?`Update ${insName(existing)}`:`Add ${MP_KINDS[P2.ins.kind]} to your instruments`):"Update your general preferences";
+  const pid="pp"+Date.now();window.__props=window.__props||{};window.__props[pid]={type:"profile",data:P2};
+  push(`<div class="card propcard" data-prop="${pid}"><h5>Save this to your Music Profile? <span class="tag">you decide</span></h5><div><b>${esc(head)}</b>${ch.length?`<ul>${ch.map(c=>`<li>${esc(c)}</li>`).join("")}</ul>`:""}</div><div class="prow"><button class="btn small primary" data-prop-yes="${pid}">Save</button><button class="btn small" data-prop-no="${pid}">Not now</button></div></div>`);
+  return {status:"Confirmation card shown. Nothing is saved unless the customer taps Save.",proposed:[head,...ch]};
+ }});
+function applyProposal(pr){
+  if(pr.type==="profile"){const {ins,gen}=pr.data,m=S.music;
+    if(ins){let t=m.instruments.find(z=>z.id===m.active&&z.kind===ins.kind)||m.instruments.find(z=>z.kind===ins.kind);
+      if(!t){t={id:newInsId(),kind:ins.kind,label:"",level:"",uses:[],genres:[],artists:[],budget:"",goals:"",notes:""};m.instruments.push(t)}
+      for(const [k,v] of Object.entries(ins)){if(k==="kind")continue;t[k]=Array.isArray(v)?[...new Set([...(t[k]||[]),...v])]:v}}
+    for(const [k,v] of Object.entries(gen))m.general[k]=Array.isArray(v)?[...new Set([...(m.general[k]||[]),...v])]:v;
+    autoLinkGear();saveMusic();return "Saved to your Music Profile";}
+  if(pr.type==="rig-add"){const {id,name,kind,insKind}=pr.data,ins=insKind&&S.music.instruments.find(z=>z.kind===insKind);
+    if(id){if(!S.rig.some(r=>r.id===id))S.rig.push({id,since:TODAY.toISOString().slice(0,7),bought:"elsewhere",...(ins?{inst:[ins.id]}:{})})}
+    else addCustomGear(ins?.id||"",{brand:"",model:name,kind:kind||"other",specs:""});
+    store.set("rig",S.rig);autoLinkGear();saveMusic();return "Added to My rig";}
+  if(pr.type==="rig-rm"){S.rig.splice(pr.data.idx,1);store.set("rig",S.rig);saveMusic();return "Removed from My rig";}
+}
+document.addEventListener("click",e=>{
+  const y=e.target.closest("[data-prop-yes]"),n=e.target.closest("[data-prop-no]");if(!y&&!n)return;
+  const pid=(y||n).dataset.propYes||(y||n).dataset.propNo,pr=window.__props?.[pid],card=(y||n).closest(".propcard");if(!pr||!card)return;
+  if(y){const msg=applyProposal(pr);card.innerHTML=`<div class="savednote">✓ ${esc(msg)} · <button data-open="${pr.type==="profile"?"profile":"rig"}">view</button></div>`;if(["rig","profile","product","results"].includes(S.view.name))render()}
+  else card.innerHTML=`<div class="muted">Not saved.</div>`;
+  delete window.__props[pid];
+});
+/* update_rig: owning gear is only recorded when the customer confirms */
+Object.assign(TOOLS.find(t=>t.name==="update_rig"),{description:"Propose adding or removing an item in the customer's My rig when they SAY they own or sold it (never because they viewed or asked about it). Shows a confirmation card; nothing changes unless the customer confirms. Use a product id when it's in the catalogue, otherwise a name and kind.",
+ inputSchema:{type:"object",properties:{action:{type:"string",enum:["add","remove"]},id:{type:"string"},name:{type:"string"},kind:{type:"string",enum:Object.keys(CUSTOM_KINDS)},instrument:{type:"string",enum:Object.keys(MP_KINDS),description:"Which of their instruments the gear belongs to, if clear"}},required:["action"]},
+ execute(i){
+  let pr,label;
+  if(i.action==="add"){const id=BY[i.id]?String(i.id):null;if(!id&&!i.name)throw new Error("Need id or name");
+    if(id&&S.rig.some(r=>r.id===id))return {status:"Already in My rig"};
+    label=id?BY[id].n:String(i.name);pr={type:"rig-add",data:{id,name:label,kind:i.kind,insKind:i.instrument}}}
+  else{const idx=S.rig.findIndex(r=>r.id===i.id||(r.custom&&r.name.toLowerCase()===String(i.name||"").toLowerCase()));if(idx<0)throw new Error("Not in rig");
+    label=S.rig[idx].custom?S.rig[idx].name:BY[S.rig[idx].id].n;pr={type:"rig-rm",data:{idx}}}
+  const pid="pr"+Date.now();window.__props=window.__props||{};window.__props[pid]=pr;
+  push(`<div class="card propcard"><h5>${i.action==="add"?`Add ${esc(label)} to My rig as gear you own?`:`Remove ${esc(label)} from My rig?`} <span class="tag">you decide</span></h5><div class="prow"><button class="btn small primary" data-prop-yes="${pid}">${i.action==="add"?"Yes, I own it":"Yes, remove"}</button><button class="btn small" data-prop-no="${pid}">No</button></div></div>`);
+  return {status:"Confirmation card shown. Nothing changes unless the customer confirms."};
  }});
 TOOLS.push({name:"save_to_picks",description:"Save products to the customer's Saved list. ONLY call this when the customer explicitly asks you in words to save specific products (e.g. 'save those two', 'keep the Squier for later'). Never call it on your own initiative or because you recommended something.",
  inputSchema:{type:"object",properties:{ids:{type:"array",items:{type:"string"}}},required:["ids"]},
@@ -1451,14 +1708,16 @@ HOW TO WORK
 - TRANSPARENCY: mention notable return reasons when relevant (return_insights). Point out cheaper options and B-Stock (price_check), including house brands like Harley Benton and the sssnake. Never pressure.
 - ADVISE, NEVER BUY: you cannot order or add to the basket; the customer uses the buttons on the cards.
 - ORDERS & RETURNS: 30-day money-back guarantee and 3-year warranty. Before a fault return, offer setup_help first; use orders(start_return) only if they still want to return.
-- ABOUT YOU: the customer's About you profile is in the page context; use it (level, where they play, computer, who it's for). Whenever they tell you any of these, call update_profile straight away with just those fields.
-- NEVER ASSUME A LEVEL: don't assume the customer is a beginner (or a pro). Use the level in About you. If it isn't filled in and it matters, ask it as one offer_choices question ("How long have you been playing?": Just starting / A few years / Gigging or pro) and save it with update_profile. If About you has a level, confirm it in passing rather than asking again, e.g. "As an intermediate player, ..."; the customer can correct it.
-- STARTER BUTTONS: "I want to buy an instrument" -> interview with offer_choices, ONE question per turn, max 4, skipping anything About you or My rig already answers, in this order: which instrument (Guitar, Bass, Drums, Keys, Mic/recording, Other); level (confirm from About you, or ask as above); budget; where they'll play. Save answers with update_profile. Then recommend 2-3 options with show_products, a short reason for each in notes, matched to their level (complete ready-to-play packages only for people just starting). "I want to upgrade my rig" -> look at My rig and About you and suggest the one change with the biggest effect. "Something isn't working" -> ask which item and what happens (offer_choices with their My rig items), then setup_help. "A question about an order" -> call orders(list) and ask which order.
+- MUSIC PROFILE: the customer's Music Profile is in the page context: one or more instruments, each with its own level, uses, genres, budget, goal and linked gear, plus general preferences and shared gear. It is optional and may be empty or partial; then just ask what you need, and help normally. Use the instrument the request is about. If they play several instruments, no advisor focus is set and the request could apply to more than one (e.g. "I need an amp" from someone with guitar and bass), ask which one first with offer_choices. Follow topic changes (e.g. from guitar amps to recording mics): use the level and uses of whatever instrument or activity is now relevant. Match technical detail to their level in that instrument: plain words, no jargon for beginners; specs and trade-offs for advanced and professional players. When one instrument has several uses (e.g. home practice and live), prefer gear that covers all of them and say so. Respect each instrument's budget.
+- OWNED GEAR: never recommend something they already own, or a second item in the same role (e.g. more headphones when they own headphones), unless there is a real upgrade reason, which you state. Cards mark owned items.
+- PROFILE CHANGES NEED PERMISSION: never change the profile or My rig silently. When the customer tells you something worth saving (an instrument, level, use, budget, gear they own or sold), call update_profile or update_rig: these only show a confirmation card, and nothing is saved unless they tap Save. Never treat products they viewed or asked about as owned.
+- NEVER ASSUME A LEVEL: don't assume beginner or pro. Use the level of the relevant instrument in the profile; if it's missing and it matters, ask ("How long have you been playing?": Just starting / A few years / Advanced / Professional) and offer to save it.
+- STARTER BUTTONS: "I want to buy an instrument" -> interview with offer_choices, ONE question per turn, max 4, skipping anything the Music Profile or My rig already answers, in this order: which instrument (Guitar, Bass, Drums, Keys, Mic/recording, Other); level (confirm from the Music Profile, or ask as above); budget; where they'll play. Offer to save new answers with update_profile (the customer confirms). Then recommend 2-3 options with show_products, a short reason for each in notes, matched to their level (complete ready-to-play packages only for people just starting). "I want to upgrade my rig" -> look at My rig and the Music Profile and suggest the one change with the biggest effect. "Something isn't working" -> ask which item and what happens (offer_choices with their My rig items), then setup_help. "A question about an order" -> call orders(list) and ask which order.
 - SAVED PRODUCTS: the customer saves products themselves with the Save buttons on your cards, product pages and search results. Never save anything on your own initiative, and don't push them to save. Only call save_to_picks when they explicitly ask you in words to save specific products. Their Saved list is in the page context; when they mention "my saved ones" or "the ones I saved", use it. Always pass a short reason per product in show_products notes; it is kept if they save the product.
 - WARRANTY: items bought at Thomann have a 3-year Thomann warranty from delivery (dates are in My rig); items bought elsewhere only have the warranty date the customer entered, if any. For a fault under warranty, offer setup_help first; if it's still broken, call expert_handoff with department "service".
 - WHEN YOU DON'T KNOW: if the catalogue, your tools and solid general knowledge can't answer (vintage or unlisted gear, compatibility you can't verify, repairs, anything you'd be guessing), say plainly "I'm not sure about that", give the reason in one short sentence, and call expert_handoff. Never guess specs or compatibility.
 - HUMAN SPECIALISTS: real Thomann specialists stand behind this chat. The customer can press "Talk to a person" at the top of the chat at any time. After you give a recommendation, you may add one short line offering a specialist. For complex or professional setups, budgets over €2,000, installations, repairs, or when they ask for a person, call expert_handoff with a summary the specialist can act on. Specialists are currently ${S.online?"ONLINE and can join this chat now":"OFFLINE until 9:00; offer a call back"}.
-- MY RIG: the customer's owned gear is listed in the context. Use it for upgrades, refills (strings older than about 3 months) and compatibility. If they mention owning or selling gear, call update_rig.
+- MY RIG: the customer's owned gear is listed in the context. Use it for upgrades, refills (strings older than about 3 months) and compatibility. If they say they own or sold gear, call update_rig (it asks them to confirm).
 - Music theory, technique and general gear knowledge: answer from your own knowledge, briefly.
 - Reply in the customer's language. Prices in EUR. Light Markdown only (bold, short lists); no tables.
 
@@ -1468,7 +1727,7 @@ ${P.map(p=>`${p.id} | ${p.n} | ${p.c} | €${p.p}${p.bs?" (B-Stock €"+p.bs+")"
 function contextText(){
   const v=S.viewing&&BY[S.viewing],c=S.chatCtx;
   return `[Page context, today ${TODAY.toISOString().slice(0,10)}${c?.enquiry?`; entered Live chat via contact form: ${[c.enquiry,c.category,c.need].filter(x=>x&&x!=="skipped").join(" → ")}${c.product?` about ${BY[c.product].n} (${c.product})`:""}`:""}${v?`; customer is viewing: ${v.n} (${v.id})`:""}${S.view.q?`; last search: "${S.view.q}"`:""}; specialists ${S.online?"online now":"offline until 9:00"}
-About you: ${Object.entries(PROFILE_FIELDS).map(([k,f])=>{const v=S.profile[k];return v&&(!Array.isArray(v)||v.length)?`${f.label}: ${f.multi?v.map(x=>f.opts[x]).join(", "):f.opts[v]}`:null}).filter(Boolean).join("; ")||"not filled in"}${S.profile.forWhom==="child"&&S.profile.childAge?`; child's age: ${S.profile.childAge}`:""}
+${musicText()}
 My rig: ${rigItems().map(r=>{const w=warrantyOf(r);return `${r.name}${r.id?" ("+r.id+")":""} – ${r.bought==="thomann"?`bought at Thomann ${String(r.since).slice(0,10)}${r.order?" ("+r.order+")":""}`:`bought elsewhere, owned since ${r.since||"?"}`}${w?`, warranty until ${isoDay(w.end)}${warrantyLeft(w)<=0?" (ended)":""}`:", no warranty date"}${w?.returnDays>0?`, 30-day return open for ${w.returnDays} more days`:""}${r.note?" – "+r.note:""}`}).join("; ")||"empty"}
 Basket: ${S.basket.map(x=>`${x.qty}× ${BY[x.id].n}`).join("; ")||"empty"}
 Saved products (saved by the customer, newest first): ${S.picks.slice(0,20).map(x=>`${x.star?"★ ":""}${BY[x.id].n} (${x.id})${x.why?" – "+x.why:""}`).join("; ")||"none yet"}
@@ -1503,7 +1762,7 @@ async function send(text){
     if(["not_granted","sampling_disabled","tools_unavailable","session_expired","api_unavailable"].includes(e?.code)){sample=null;sampleState="none";updateAcct()}
   }finally{st.remove();currentCards=null;S.busy=false;S.ctl=null;$("#sendb").hidden=false;$("#stopb").hidden=true;sendState()}
   const lastIds=shownLog.join(",").match(/[a-z]{1,2}\d+/g)?.filter(id=>BY[id]&&BY[id].c!=="accessories");if(lastIds?.length)S.lastCat=BY[lastIds[0]].c;
-  if(["rig","product","picks"].includes(S.view.name))render();
+  if(["rig","product","picks","profile"].includes(S.view.name))render();
   S.turns.push({role:"user",content:text});
   S.turns.push({role:"assistant",content:(fin||"(no text)")+(shownLog.length?`\n[cards shown: ${shownLog.join("; ")}]`:"")});
   scrollLog();
@@ -1542,7 +1801,7 @@ document.addEventListener("click",e=>{
   else if(d.ask||d.say){if(a.closest(".drawer"))closeDrawer();ac.hidden=true;$("#plusmenu").hidden=true;
     if(a.closest(".choices")){if(S.busy)return}
     send(d.ask||d.say)}
-  else if(d.open){closeDrawer();if(d.open==="rig")go({name:"rig"});else if(d.open==="picks")go({name:"picks"});else if(d.open==="about"){go({name:"rig"});setTimeout(()=>$("#about")?.scrollIntoView({behavior:"smooth",block:"start"}),30)}else ({orders:openOrders,basket:openBasket})[d.open]()}
+  else if(d.open){closeDrawer();if(d.open==="rig")go({name:"rig"});else if(d.open==="picks")go({name:"picks"});else if(d.open==="about"||d.open==="profile"){go({name:"profile"})}else ({orders:openOrders,basket:openBasket})[d.open]()}
   else if(d.rigAdd)addRig(d.rigAdd);
   else if(d.toast)toast(d.toast);
   else if(d.step){const c=ctxOf(d.where);c[d.step]=d.v||null;c.summary=null;refreshSteps(d.where)}
@@ -1606,8 +1865,10 @@ cin.addEventListener("input",()=>{cin.style.height="auto";cin.style.height=Math.
 cin.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();$("#cform").requestSubmit()}});
 $("#cform").addEventListener("submit",e=>{e.preventDefault();const t=cin.value;cin.value="";cin.style.height="auto";sendState();send(t)});
 $("#stopb").onclick=()=>S.ctl&&S.ctl.abort();
+$("#focusSel").onchange=e=>{S.music.active=e.target.value||null;saveMusic();if(S.view.name==="profile")render();const a=activeIns();if(S.started)sysLine("Now talking about: "+(a?insName(a):"all instruments"))};
 
 /* ---------------- Boot ---------------- */
+S.music=migrateMusic();autoLinkGear();syncLegacy();store.set("music",S.music);updateFocusBar();
 bcount();updateOnline();updateAcct();updatePickCount();render();
 (async()=>{
   if(window.claude){

@@ -139,7 +139,7 @@ const DEFAULT_RIG = [
 ];
 /* About you: the shopper's situation, used by filters, labels, fit checks and the advisor */
 const PROFILE_FIELDS = {
- level:{label:"Your level",multi:false,opts:{beginner:"Beginner",intermediate:"Intermediate",advanced:"Advanced"}},
+ level:{label:"Your level",multi:false,opts:{beginner:"Beginner",intermediate:"Intermediate",advanced:"Advanced",professional:"Professional"}},
  instruments:{label:"Instruments you play",multi:true,opts:{guitar:"Guitar",bass:"Bass",keys:"Keys",drums:"Drums",vocals:"Vocals",production:"Production"}},
  styles:{label:"Styles",multi:true,opts:{rock:"Rock",blues:"Blues",metal:"Metal",pop:"Pop",jazz:"Jazz",electronic:"Electronic",classical:"Classical",other:"Other"}},
  place:{label:"Where you play",multi:false,opts:{flat:"Flat (neighbours)",house:"House",rehearsal:"Rehearsal room",stage:"Stage"}},
@@ -147,4 +147,16 @@ const PROFILE_FIELDS = {
  computer:{label:"Computer",multi:false,opts:{usbc:"Mac with USB-C",usba:"Mac or PC with USB-A",ipad:"iPad",none:"None"}},
  forWhom:{label:"Who it's for",multi:false,opts:{me:"Me",child:"My child"}},
 };
+/* My Music Profile: one customer -> many instruments; each instrument -> many use occasions, genres and linked gear (My rig items carry inst:[instrument ids]) */
+const MP_KINDS = {guitar:"Electric guitar",acoustic:"Acoustic guitar",bass:"Bass",piano:"Piano & keys",drums:"Drums & percussion",vocals:"Vocals",production:"Production & DJ",wind:"Wind & brass",strings:"Violin & strings",other:"Other instrument"};
+const MP_LEVELS = {beginner:"Beginner",intermediate:"Intermediate",advanced:"Advanced",professional:"Professional"};
+const MP_USES = {home:"Home practice",live:"Live performance",studio:"Studio recording",teaching:"Teaching",producing:"Producing",rehearsal:"Rehearsal",other:"Other"};
+const MP_GENRES = {rock:"Rock",blues:"Blues",metal:"Metal",pop:"Pop",jazz:"Jazz",funk:"Funk & soul",hiphop:"Hip-hop & R&B",electronic:"Electronic",classical:"Classical",folk:"Folk & acoustic",country:"Country",worship:"Worship",other:"Other"};
+const MP_INTERESTS = {newgear:"New gear",upgrades:"Upgrades",deals:"Deals & B-Stock",refills:"Accessories & refills",learning:"Setup help & learning"};
+const MP_LEGACY = {guitar:"guitar",acoustic:"guitar",bass:"bass",piano:"keys",drums:"drums",vocals:"vocals",production:"production"};
+/* which owned gear (by kind) belongs to which instrument when gear is first linked automatically */
+const MP_GEAR_FOR = {guitar:["electric guitar","amp","pedal","psu","strings","picks","cable","booster","battery"],acoustic:["acoustic guitar","strings","picks"],bass:["bass"],piano:["keys","sustain"],drums:["edrums","cymbal"],vocals:["mic"]};
+const DEFAULT_MUSIC = {v:1,active:null,
+ general:{genres:["blues","rock"],artists:["John Mayer"],place:"flat",listen:"both",computer:"usbc",forWhom:"me",childAge:"",interests:["upgrades","deals"],notes:""},
+ instruments:[{id:"ins-guitar",kind:"guitar",label:"",level:"intermediate",uses:["home"],genres:[],artists:[],budget:"",goals:"A better clean tone for blues at flat volume",notes:""}]};
 const DEFAULT_PROFILE = {level:"intermediate",instruments:["guitar"],styles:["blues","rock"],place:"flat",listen:"both",computer:"usbc",forWhom:"me",childAge:""};
