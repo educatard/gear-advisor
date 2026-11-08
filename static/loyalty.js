@@ -5,7 +5,7 @@
 
 /* ---------- Ready-to-Play: what else the main item needs ---------- */
 const kindOf = p => DUP_KINDS[p.cp && p.cp.kind] || (p.cp && ["electric guitar", "mic", "edrums", "keys", "interface"].includes(p.cp.kind)) ? p.cp.kind : (SUB_KIND[p.sub] || ({"Large-diaphragm microphones": "mic", "Vocal microphones": "mic", "Instrument microphones": "mic", "Electric guitars": "electric guitar", "DJ controllers": "djctl"})[p.sub] || p.cp && p.cp.kind);
-/* opts per tier: min = Minimum Complete, bal = Balanced, up = Upgrade-Friendly (cheapest listed id that exists wins) */
+/* opts per tier (same names as the goal builder): min = Lowest Cost, bal = Best Value, up = Upgrade-Friendly (cheapest listed id that exists wins) */
 const RTP_RULES = {
   "electric guitar": [
     {lvl: "Essential", role: "Amp or headphone amp", why: "an electric guitar is nearly silent without one", owns: ["amp"], min: ["t590648"], bal: ["a1"], up: ["a1"]},
@@ -32,7 +32,7 @@ const RTP_RULES = {
   djctl: [
     {lvl: "Essential", role: "DJ headphones", why: "to cue the next track", owns: ["headphones"], min: ["t331904"], bal: ["t379291"], up: ["t379291"]}],
 };
-const RTP_TIERS = {min: {label: "Minimum Complete", rule: "Only the Essential items, cheapest option each."}, bal: {label: "Balanced", rule: "Essential and Recommended items, mid-range options."}, up: {label: "Upgrade-Friendly", rule: "Essential, Recommended and Optional items, options with room to grow."}};
+const RTP_TIERS = {min: {label: TIER_INFO.low.label, rule: "Only what's needed to play, cheapest option in each role."}, bal: {label: TIER_INFO.value.label, rule: "What's needed plus recommended items, mid-range options."}, up: {label: TIER_INFO.upgrade.label, rule: "Everything incl. optional items, options with room to grow."}};
 function readyToPlay(anchorId, budget, allowOverBudget) {
   const a = BY[anchorId]; if (!a) throw new Error("Unknown product id");
   const rules = RTP_RULES[kindOf(a)] || [];
@@ -79,9 +79,10 @@ function purchaseReadiness() {
     if (b.p.bstockOf) unresolved.push(`${b.p.n} is B-Stock: ${b.p.tv.condition}.`);
     if (!b.p.tv) unresolved.push(`${b.p.n}: demo product, price not verified on thomann.de.`);
   }
-  const offerSpecialist = problems.some(Boolean) || items.some(b => b.p.vonly) || total > 2000;
+  const highPrice = items.some(b => b.p.p > 1000);
+  const offerSpecialist = problems.some(Boolean) || items.some(b => b.p.vonly) || highPrice;
   return {items: items.map(b => ({id: b.id, name: b.p.n, qty: b.qty, price: b.p.p, line: +(b.p.p * b.qty).toFixed(2), verified: !!b.p.tv, verifiedOn: b.p.tv && b.p.tv.verified})),
-    total, verified, problems, unresolved, offerSpecialist, ready: !problems.length};
+    total, verified, problems, unresolved, offerSpecialist, highPrice, ready: !problems.length};
 }
 
 /* ---------- Upgrade roadmap from the Music Profile ---------- */
@@ -116,7 +117,7 @@ function consultSummary() {
 }
 
 /* ---------- Anonymous event tracking ---------- */
-const EVENT_NAMES = ["chat_started", "needs_assessment_completed", "product_recommended", "product_compared", "compatibility_checked", "setup_completed", "bundle_viewed", "deal_viewed", "price_alert_created", "product_saved", "add_to_cart", "cart_reviewed", "human_handoff_requested", "human_handoff_completed", "thomann_product_link_clicked", "returning_profile_loaded", "purchase_completed", "product_page_viewed"];
+const EVENT_NAMES = ["chat_started", "needs_assessment_completed", "product_recommended", "product_compared", "compatibility_checked", "setup_completed", "bundle_viewed", "deal_viewed", "price_alert_created", "product_saved", "live_agent_suggested", "add_to_cart", "cart_reviewed", "human_handoff_requested", "human_handoff_completed", "thomann_product_link_clicked", "returning_profile_loaded", "purchase_completed", "product_page_viewed"];
 const EV_KEY = "ga3_events";
 const SESSION_ID = (() => { try { let s = sessionStorage.getItem("ga3_sid"); if (!s) { s = "s-" + Math.random().toString(36).slice(2, 10); sessionStorage.setItem("ga3_sid", s); } return s; } catch (e) { return "s-" + Math.random().toString(36).slice(2, 10); } })();
 const VISITOR = (() => { const v = ls.get("ga3_vid", null); if (v) return {id: v, returning: true}; const n = "v-" + Math.random().toString(36).slice(2, 10); ls.set("ga3_vid", n); return {id: n, returning: false}; })();

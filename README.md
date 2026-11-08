@@ -10,7 +10,7 @@ The Thomann-style shop prototype with the AI advisor running on **your** Claude 
 ## What is real and what is demo data
 
 - Verified: product names, brands, article numbers, prices, reference prices (labelled UVP or 30-day best price), availability text, breadcrumbs and listed specs of the catalogue records; the listed offers; the parts and prices of the Scarlett Solo 3rd + NT1-A bundle.
-- Demo: the original 61 demo products' ratings, reviews, return statistics and fit-check model (10 of them are linked to their verified record and show the verified price), orders, specialists and handoffs.
+- Demo: the original 61 demo products' ratings, reviews and fit-check model (return statistics are no longer shown anywhere) (10 of them are linked to their verified record and show the verified price), orders, specialists and handoffs.
 - The page doesn't link out to thomann.de; sources are shown as plain text.
 - Not available: checkout, real purchases, customer accounts, scheduled price monitoring, email or push notifications. Price alerts only react to imported verified prices or to the clearly labelled demo mode. The performance dashboard reports conversion, order value and repeat-purchase metrics as not measurable and labels proxies.
 - Privacy: the Music Profile, My rig, saved products, projects, alerts and anonymous usage events are stored in the visitor's browser only; profile details are sent to Claude only as part of chat messages.

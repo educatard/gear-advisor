@@ -36,7 +36,7 @@ function saveImported(l) { try { localStorage.setItem("ga3_imported", JSON.strin
 (function mergeCatalogue() {
   for (const p of P) {
     const m = DEMO_TOP[p.c] && !DEMO_KIND_TOP[p.cp.kind] ? DEMO_TOP[p.c] : DEMO_KIND_TOP[p.cp.kind] || DEMO_TOP[p.c] || ["accessories", "Accessories"];
-    p.top = m[0]; p.sub = m[1]; p.src = "demo";
+    p.top = m[0]; p.sub = m[1]; p.src = "demo"; p.ret = null; /* return reasons are not shown anywhere */
   }
   const byArticle = Object.fromEntries(THOMANN_DATA.records.map(r => [r.article, r]));
   const linked = new Set();

@@ -153,9 +153,9 @@ function simulatePrice(id, price) {
    Upgrade-Friendly = the cheapest item that leaves room to grow (listed per role).
    Roles the customer already covers with My rig are skipped. */
 const TIER_INFO = {
-  low: {label: "Lowest Cost", rule: "Cheapest item that meets the minimum requirement in each role."},
-  value: {label: "Best Value", rule: "Cheapest item that meets the recommended requirement in each role (shown per item)."},
-  upgrade: {label: "Upgrade-Friendly", rule: "Cheapest item in each role that leaves room to grow, e.g. more inputs."},
+  low: {label: "Lowest Cost", rule: "Only what's needed, cheapest item that meets the minimum in each role."},
+  value: {label: "Best Value", rule: "Cheapest item that meets the recommended level in each role (shown per item)."},
+  upgrade: {label: "Upgrade-Friendly", rule: "Cheapest item in each role with room to grow, e.g. more inputs."},
 };
 const SETUP_RECIPES = {
   vocal_recording: {label: "Vocal recording at home", officialBundles: ["652654"], roles: [
