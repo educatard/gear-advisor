@@ -600,7 +600,7 @@ details.rigmore{margin-top:8px}
 details.rigmore>summary,details.fromorders>summary{cursor:pointer;font-size:14px;font-weight:600;color:var(--muted);padding:4px 0}
 details.rigmore .issues{margin-top:6px}
 ul.passed{margin:4px 0 0;padding-left:20px;font-size:14px;color:var(--muted);line-height:1.6}
-.rigsec .chains{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,560px),1fr));gap:12px;margin:0}
+.rigsec .chains{margin:0}
 .gearhead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
 details.fromorders{border:1px dashed var(--line);border-radius:8px;padding:6px 12px;margin-bottom:10px}
 details.fromorders[open]{padding-bottom:10px}
@@ -624,6 +624,41 @@ details.grow .gbody .acts{display:flex;gap:6px;flex-wrap:wrap}
 .up .it .muted{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .up .price{font-weight:800;flex:none}
 @media (max-width:600px){.issue,.up{flex-wrap:wrap}.issue .it{flex-basis:100%}.issue .btn,.up .btn{margin-left:auto}details.grow .gbody{padding-left:14px}details.grow>summary{flex-wrap:wrap}details.grow .gb{order:3;flex-basis:100%;justify-content:flex-start;padding-left:58px}details.grow .gb:empty{display:none}.righead .cta{width:100%}}
+.rigtitle{margin-bottom:12px}
+.righead{align-items:center}
+.rigcard{flex:1 1 520px;min-width:0;display:flex;align-items:center;gap:12px 20px;flex-wrap:wrap;border:1px solid var(--line);border-left:6px solid var(--ok);border-radius:10px;padding:12px 16px;background:var(--bg)}
+.rigcard.amber{border-left-color:var(--warn)}.rigcard.red{border-left-color:var(--bad,#c62828)}
+.rcstat{display:flex;align-items:center;gap:10px;min-width:0}
+.rcstat b{font-size:17px}.rcstat .muted{font-size:13px}
+.rcicon{width:30px;height:30px;flex:none;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#fff;background:var(--ok)}
+.rigcard.amber .rcicon{background:var(--warn)}.rigcard.red .rcicon{background:var(--bad,#c62828)}
+.rcareas{display:flex;gap:6px;flex-wrap:wrap}
+.rcchip{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:4px 10px;font-size:12.5px;font-weight:700;border:1px solid var(--line);background:var(--soft2);color:var(--ink);cursor:pointer}
+.rcchip>span:first-child{font-weight:800}
+.rcchip.ok>span:first-child{color:var(--ok)}
+.rcchip.warn{background:var(--warn-soft);border-color:var(--warn);color:var(--warn)}
+.rcchip.none{opacity:.6;cursor:default}
+.rcchip .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.issue.flash,ul.passed li.flash{animation:rigflash 1.6s ease}
+@keyframes rigflash{0%,40%{background:var(--purple-soft);box-shadow:0 0 0 3px var(--purple)}100%{box-shadow:0 0 0 0 transparent}}
+body[data-view="rig"] .needhelp .avatars{display:none}
+@media (max-width:600px){body[data-view="rig"] .needhelp{padding:8px 14px;font-size:13px}}
+.switch.stack{flex-direction:column;align-items:stretch;gap:4px}.switch.stack select{max-width:100%;width:100%}
+.banner.b2{display:grid;grid-template-columns:minmax(0,1fr) auto;align-content:center;justify-items:center;column-gap:4%;row-gap:4px}
+.banner.b2 .bbrand,.banner.b2 .bdate,.banner.b2 .bnote{grid-column:1;max-width:100%;text-align:center}
+.banner.b2 .bbrand{font-size:clamp(28px,4.4vw,70px);overflow-wrap:anywhere}
+.banner.b2 .bbadge{position:static;transform:none;grid-column:2;grid-row:1 / span 3;width:clamp(70px,9vw,140px)}
+.wb{border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:18px 0 14px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,.8fr);gap:12px 24px;background:var(--bg)}
+.wb h1{font-size:22px;font-weight:800;margin:0 0 4px;grid-column:1 / -1}
+.wb .wbcol{min-width:0;font-size:14px;line-height:1.4}
+.wb .wbcol+.wbcol{border-left:1px solid var(--line);padding-left:20px}
+.wb .wbh{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:4px}
+.wb .prow{margin-top:8px;gap:6px}
+.wb .wbfoot{grid-column:1 / -1;display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.wb .wbfoot details summary{cursor:pointer;text-decoration:underline}
+.wbdot{display:inline-block;width:11px;height:11px;border-radius:50%;background:var(--ok);margin-right:6px;vertical-align:baseline}
+.wbdot.amber{background:var(--warn)}.wbdot.red{background:var(--bad,#c62828)}
+@media (max-width:820px){.wb{grid-template-columns:1fr}.wb .wbcol+.wbcol{border-left:0;padding-left:0;border-top:1px solid var(--line);padding-top:10px}}
 </style>
 
 <div class="promo gut"><b>Concept prototype</b> · AI advisor for Thomann · demo catalogue, prices, orders and specialists · nothing can be bought</div>
@@ -705,7 +740,7 @@ const S={
   view:{name:"home",q:"",cats:[],top:"",sub:"",src:"",brand:"",inst:"",min:"",max:"",stock:false,sort:"rel",sit:"",limit:24}, viewing:null,
   contact:{enquiry:null,category:null,need:null,method:null,product:null}, chatCtx:null, turns:[], busy:false, ctl:null,
   chat:"closed", mode:"ai", expert:null, started:false, toolsOK:null, apiMode:false,
-  picks:store.get("saved",[]), offered:{}, variant:store.get("variant","B"), rtpTier:"bal", answers:0, pickSel:[], pickCmp:null, pickFit:null, ctab:"chat", topic:"",
+  picks:store.get("saved",[]), offered:{}, variant:store.get("variant","B"), customer:store.get("customer","returning"), rtpTier:"bal", answers:0, pickSel:[], pickCmp:null, pickFit:null, ctab:"chat", topic:"",
 };
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -761,7 +796,7 @@ function sil(c){
 /* ---------------- Views ---------------- */
 function go(v){if(v.name!=="results")sq.value="";S.view=Object.assign({name:"results",q:"",cats:[],top:"",sub:"",src:"",brand:"",inst:"",min:"",max:"",stock:false,sort:"rel",sit:"",limit:24},v);S.editing=null;if(v.name==="product")S.viewing=v.id;render();window.scrollTo(0,0);if(innerWidth<700&&S.chat==="open")setChat("min")}
 function render(){
-  const v=S.view,el=$("#view");
+  const v=S.view,el=$("#view");document.body.dataset.view=v.name;
   updateNeedHelp();
   if(v.name==="home") el.innerHTML=homeView();
   else if(v.name==="product") el.innerHTML=productView(BY[v.id]);
@@ -956,7 +991,7 @@ function dealCardHtml(o,p){
 function homeView(){
   const deals=homeDeals(8);
   return `<div class="home">
-  <h1 class="hometitle">Welcome 👋</h1>
+  ${welcomeHtml()||`<h1 class="hometitle">Welcome 👋</h1>`}
   <div class="banners">
    <button class="banner b1" data-topsub="studio|Audio interfaces"><span class="bsm">Home recording</span><span class="bbig">from ${eur(Math.min(...P.filter(p=>p.sub==="Audio interfaces"||p.c==="interfaces").map(p=>p.p)))}</span></button>
    <button class="banner b2" data-go="deals"><span class="bbrand">Cyber Deals</span><span class="bdate">05.11 – 30.11</span><span class="bbadge">up to<b>70%</b>off</span><span class="bnote">as advertised by Thomann</span></button>
@@ -971,6 +1006,70 @@ function homeView(){
    <div class="askstrip" style="margin:24px 0 90px"><span class="aiav sm">${AISVG}</span><p><b>Not sure where to start?</b> Tell the AI advisor what you play and what you need.</p><button class="cta purple" style="padding:9px 18px" data-say="I want to buy an instrument.">Ask the advisor</button></div></div>
   </div>`;
 }
+/* ---------------- Welcome back (returning customers): check-in, one suggestion, rig health ---------------- */
+const isReturning=()=>S.customer!=="new"&&(ORDERS.length>0||S.rig.length>0);
+const wbHidden=()=>{try{return sessionStorage.getItem("ga3_wbhide")==="1"}catch(e){return !!S.wbHide}};
+function welcomeCheckin(){
+  const done=new Set(store.get("checkinDone",[])),rows=[];
+  const rigOf=id=>S.rig.find(r=>r.id===id);
+  // a) delivered in the last 14 days (most recent first)
+  for(const o of ORDERS.filter(o=>o.delivered).sort((a,b)=>b.delivered.localeCompare(a.delivered))){const d=daysSince(o.delivered);if(d===null||d>14)continue;
+    for(const [id] of o.items)if(BY[id]&&BY[id].c!=="accessories"&&!done.has(id))rows.push({id,order:o.id,days:d,kind:"arrived"})}
+  // b) return window ending soon, c) warranty ending within 60 days
+  for(const r of S.rig){if(!r.id||!BY[r.id]||done.has(r.id))continue;const w=warrantyOf(r);
+    if(w?.returnDays>0&&w.returnDays<=10)rows.push({id:r.id,order:r.order,kind:"return",left:w.returnDays})}
+  for(const r of S.rig){if(!r.id||!BY[r.id]||done.has(r.id))continue;const w=warrantyOf(r),left=warrantyLeft(w);
+    if(w&&left>0&&left<=60)rows.push({id:r.id,order:r.order,kind:"warranty",left})}
+  const c=rows[0];if(!c)return null;
+  const r=rigOf(c.id),w=r?warrantyOf(r):null,o=ORDERS.find(x=>x.id===(c.order||r?.order));
+  c.name=BY[c.id].n;c.delivered=o?.delivered||(r&&r.bought==="thomann"?r.since:null);c.sinceDays=c.delivered?daysSince(c.delivered):null;
+  c.returnDays=w?.returnDays>0?w.returnDays:0;c.warEnd=w&&warrantyLeft(w)>0?isoDay(w.end):null;c.warSrc=w?.src||"";
+  c.q=c.kind==="arrived"?`Your ${c.name} arrived ${c.days} day${c.days===1?"":"s"} ago. How's it going?`:c.kind==="return"?`You can still return your ${c.name} for ${c.left} more days. How's it going?`:`The warranty on your ${c.name} ends in ${c.left} days. Is it working well?`;
+  return c;
+}
+function checkinFacts(c){return `order ${c.order||"not from a Thomann order"}${c.sinceDays!==null?`, delivered ${c.sinceDays} days ago`:""}; ${c.returnDays?`return window: ${c.returnDays} days left`:"return window closed"}; ${c.warEnd?`warranty (${c.warSrc}) until ${c.warEnd}`:"no warranty date"}`}
+function welcomeSuggestion(st){
+  const owned=new Set(S.rig.map(r=>r.id)),inBasket=new Set(S.basket.map(b=>b.id)),free=id=>id&&BY[id]&&!owned.has(id)&&!inBasket.has(id);
+  const gap=st.ov.issues.find(i=>i.area!=="war"&&i.k!=="war"&&i.k!=="ret"&&free(i.rec));
+  if(gap)return {title:gap.title,line:gap.line,attr:gap.act?.attr||`data-detail="${gap.rec}"`,id:gap.rec};
+  const u=st.ov.ups.find(u=>free(u.id));
+  return u?{title:esc(BY[u.id].n),line:esc(u.why)+` (${eur(BY[u.id].p)})`,attr:`data-detail="${u.id}"`,id:u.id}:null;
+}
+function welcomeHtml(){
+  if(!isReturning()||wbHidden())return "";
+  const st=rigStatus(),c=welcomeCheckin(),sg=welcomeSuggestion(st),name=(S.music.general.name||"").trim();
+  if(!S.wbTracked){S.wbTracked=true;track("welcome_card_shown",{checkin:c?.id||null,suggestion:sg?.id||null,status:st.level})}
+  const thanks=S.wbThanks?`<div class="wbcol"><div class="wbh">Your recent purchase</div>Thanks for letting us know. Enjoy your ${esc(S.wbThanks)}! We won't ask about it again.</div>`:"";
+  return `<section class="wb" aria-label="Welcome back">
+   <h1>Welcome back${name?", "+esc(name):""}</h1>
+   ${thanks||(c?`<div class="wbcol"><div class="wbh">Your recent purchase</div>${esc(c.q)}
+     <div class="prow"><button class="btn" data-checkin="good|${c.id}">All good</button><button class="btn" data-checkin="broken|${c.id}">Something's not working</button><button class="btn" data-checkin="notyet|${c.id}">Haven't set it up yet</button></div></div>`:"")}
+   ${sg?`<div class="wbcol"><div class="wbh">For your rig</div><b>${sg.title}</b><div class="muted">${sg.line}</div><div class="prow"><button class="btn" data-wb-sugg ${sg.attr}>See options</button></div></div>`:""}
+   <div class="wbcol"><div class="wbh">Rig health</div><b><span class="wbdot ${st.level}" aria-hidden="true"></span>${esc(st.label)}</b><div class="muted">${esc(st.counts)}</div><div class="prow"><button class="btn" data-wb-rig>Open My rig →</button></div></div>
+   <div class="wbfoot"><details><summary>Why am I seeing this?</summary>Based on your orders and My rig. Stored on this device only.</details><button class="linkish" data-wb-hide style="text-decoration:underline;font-weight:600">Not now</button></div>
+  </section>`;
+}
+function checkinAnswer(answer,id){
+  const c=welcomeCheckin()||{id,name:BY[id].n,order:null,sinceDays:null,returnDays:0,warEnd:null};
+  track("checkin_answered",{productId:id,answer});
+  if(answer==="good"){store.set("checkinDone",[...new Set([...store.get("checkinDone",[]),id])]);S.wbThanks=BY[id].n;render();return}
+  if(answer==="notyet"){send(`How do I set up and look after my ${BY[id].n}? Short checklist, please.`);return}
+  // something's not working: setup & fix-it mode with the facts prefilled; straight to a specialist if the AI can't run
+  const facts=checkinFacts(c);
+  if(sampleState==="none"){if(!S.started)startConversation();else setChat("open");
+    handover(DEPT2EXP[DEPT(BY[id].c)],`Wants: help, ${BY[id].n} isn't working\nProduct: ${BY[id].n}\nStatus: ${facts}\nAI advisor: unavailable, so sent straight to a specialist`);return}
+  if(!S.started)startConversation();else setChat("open");
+  sysLine("Setup & fix-it mode: let's get it working first. A specialist can take over any time.");
+  cin.value=`My ${BY[id].n} isn't working properly (${facts}). What happens: `;sendState();
+  setTimeout(()=>{cin.focus();cin.setSelectionRange(cin.value.length,cin.value.length)},60);
+}
+document.addEventListener("click",e=>{
+  const ck=e.target.closest("[data-checkin]");if(ck){const [a,id]=ck.dataset.checkin.split("|");checkinAnswer(a,id);return}
+  if(e.target.closest("[data-wb-sugg]")){const b=e.target.closest("[data-wb-sugg]");track("welcome_suggestion_clicked",{productId:(b.dataset.detail||b.dataset.rigOrder||"").split("|")[0]||null});return}
+  if(e.target.closest("[data-wb-rig]")){track("welcome_open_rig");go({name:"rig"});window.scrollTo(0,0);return}
+  if(e.target.closest("[data-wb-hide]")){try{sessionStorage.setItem("ga3_wbhide","1")}catch(err){S.wbHide=true}render();return}
+  if(e.target.closest("[data-welcome-demo]")){S.customer="returning";store.set("customer","returning");try{sessionStorage.removeItem("ga3_wbhide")}catch(err){}S.wbHide=false;S.wbThanks=null;go({name:"home"});window.scrollTo(0,0)}
+},true);
 /* ---------------- Decision confidence, Ready-to-Play, loyalty (UI) ---------------- */
 function rtpHtml(r,interactive){
   const tier=r.tiers[S.rtpTier]||r.tiers.bal;
@@ -1028,11 +1127,24 @@ function dashboardView(){
   <h2 class="mph">Metrics</h2><div class="tblwrap"><table class="cmp covtbl"><thead><tr><th>Metric</th><th>Formula</th><th>Numerator / denominator</th><th>Value</th><th>Status</th></tr></thead><tbody>
    ${m.metrics.map(x=>`<tr><th>${esc(x.name)}</th><td>${esc(x.formula)}</td><td>${x.status==="not measurable"?"–":`${f(x.num)} / ${f(x.den)}`}</td><td>${x.value===null?"–":(/rate/i.test(x.name)?x.value+"%":eur(x.value))}</td><td><span class="badge ${x.status==="not measurable"?"warn":"ok"}">${esc(x.status.toUpperCase())}</span><div class="muted" style="font-size:12px">${esc(x.note)}</div></td></tr>`).join("")}</tbody></table></div>
   <h2 class="mph">Event counts</h2><div class="tblwrap"><table class="cmp covtbl"><tbody>${EVENT_NAMES.map(n=>`<tr><th>${n}</th><td>${m.counts[n]}</td><td class="muted">${n==="purchase_completed"?"never fired: no real purchase confirmation exists":n==="thomann_product_link_clicked"?"no longer fired: external links were removed":n==="human_handoff_completed"?"simulated handoff":""}</td></tr>`).join("")}</tbody></table></div>
+  ${loyaltyTableHtml(demo?demoEvents():undefined)}
   <h2 class="mph">A/B test <span class="muted">A = standard recommendations · B = explainable comparisons, Ready-to-Play, savings, selective handoff</span></h2>
   <div class="tblwrap"><table class="cmp covtbl"><thead><tr><th></th><th>Variant A</th><th>Variant B</th></tr></thead><tbody>
    ${[["Sessions recorded","n"],["Task completion %","taskCompletion"],["Minutes to decision","minutesToDecision"],["Compatibility correct %","compatCorrect"],["Cart items","cartItems"],["Cart value €","cartValue"],["Trust (1–5)","trust"],["Usefulness (1–5)","usefulness"],["Willingness to buy (1–5)","willingness"],["Handoff helpful","handoffHelpful"]].map(([lab,k])=>`<tr><th>${lab}</th><td>${f(ab.A[k])}</td><td>${f(ab.B[k])}</td></tr>`).join("")}</tbody></table></div>
   <p class="muted">${demo?"Simulated records.":"Only sessions recorded with the Test guide's “Record this test session” form are counted. No results are filled in automatically."}</p>
   ${demo?"":`<div class="prow"><button class="btn" data-dash-reset>Delete all recorded events and test sessions on this device</button></div>`}</div>`;
+}
+function loyaltyTableHtml(events){
+  const ev=events||ls.get(EV_KEY,[]);
+  const by=n=>ev.filter(x=>x.e===n),sess=n=>new Set(by(n).map(x=>x.s)),pct=(a,b)=>b?(a/b*100).toFixed(1)+"%":"–";
+  const shownS=sess("welcome_card_shown"),ans=by("checkin_answered"),clickS=new Set(by("welcome_suggestion_clicked").map(x=>x.s).filter(s=>shownS.has(s))),rigS=new Set(by("welcome_open_rig").map(x=>x.s).filter(s=>shownS.has(s)));
+  const cnt=a=>ans.filter(x=>x.answer===a).length;
+  return `<h2 class="mph">Loyalty check-ins <span class="muted">Welcome back card · shown in both variants</span></h2><div class="tblwrap"><table class="cmp covtbl"><thead><tr><th>Measure</th><th>Numerator / denominator</th><th>Value</th><th>Note</th></tr></thead><tbody>
+   <tr><th>Cards shown</th><td>${shownS.size} sessions</td><td>${by("welcome_card_shown").length} views</td><td class="muted">A session counts once, however often the home page is opened.</td></tr>
+   ${[["good","All good"],["broken","Something's not working"],["notyet","Haven't set it up yet"]].map(([k,l])=>`<tr><th>Check-in answer: ${l}</th><td>${cnt(k)} / ${ans.length} answers</td><td>${pct(cnt(k),ans.length)}</td><td class="muted">Share of all check-in answers.</td></tr>`).join("")}
+   <tr><th>Suggestion click rate</th><td>${clickS.size} / ${shownS.size} sessions</td><td>${pct(clickS.size,shownS.size)}</td><td class="muted"><b>Proxy</b> for interest: a click opens the product, it isn't a purchase.</td></tr>
+   <tr><th>Open My rig rate</th><td>${rigS.size} / ${shownS.size} sessions</td><td>${pct(rigS.size,shownS.size)}</td><td class="muted"><b>Proxy</b> for engagement with My rig.</td></tr>
+  </tbody></table></div>`;
 }
 /* ---------------- AI summary above search results ---------------- */
 const SUMMARY_RULES="You write the short AI summary shown above search results in Thomann's online shop (a concept prototype; all data is demo data). Use ONLY the facts given: never invent products, prices, specs or review content. Write for the customer described in the facts, in plain words a non-expert understands, and never assume they are a beginner unless the facts say so. Hard limit: 70 words. No preamble, no headings, no closing question. Use exactly the shape asked for, in light Markdown (bold labels, '- ' bullets). Prices in EUR.";
@@ -1342,6 +1454,7 @@ function rigHealth(){
   if(str){const d=daysSince(str.since);if(d!==null)out.push(d>90?{k:"strings",s:"warn",t:`Your strings were changed ${d} days ago. Most players change them every 2–3 months.`,ask:"My strings are over 3 months old. Which ones should I get?"}:{k:"strings",s:"ok",t:`Strings changed ${d} days ago.`})}
   const pedals=kind("pedal"),psu=kind("psu")[0];
   if(pedals.length&&!psu)out.push({k:"power",s:"warn",t:`${pedals.length} pedal${pedals.length>1?"s run":" runs"} on batteries. A 9 V supply saves batteries and noise.`,ask:"Which power supply should I get for my pedals?"});
+  if(psu&&pedals.length&&pedals.every(pd=>psu.cp.outputs.some(o=>o.mA>=pd.cp.mA)))out.push({k:"power",s:"ok",t:`${psu.name} powers your ${pedals.length===1?pedals[0].name:pedals.length+" pedals"}.`});
   if(psu)for(const pd of pedals)if(!psu.cp.outputs.some(o=>o.mA>=pd.cp.mA))out.push({k:"power",s:"bad",t:`${pd.name} needs ${pd.cp.mA} mA; no output on your ${psu.name} gives that.`,ask:`My ${psu.name} can't power my ${pd.name}. What should I do?`});
   const g=kind("electric guitar"),amp=kind("amp")[0];
   if(g.length&&!amp&&!pedals.some(p=>p.cp.headphoneOut))out.push({k:"amp",s:"warn",t:"You have an electric guitar but no amp or headphone amp.",ask:"I need an amp for my guitar. What fits my rig?"});
@@ -1627,12 +1740,15 @@ function rigOverview(){
   const add=(key,o)=>{const c=iss.get(key);if(!c){iss.set(key,Object.assign({key,s:"warn"},o));return}
     c.urg=Math.min(c.urg,o.urg);if(o.s==="bad")c.s="bad";for(const f in o)if(c[f]===undefined)c[f]=o[f]};
   const URG={power:2,amp:2,interface:1,phantom:1,gain:2,usb:2,xlr:3,hp:3,hp250:6,strings:4};
+  const hasItf=rigItems().some(x=>x.cp?.kind==="interface"),notes=[],startUps=[];
   for(const h of health){if(h.s==="ok"||h.k==="war"||h.k==="ret"||h.k==="none")continue;
+    if(h.k==="hp250"&&hasItf){notes.push(h);continue}/* advice only: they're driven by your interface */
     const one=["power","amp","interface","strings"].includes(h.k);
     add(one?h.k:h.k+":"+h.t,{k:h.k,s:h.s,urg:h.s==="bad"?0:(URG[h.k]??3),text:h.t,ask:h.ask})}
   const MISS={"Pedal power":"power","Amp":"amp","Microphone":"mic","Interface":"interface"};
-  for(const c of chains)for(const n of c.flow)if(n.missing){const k=MISS[n.missing]||"miss:"+n.missing;add(k,{k,urg:k==="mic"?5:2,ask:n.ask,miss:n.missing})}
+  for(const c of chains)for(const n of c.flow)if(n.missing){const k=MISS[n.missing]||"miss:"+n.missing;if(k==="mic")continue;/* an upgrade opportunity, not a health problem */add(k,{k,urg:k==="mic"?5:2,ask:n.ask,miss:n.missing})}
   for(const st of steps.filter(x=>x.when==="Now")){const t=topicOf(st.id);
+    if(/^a starting point/.test(st.why)){startUps.push(st);continue}
     if(t==="power"&&BY[st.id].cp?.kind==="battery")add("power",{k:"power",urg:2,stop:st.id});
     else add(t||"need:"+st.id,{k:t||"need",urg:t?2:3,rec:st.id,why:st.why})}
   for(const o of sug){const t=topicOf(o.p.id);if(t&&iss.has(t)){const c=iss.get(t);if(!c.rec||BY[c.rec].cp?.kind==="battery")c.rec=o.p.id}}
@@ -1657,13 +1773,36 @@ function rigOverview(){
     if(i.k==="need")return {...i,title:`Missing: ${pn(i.rec)}`,line:`${esc(i.why.charAt(0).toUpperCase()+i.why.slice(1))} (${pp(i.rec)}).`,act:view};
     if(i.miss)return {...i,title:"Missing: "+esc(i.miss),line:esc(i.text||"Nothing fills this spot in your setup yet."),act:view||ask("Ask the advisor",i.ask)};
     return {...i,title:i.s==="bad"?"Won't work as it is":"Worth checking",line:esc(i.text),act:i.ask?ask("Ask the advisor",i.ask):ask("Ask the advisor",i.text+" What can I do?")};
-  }).sort((a,b)=>a.urg-b.urg);
-  const passed=health.filter(h=>h.s==="ok"&&h.k!=="ret"&&h.k!=="none");
+  }).map(i=>({...i,area:i.k==="need"?(["picks","strings","battery"].includes(BY[i.rec]?.cp?.kind)?"care":"conn"):rigArea(i.k)})).sort((a,b)=>a.urg-b.urg);
+  const passed=health.filter(h=>h.s==="ok"&&h.k!=="ret"&&h.k!=="none").map(h=>({...h,area:rigArea(h.k)}));
   const used=new Set([...issues.flatMap(i=>[i.rec,i.stop]),...ordered.map(x=>x.id)].filter(Boolean)),keys=new Set(issues.map(i=>i.key));
-  const ups=[];
+  const ups=startUps.map(st=>({id:st.id,why:st.why.charAt(0).toUpperCase()+st.why.slice(1)})),orderedTopics=new Set(ordered.map(x=>topicOf(x.id)).filter(Boolean));
   for(const st of steps)if(st.when!=="Now"&&!used.has(st.id)&&!ups.some(u=>u.id===st.id))ups.push({id:st.id,why:(st.when==="Later"?"Later, above your budget: ":"")+st.why.charAt(0).toUpperCase()+st.why.slice(1)});
-  for(const o of sug){const t=topicOf(o.p.id);if(used.has(o.p.id)||(t&&keys.has(t))||ups.some(u=>u.id===o.p.id))continue;ups.push({id:o.p.id,why:o.why+(o.warn?" · fits with notes":" · fits your rig")})}
-  return {issues,passed,ups:ups.slice(0,3),budget:rm.map(r=>r.budget).find(Boolean)||null};
+  for(const o of sug){const t=topicOf(o.p.id);if(used.has(o.p.id)||(t&&(keys.has(t)||orderedTopics.has(t)))||ups.some(u=>u.id===o.p.id))continue;ups.push({id:o.p.id,why:o.why+(o.warn?" · fits with notes":" · fits your rig")})}
+  return {issues,passed,notes:notes.map(h=>({...h,area:rigArea(h.k)})),ups:ups.slice(0,3),budget:rm.map(r=>r.budget).find(Boolean)||null};
+}
+const RIG_AREAS=[["conn","Connections"],["power","Power"],["care","Strings & care"],["war","Warranty & returns"],["rec","Computer & recording"]];
+const rigArea=k=>({power:"power",strings:"care",war:"war",ret:"war",usb:"rec",hp:"rec",hp250:"rec",interface:"rec",phantom:"rec",gain:"rec",xlr:"rec"})[k]||"conn";
+/* The one rig status used everywhere (My rig card, Welcome back card). Upgrade opportunities never count. */
+function rigStatus(ov){
+  ov=ov||rigOverview();const n=ov.issues.length,now=Math.min(3,n),more=n-now;
+  const level=ov.issues.some(i=>i.s==="bad")?"red":n?"amber":"green";
+  return {level,n,now,more,ov,
+    label:level==="red"?"Action needed":level==="amber"?`Good · ${n} thing${n===1?"":"s"} to do`:"All good",
+    icon:level==="red"?"✕":level==="amber"?"!":"✓",
+    counts:n?`${now} to do now${more?` · ${more} more to check`:""}`:"Nothing to do right now",
+    areas:RIG_AREAS.map(([id,name])=>{const bad=ov.issues.filter(i=>i.area===id),ok=ov.passed.filter(h=>h.area===id);return {id,name,state:bad.length?"warn":ok.length?"ok":"none"}})};
+}
+function rigCardHtml(st){
+  return `<div class="rigcard ${st.level}" role="status"><div class="rcstat"><span class="rcicon" aria-hidden="true">${st.icon}</span><div><b>${esc(st.label)}</b><div class="muted">${esc(st.counts)}</div></div></div>
+   <div class="rcareas">${st.areas.map(a=>`<button class="rcchip ${a.state}" data-rig-area="${a.id}"${a.state==="none"?" disabled title=\"Nothing in your rig to check here\"":""}><span aria-hidden="true">${a.state==="warn"?"!":a.state==="ok"?"✓":"–"}</span>${esc(a.name)}<span class="sr">${a.state==="warn"?" needs attention":a.state==="ok"?" ok":" not checked"}</span></button>`).join("")}</div></div>`;
+}
+function rigFocusArea(id){
+  const flash=el=>{el.classList.remove("flash");void el.offsetWidth;el.classList.add("flash");setTimeout(()=>el.classList.remove("flash"),1700)};
+  const it=document.querySelector(`.issue[data-area="${id}"]`);
+  if(it){const d=it.closest("details");if(d)d.open=true;it.scrollIntoView({block:"center",behavior:"smooth"});flash(it);return}
+  const p=document.querySelector("details.passedbox");if(!p)return;p.open=true;const li=[...p.querySelectorAll(`li[data-area="${id}"]`)];
+  (li[0]||p).scrollIntoView({block:"center",behavior:"smooth"});li.forEach(flash);
 }
 function rigView(){
   const items=rigItems(),ov=rigOverview(),top=ov.issues.slice(0,3),more=ov.issues.slice(3);
@@ -1671,20 +1810,20 @@ function rigView(){
   const inIssue=new Set(ov.issues.map(i=>i.rec)),fromOrders=rigFromOrders().filter(x=>!inIssue.has(x.id));
   const node=x=>x.missing?`<button class="node missing" data-ask="${esc(x.ask)}">+ ${esc(x.missing)}</button>`:`<div class="node">${sil(x.custom?(x.cat==="computer"?"interfaces":x.cat):x.c)}${esc(x.name)}</div>`;
   const arrow=`<svg class="i arr" style="width:18px" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`;
-  const m=S.music,n=ov.issues.length;
+  const m=S.music,st=rigStatus(ov);
   const chip=`<span class="profchip">${m.instruments.length?m.instruments.map(i=>esc([insName(i),i.level?MP_LEVELS[i.level]:"",i.uses.length?labList(MP_USES,i.uses):""].filter(Boolean).join(" · "))).join(" | "):"No instruments in your Music Profile"} · <button class="linkish" data-open="profile">${m.instruments.length?"Edit":"Add"}</button></span>`;
-  const issueHtml=i=>`<div class="issue ${i.s}"><div class="it"><b>${i.title}</b><div>${i.line}</div></div>${i.act?`<button class="btn" ${i.act.attr}>${esc(i.act.label)}</button>`:""}</div>`;
+  const issueHtml=i=>`<div class="issue ${i.s}" data-area="${i.area}"><div class="it"><b>${i.title}</b><div>${i.line}</div></div>${i.act?`<button class="btn" ${i.act.attr}>${esc(i.act.label)}</button>`:""}</div>`;
   const pres=S.present?`<p class="muted presline"><span class="tag moat">moat</span> <span class="tag sim">demo data</span> Presentation mode · value at today's shop prices: ${eur(Math.round(items.reduce((a,x)=>a+(x.p||0),0)))} · ${S.rig.filter(r=>warrantyLeft(warrantyOf(r))>0).length} items under warranty</p>`:"";
   const chains=rigChains();
   return `<div class="wrap rigpage">
   <div class="crumbs"><span>⌂</span><span>My account</span><span class="last">My rig</span></div>
-  <div class="righead"><div style="min-width:0"><div class="rigtitle"><h1 class="page" style="margin:0">My rig</h1>${chip}</div>
-   <p class="rigsum">${items.length} item${items.length===1?"":"s"} · ${n?`${n} thing${n===1?"":"s"} need${n===1?"s":""} attention`:"nothing needs attention"} · ${ov.ups.length} upgrade${ov.ups.length===1?"":"s"} suggested</p>${pres}</div>
+  <div class="rigtitle"><h1 class="page" style="margin:0">My rig</h1>${chip}</div>${pres}
+  <div class="righead">${rigCardHtml(st)}
    <button class="cta purple" style="padding:11px 22px" data-ask="Look at my whole rig. What should I upgrade first, and why?">Ask the advisor about my rig</button></div>
   <section class="rigsec"><h2>Needs attention</h2>
    ${top.length?`<div class="issues">${top.map(issueHtml).join("")}</div>`:`<p class="okline">✓ Your rig is ready to play. Nothing needs fixing.</p>`}
    ${more.length?`<details class="rigmore"><summary>${more.length} more to check</summary><div class="issues">${more.map(issueHtml).join("")}</div></details>`:""}
-   ${ov.passed.length?`<details class="rigmore"><summary>✓ ${ov.passed.length} check${ov.passed.length===1?"":"s"} passed</summary><ul class="passed">${ov.passed.map(h=>`<li>${esc(h.t)}</li>`).join("")}</ul></details>`:""}
+   ${ov.passed.length||ov.notes.length?`<details class="rigmore passedbox"><summary>✓ ${ov.passed.length} check${ov.passed.length===1?"":"s"} passed${ov.notes.length?` · ${ov.notes.length} note${ov.notes.length===1?"":"s"}`:""}</summary><ul class="passed">${ov.passed.map(h=>`<li data-area="${h.area}">${esc(h.t)}</li>`).join("")}${ov.notes.map(h=>`<li data-area="${h.area}">Note: ${esc(h.t)}</li>`).join("")}</ul></details>`:""}
   </section>
   ${chains.length?`<section class="rigsec"><h2>How it connects</h2><div class="chains">${chains.map(c=>`<div class="chain"><h3>${esc(c.title)}</h3><div class="flow">${c.flow.map(node).join(arrow)}</div></div>`).join("")}</div></section>`:""}
   <section class="rigsec"><div class="gearhead"><h2>Your gear <span class="muted" style="font-weight:400;font-size:14px">${items.length} items</span></h2><button class="btn" id="rigAddOpen">+ Add gear</button></div>
@@ -1730,6 +1869,7 @@ function bindRig(){
   });
   document.querySelectorAll("[data-rig-order]").forEach(b=>b.onclick=()=>{const [id,oid]=b.dataset.rigOrder.split("|"),o=ORDERS.find(x=>x.id===oid);addRig(id,{bought:"thomann",order:oid,since:o.delivered||o.eta})});
   $("#rigAddOpen").onclick=openAddGear;
+  document.querySelectorAll("[data-rig-area]").forEach(b=>b.onclick=()=>rigFocusArea(b.dataset.rigArea));
 }
 /* ---------------- Saved products: only what the customer saves ---------------- */
 const PICK_SRC={suggested:"Suggested by the advisor",compared:"Compared by the advisor",cheaper:"Cheaper option from the advisor",setup:"Part of an advisor setup",you:"Saved by you"};
@@ -1960,14 +2100,16 @@ const FEATURES=[
  {stage:"Own",kind:"moat",n:"Roadmap, projects, consultation",d:"My rig shows an upgrade roadmap per instrument; Projects store planned setups; a consent-based summary prepares a (simulated) specialist consultation.",try:"What should I upgrade next for each instrument I play?"},
  {stage:"Measure",kind:"open",n:"Dashboard and A/B test",d:"Test guide: switch variant A/B, record a test session, and open the performance dashboard (anonymous events, correct denominators, no invented results; demo data clearly labelled).",action:"dashboard"},
  {stage:"Own",kind:"moat",n:"Music Profile",d:"Account menu → My Music Profile: several instruments, each with its own level, uses, genres, budget, goal and gear, plus general preferences. Optional and stored on this device. The advisor uses it, asks which instrument when unclear, avoids gear you own, and only saves changes after you confirm.",try:"I play piano at an advanced level and I just started guitar. What should I get next?"},
+ {stage:"Own",kind:"moat",n:"Welcome back check-in",d:"Home page card for returning customers: one check-in about a recent purchase (All good / Something's not working / Haven't set it up yet), one rig suggestion and the same rig health as My rig. Never pops up; Not now hides it for the session.",action:"welcome"},
  {stage:"Own",kind:"moat",n:"Warranty in My rig",d:"Warranty and return days left for Thomann purchases; your own dates for gear bought elsewhere.",try:"Which of my gear is still under warranty?"},
 ];
 function openGuide(){
   const lab={basic:'<span class="tag">basic</span>',edge:'<span class="tag edge">Thomann edge</span>',moat:'<span class="tag moat">moat</span>',open:'<span class="tag sim">decide with Thomann</span>'};
-  drawer("Test guide",`<p class="aistatus" style="margin:0 0 8px;font-weight:600">AI status: ${sampleState==="ready"?"ready":sampleState==="loading"?"connecting":"unavailable"} · page tools: ${S.toolsOK===false?"no":S.toolsOK?"yes":"unknown"}${S.apiMode?" · via Render server":""} · reason: ${esc(aiReason||"none")}</p><p class="muted" style="margin:0">For the person running the test. Entry points to try: the search box, “Need help?”, Contact us → Live chat, and the product page boxes.</p>
+  drawer("Test guide",`<p class="aistatus" style="margin:0 0 8px;font-weight:600">AI status: ${sampleState==="ready"?"ready":sampleState==="loading"?"connecting":"unavailable"} · page tools: ${S.toolsOK===false?"no":S.toolsOK?"yes":"unknown"}${S.apiMode?" · via Render server":""} · reason: ${esc(AI_REASON_TEXT[aiReason]||aiReason||"none")}</p><p class="muted" style="margin:0">For the person running the test. Entry points to try: the search box, “Need help?”, Contact us → Live chat, and the product page boxes.</p>
    <label class="switch"><input type="checkbox" id="onl"${S.online?" checked":""}> Specialists online (uncheck to test out-of-hours)</label>
    <label class="switch"><input type="checkbox" id="pres"${S.present?" checked":""}> Presentation mode: show how AI tools read each product (AI-ready data) on product pages, and the demo tags on My rig</label>
-   <div class="switch">A/B test variant <select id="abVariant" class="search"><option value="B"${S.variant!=="A"?" selected":""}>B: explainable comparisons, Ready-to-Play, savings, selective handoff</option><option value="A"${S.variant==="A"?" selected":""}>A: standard recommendations</option></select></div>
+   <label class="switch stack">Customer<select id="custType" class="search"><option value="returning"${S.customer!=="new"?" selected":""}>Returning (orders and My rig)</option><option value="new"${S.customer==="new"?" selected":""}>New</option></select></label>
+   <label class="switch stack">A/B test variant <select id="abVariant" class="search"><option value="B"${S.variant!=="A"?" selected":""}>B: explainable comparisons, Ready-to-Play, savings, selective handoff</option><option value="A"${S.variant==="A"?" selected":""}>A: standard recommendations</option></select></label>
    <details class="abform"><summary>Record this test session (variant ${S.variant})</summary>
     <div class="abq">Task completed? ${["yes","no"].map(v=>`<label><input type="radio" name="abTask" value="${v}"> ${v}</label>`).join("")}</div>
     <div class="abq">Compatibility advice was ${["correct","partly","wrong","n/a"].map(v=>`<label><input type="radio" name="abCompat" value="${v}"> ${v}</label>`).join("")}</div>
@@ -1979,14 +2121,15 @@ function openGuide(){
    <div class="switch simbox"><span class="tag sim">demo mode</span> Simulate a new price for a tracked item: <select id="simItem" class="search"><option value="">${getAlerts().filter(x=>x.active).length?"Choose…":"No tracked items yet (use the 🔕 bell)"}</option>${getAlerts().filter(x=>x.active&&BY[x.id]).map(x=>`<option value="${x.id}">${esc(BY[x.id].n)} (${eur(x.basePrice)})</option>`).join("")}</select><input id="simPrice" inputmode="decimal" placeholder="€" style="width:80px"> <button class="btn" data-sim-go>Simulate</button></div>
    <div class="switch">Advisor speed <select id="tier" class="search"><option value="quick"${S.tier==="quick"?" selected":""}>Fast</option><option value="default"${S.tier!=="quick"?" selected":""}>Thorough (slower)</option></select></div>
    ${FEATURES.map(f=>`<div class="feat"><div class="h"><span class="n">${f.stage}</span>${esc(f.n)} ${lab[f.kind]}</div><p>${esc(f.d)}</p>
-    ${f.try?`<div><button class="btn" data-ask="${esc(f.try)}">Try: “${esc(f.try)}”</button></div>`:f.action==="data"?`<div><button class="btn" data-detail="m2" data-close>Open a product page</button></div>`:f.action==="dashboard"?`<div class="prow"><button class="btn" data-go="dashboard" data-close>Open the dashboard</button></div>`:f.action==="categories"?`<div class="prow"><button class="btn" data-go="categories" data-close>Open all categories</button><button class="btn" data-go="coverage" data-close>Coverage report and import</button></div>`:f.action==="summary"?`<div class="prow"><button class="btn" data-cat="guitars" data-close>Try: Guitars</button><button class="btn" data-sumq="SM58" data-close>Try: “SM58”</button></div>`:`<div><button class="btn" data-platform>Open the advisor full screen</button></div>`}</div>`).join("")}
+    ${f.try?`<div><button class="btn" data-ask="${esc(f.try)}">Try: “${esc(f.try)}”</button></div>`:f.action==="data"?`<div><button class="btn" data-detail="m2" data-close>Open a product page</button></div>`:f.action==="dashboard"?`<div class="prow"><button class="btn" data-go="dashboard" data-close>Open the dashboard</button></div>`:f.action==="categories"?`<div class="prow"><button class="btn" data-go="categories" data-close>Open all categories</button><button class="btn" data-go="coverage" data-close>Coverage report and import</button></div>`:f.action==="welcome"?`<div class="prow"><button class="btn" data-welcome-demo data-close>Returning customer: open the home page</button></div>`:f.action==="summary"?`<div class="prow"><button class="btn" data-cat="guitars" data-close>Try: Guitars</button><button class="btn" data-sumq="SM58" data-close>Try: “SM58”</button></div>`:`<div><button class="btn" data-platform>Open the advisor full screen</button></div>`}</div>`).join("")}
    <div class="prow"><button class="btn" id="resetRigOnly">Reset demo rig</button><button class="btn" id="resetAll">Reset demo (profile, rig, basket, saved, chat)</button></div>`,(b)=>{
     $("#onl").onchange=e=>{S.online=e.target.checked;store.set("online",S.online);updateOnline();if(S.view.name==="contact")render()};
     $("#tier").onchange=e=>{S.tier=e.target.value;store.set("tier",S.tier)};
+    $("#custType").onchange=e=>{S.customer=e.target.value;store.set("customer",S.customer);if(S.view.name==="home")render()};
     $("#abVariant").onchange=e=>{S.variant=e.target.value;store.set("variant",S.variant);toast("Variant "+S.variant+" active for new messages");render();openGuide()};
     $("#pres").onchange=e=>{S.present=e.target.checked;store.set("present",S.present);if(["product","rig"].includes(S.view.name))render()};
     $("#resetRigOnly").onclick=()=>{resetDemoRig();closeDrawer()};
-    $("#resetAll").onclick=()=>{S.rig=JSON.parse(JSON.stringify(DEFAULT_RIG));S.music=clone(DEFAULT_MUSIC);autoLinkGear();saveMusic();S.basket=[];S.picks=[];S.offered={};S.pickSel=[];S.pickCmp=null;savePicks();store.set("rig",S.rig);store.set("basket",[]);bcount();resetChat();closeDrawer();render();toast("Demo reset")};
+    $("#resetAll").onclick=()=>{S.customer="returning";store.set("customer","returning");store.set("checkinDone",[]);try{sessionStorage.removeItem("ga3_wbhide")}catch(e){}S.rig=JSON.parse(JSON.stringify(DEFAULT_RIG));S.music=clone(DEFAULT_MUSIC);autoLinkGear();saveMusic();S.basket=[];S.picks=[];S.offered={};S.pickSel=[];S.pickCmp=null;savePicks();store.set("rig",S.rig);store.set("basket",[]);bcount();resetChat();closeDrawer();render();toast("Demo reset")};
   },null,true);
 }
 
@@ -2141,6 +2284,7 @@ const AI_MSG={
   api_unavailable:"The advisor's server isn't set up right now. Please try again later."
 };
 /* codes that turn the chat off for this page load; everything else keeps it on */
+const AI_REASON_TEXT={loading:"still connecting",no_claude:"not opened inside Claude",signed_out:"not signed in to claude.ai",not_granted:"permission not given",sampling_disabled:"Claude is blocked for this account",session_expired:"Claude session expired",rate_limited:"usage limit reached",unavailable:"can't run in this view",api_unavailable:"server not set up"};
 const AI_OFF={not_granted:"not_granted",sampling_disabled:"sampling_disabled",session_expired:"session_expired",not_declared:"unavailable",capability_disabled:"unavailable",capability_removed:"unavailable"};
 const PLAIN_NOTE="Simplified mode: product cards and setup checks aren't available in this app. For the full advisor, open the link in a desktop browser at claude.ai.";
 const noAI=()=>AI_MSG[aiReason]||AI_MSG.unavailable;

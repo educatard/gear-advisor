@@ -83,10 +83,11 @@ function savingVs(price, ref) {
 function offersFor(id) {
   const p = BY[id]; if (!p) return [];
   const art = p.tv && p.tv.article, out = [];
+  if (!art) return out; /* demo products have no article number: never match offers to them */
   for (const o of OFFERS) {
-    if ((o.type === "hotdeal" || o.type === "bargain") && o.article === art) out.push({...o, productId: id, saving: savingVs(o.price, o.ref)});
-    if (o.type === "bstock" && o.newArticle === art) out.push({...o, productId: offerProductId(o), saving: p.p > o.price ? {amount: +(p.p - o.price).toFixed(2), basis: "the new item's verified price", text: `€${(p.p - o.price).toFixed(2)} less than new (€${p.p})`} : null});
-    if (o.type === "bundle" && (o.article === art || (o.parts || []).includes(art))) out.push({...o, productId: offerProductId(o)});
+    if ((o.type === "hotdeal" || o.type === "bargain") && o.article && o.article === art) out.push({...o, productId: id, saving: savingVs(o.price, o.ref)});
+    if (o.type === "bstock" && o.newArticle && o.newArticle === art) out.push({...o, productId: offerProductId(o), saving: p.p > o.price ? {amount: +(p.p - o.price).toFixed(2), basis: "the new item's verified price", text: `€${(p.p - o.price).toFixed(2)} less than new (€${p.p})`} : null});
+    if (o.type === "bundle" && ((o.article && o.article === art) || (o.parts || []).includes(art))) out.push({...o, productId: offerProductId(o)});
   }
   return out;
 }
