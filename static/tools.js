@@ -25,7 +25,7 @@ const TOOLS = [
   execute(i){setStatus("Searching the catalogue…");const q=String(i.query||"").toLowerCase().split(/\s+/).filter(w=>w.length>1);
    const hay=p=>(p.n+" "+p.b+" "+p.tags.join(" ")+" "+(p.sub||"")+" "+(TOPS[p.top]?.en||"")).toLowerCase();
    const specHay=p=>(p.n+" "+p.tags.join(" ")+" "+Object.entries({...p.specs,...(p.tv?.specs||{})}).map(([k,v])=>k+": "+v).join(" | ")).toLowerCase();
-   let l=P.filter(p=>(!i.category||p.c===i.category)&&(!i.top_category||p.top===i.top_category)&&(!i.max_price||p.p<=+i.max_price)&&(!i.min_price||p.p>=+i.min_price)&&(!i.in_stock||p.st>0)
+   let l=P.filter(p=>!p.conflict&&(!i.category||p.c===i.category)&&(!i.top_category||p.top===i.top_category)&&(!i.max_price||p.p<=+i.max_price)&&(!i.min_price||p.p>=+i.min_price)&&(!i.in_stock||p.st>0)
      &&(!i.source||i.source==="any"||(i.source==="verified"?!!p.tv:!p.tv))&&(i.requires||[]).every(r=>specHay(p).includes(String(r).toLowerCase())));
    l=l.map(p=>{const h=hay(p);return {p,s:q.reduce((a,w)=>a+(h.includes(w)?1:0),0)}}).filter(o=>!q.length||o.s>0);
    l.sort(i.sort==="price_low"?(a,b)=>a.p.p-b.p.p:i.sort==="price_high"?(a,b)=>b.p.p-a.p.p:(a,b)=>b.s-a.s||(b.p.tv?1:0)-(a.p.tv?1:0)||(b.p.r||0)-(a.p.r||0));
@@ -41,7 +41,7 @@ const TOOLS = [
    return base}},
  {name:"show_products",description:"Display product cards to the customer (with View and Add-to-basket buttons). Use whenever you recommend specific items. Returns 'shown'.",
   inputSchema:{type:"object",properties:{ids:{type:"array",items:{type:"string"}},heading:{type:"string"},notes:{type:"object",description:"optional map id -> short reason (max 8 words)"}},required:["ids"]},
-  execute(i){const l=ids(i.ids);if(!l.length)throw new Error("No valid ids");const notes=i.notes||{};
+  execute(i){const l=ids(i.ids).filter(id=>!BY[id].conflict);if(!l.length)throw new Error("No valid ids (items whose price is being rechecked cannot be shown)");const notes=i.notes||{};
    push(card(i.heading||"Suggestions","",l.map(id=>miniProduct(BY[id],notes[id]?esc(notes[id]):"")).join("")));shownLog.push("products("+l.join(",")+")");pick(l.map(id=>({id,why:notes[id]?String(notes[id]):""})),"suggested");return "shown "+l.length}},
  {name:"compare_products",description:"Show a side-by-side comparison table of 2-4 products and return the spec matrix so you can explain trade-offs. Pass use_case so the specs that matter for it come first and are highlighted.",
   inputSchema:{type:"object",properties:{ids:{type:"array",items:{type:"string"}},use_case:{type:"string",enum:["home","live","studio","teaching","producing","rehearsal","other"]}},required:["ids"]},
@@ -105,7 +105,7 @@ const TOOLS = [
    push(card("Fix-it: "+hit.k.issue,'<span class="tag edge">setup & fix-it</span> '+sim,`<div class="muted">${esc(p.n)}</div><ul class="steps">${hit.k.steps.map((s,n)=>`<li><input type="checkbox" id="st_${p.id}_${n}_${Date.now()}" aria-label="Done"><span>${esc(s)}</span></li>`).join("")}</ul><div class="prow" style="justify-content:flex-start"><button class="btn small" data-say="I tried all the steps and it's still not working.">Still not working</button><button class="btn small" data-say="It works now, thanks!">It works now</button></div>`));
    shownLog.push("setup("+p.id+")");return {found:true,issue:hit.k.issue,steps:hit.k.steps,otherKnownIssues:list.map(k=>k.issue)}}},
  {name:"expert_handoff",description:"Hand the conversation to a named Thomann product specialist with a summary. Shows a card with contact options. Use for complex, pro or high-budget cases, installations, repairs, or when asked for a human.",
-  inputSchema:{type:"object",properties:{department:{type:"string",enum:Object.keys(EXPERTS)},summary:{type:"string",description:"3-5 sentences the specialist can act on: goal, budget, owned gear, open questions"},reason:{type:"string"}},required:["department","summary"]},
+  inputSchema:{type:"object",properties:{department:{type:"string",enum:Object.keys(EXPERTS)},summary:{type:"string",description:"Exactly 4 short lines, no sentences: 'Wants: …', 'Budget: …', 'Level: …', 'Considering: …' (product names). Only mention owned gear if it matters for the question."},reason:{type:"string"}},required:["department","summary"]},
   execute(i){const e=EXPERTS[i.department]||EXPERTS.recording;setStatus("Briefing a specialist…");const k="h"+Date.now();
    push(card("Talk to "+e.name,'<span class="tag edge">expert handoff</span> '+sim,`<div class="muted">${esc(e.role)} · ${esc(e.since)}</div><div style="font-size:13px;margin:6px 0;padding:8px;background:var(--sunk);border-radius:8px"><b>Summary sent with your request</b><br>${esc(i.summary)}</div><div class="prow" style="justify-content:flex-start"><button class="btn small primary" data-hand="${k}" data-who="${esc(e.name)}" data-how="call back">Request a call</button><button class="btn small" data-hand="${k}" data-who="${esc(e.name)}" data-how="live chat">Live chat</button><button class="btn small" data-hand="${k}" data-who="${esc(e.name)}" data-how="email">Email</button></div><div class="muted" data-hs="${k}"></div>`));
    shownLog.push("handoff("+i.department+")");return {specialist:e.name,role:e.role,status:"card shown; customer picks call, chat or email"}}},

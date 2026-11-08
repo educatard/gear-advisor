@@ -31,13 +31,54 @@ const byArticle = a => P.find(p => p.tv && p.tv.article === a);
   }
 })();
 const offerProductId = o => (byArticle(o.article) || {}).id;
+
+/* ---------- Deals snapshot of 2026-11-06 (catalogue/thomann_deals_seed_2026-11-06.json) ----------
+   Listing prices seen that day: a dated snapshot, never "live". record_id is the merge key.
+   Conflicting records (listing vs product page) are flagged and kept out of every AI path. */
+const PACK = THOMANN_DATA.dealsPack || {meta: {}, items: []};
+const PACK_DATE = PACK.meta.snapshot;
+const packSlug = path => "d-" + String(path).replace(/\.htm$/, "").replace(/[^a-z0-9]+/gi, "_").toLowerCase();
+const PACK_TYPE_LABEL = {hotdeal: "Hot Deal", clearance: "Clearance", bstock: "B-Stock", bundle: "Official bundle"};
+(function addPackProducts() {
+  for (const it of PACK.items) {
+    if (it.matched) continue;
+    const id = packSlug(it.path);
+    if (BY[id]) continue;
+    const rec = {id, article: it.article || it.recordId, recordId: it.recordId, name: it.name, brand: "", top: it.top, crumb: [], sub: PACK_TYPE_LABEL[it.type] + " (price data only)", subEn: PACK_TYPE_LABEL[it.type] + " (price data only)",
+      url: "https://www.thomann.de/de/" + it.path, price: it.price, currency: "EUR", priceText: it.price + " €", ref: it.conflict ? null : it.ref, avail: it.stock || "", availEn: it.stock === "in_stock" ? "In stock on " + it.observed : it.stock === "2_to_5_days" ? "Ships in 2–5 days (" + it.observed + ")" : "Availability not recorded",
+      inStock: it.stock === "in_stock", specs: {}, compat: [], uses: [], bundle: it.type === "bundle" ? {contents: "Official Thomann bundle; contents not recorded in the snapshot"} : null, image: null,
+      verified: it.observed, source: "thomann.de listing", snapshot: true, condition: it.type === "bstock" ? "B-Stock (returned goods)" : it.type === "clearance" ? "Clearance: condition not stated" : null};
+    const p = productFromRecord(rec, "snapshot"); p.priceOnly = true; p.conflict = it.conflict; p.packType = it.type; p.b = "";
+    if (it.type === "bstock") p.bstockLabel = true;
+    P.push(p); BY[id] = p;
+  }
+  for (const it of PACK.items) {
+    const prod = it.matched ? byArticle(it.article) : BY[packSlug(it.path)];
+    if (!prod) continue;
+    const art = prod.tv && prod.tv.article;
+    const dup = OFFERS.some(o => o.article === art && (o.type === it.type || (o.type === "bargain" && it.type === "hotdeal") || o.type === "bundle"));
+    if (dup) continue;
+    OFFERS.push({type: it.type, article: art, recordId: it.recordId, name: it.name, price: it.price, ref: it.conflict ? null : it.ref, checked: it.observed, snapshot: true, conflict: it.conflict,
+      pagePrice: it.pagePrice, condition: it.type === "bstock" ? "B-Stock (returned goods)" : it.type === "clearance" ? "Clearance: condition not stated" : undefined, source: "thomann.de listing", parts: null, contents: it.type === "bundle" ? "Official Thomann bundle; contents not recorded" : undefined});
+  }
+})();
+/* the snapshot observation(s) for a product, oldest first (same-day listing/detail prices are not a price change) */
+function packObservations(id) {
+  const p = BY[id]; if (!p) return [];
+  const it = PACK.items.find(x => (x.matched && p.tv && x.article === p.tv.article) || packSlug(x.path) === id);
+  if (!it) return [];
+  const l = it.observations.find(o => o.type === "listing_price") || it.observations[0];
+  return l ? [{t: l.t, price: l.price, src: "snapshot", note: "thomann.de listing" + (it.conflict ? " (conflicts with product page " + it.pagePrice + " €)" : "")}] : [];
+}
+
 const partIds = o => (o.parts || []).map(a => (byArticle(a) || {}).id).filter(Boolean);
 
 /* the comparison basis is always named; % only when the basis is a verified reference price */
 function savingVs(price, ref) {
   if (!ref || !(ref.value > price)) return null;
   const pct = Math.round((1 - price / ref.value) * 100);
-  return {amount: +(ref.value - price).toFixed(2), pct, basis: ref.label, text: `${pct}% below the ${ref.basis === "best30" ? "30-day best price" : ref.basis === "uvp" ? "manufacturer's list price (UVP)" : "reference price"} of €${ref.value}`};
+  const amt = +(ref.value - price).toFixed(2);
+  return {amount: amt, pct, basis: ref.label, text: ref.basis === "uvp" ? `€${amt} less than the manufacturer's suggested price (UVP €${ref.value})` : ref.basis === "best30" ? `€${amt} (${pct}%) below Thomann's 30-day best price (€${ref.value})` : `€${amt} below the reference price (€${ref.value})`};
 }
 function offersFor(id) {
   const p = BY[id]; if (!p) return [];
@@ -59,12 +100,12 @@ const ls = {get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON
 function priceHistory(id) {
   const all = ls.get(PRICE_KEY, {}), p = BY[id];
   const h = all[id] || [];
-  if (!h.length && p) h.push(p.tv ? {t: p.tv.verified, price: p.tv.price, src: "verified", note: "thomann.de product page"} : {t: TODAY.toISOString().slice(0, 10), price: p.p, src: "demo", note: "demo catalogue price"});
+  if (!h.length && p) { h.push(...packObservations(id)); if (!p.priceOnly) h.push(p.tv ? {t: p.tv.verified, price: p.tv.price, src: "verified", note: "thomann.de product page"} : {t: TODAY.toISOString().slice(0, 10), price: p.p, src: "demo", note: "demo catalogue price"}); }
   return h;
 }
 function seedHistory(id, price, src, t) {
   const all = ls.get(PRICE_KEY, {});
-  if (!all[id] || !all[id].length) { all[id] = [{t, price: +price, src, note: src === "verified" ? "thomann.de product page" : "demo catalogue price"}]; ls.set(PRICE_KEY, all); }
+  if (!all[id] || !all[id].length) { const snap = packObservations(id).filter(o => o.t < t); all[id] = [...snap, {t, price: +price, src: BY[id] && BY[id].priceOnly ? "snapshot" : src, note: src === "verified" ? "thomann.de product page" : "demo catalogue price"}]; ls.set(PRICE_KEY, all); }
 }
 function addSnapshot(id, price, src, note, t) {
   const all = ls.get(PRICE_KEY, {}), h = priceHistory(id);

@@ -112,21 +112,11 @@ function createProject(name, items, notes) {
 
 /* ---------- Consultation summary for a specialist (shared only with consent) ---------- */
 function consultSummary() {
-  const asks = S.turns.filter(t => t.role === "user").map(t => t.content).slice(-4);
-  const prof = S.music.instruments.map(i => insName(i) + (i.level ? " (" + MP_LEVELS[i.level].toLowerCase() + ")" : "") + (i.uses.length ? ", " + labList(MP_USES, i.uses).toLowerCase() : "") + (i.budget ? ", budget €" + i.budget : "")).join("; ");
-  return [
-    "Customer: " + (prof || "no Music Profile"),
-    "Owns: " + (rigItems().map(r => r.name).join(", ") || "nothing listed"),
-    "Saved products: " + (S.picks.map(x => BY[x.id] && BY[x.id].n).filter(Boolean).join(", ") || "none"),
-    "Projects: " + (getProjects().map(p => p.name + " (" + p.items.length + " items)").join(", ") || "none"),
-    "Basket: " + (S.basket.map(b => b.qty + "× " + BY[b.id].n).join(", ") || "empty"),
-    "Recent questions: " + (asks.map(a => "“" + a.slice(0, 120) + "”").join(" ") || "none"),
-    "Open questions: ",
-  ].join("\n");
+  return localSummary() + "\nOpen question: ";
 }
 
 /* ---------- Anonymous event tracking ---------- */
-const EVENT_NAMES = ["chat_started", "needs_assessment_completed", "product_recommended", "product_compared", "compatibility_checked", "setup_completed", "bundle_viewed", "deal_viewed", "price_alert_created", "product_saved", "add_to_cart", "cart_reviewed", "human_handoff_requested", "human_handoff_completed", "thomann_product_link_clicked", "returning_profile_loaded", "purchase_completed"];
+const EVENT_NAMES = ["chat_started", "needs_assessment_completed", "product_recommended", "product_compared", "compatibility_checked", "setup_completed", "bundle_viewed", "deal_viewed", "price_alert_created", "product_saved", "add_to_cart", "cart_reviewed", "human_handoff_requested", "human_handoff_completed", "thomann_product_link_clicked", "returning_profile_loaded", "purchase_completed", "product_page_viewed"];
 const EV_KEY = "ga3_events";
 const SESSION_ID = (() => { try { let s = sessionStorage.getItem("ga3_sid"); if (!s) { s = "s-" + Math.random().toString(36).slice(2, 10); sessionStorage.setItem("ga3_sid", s); } return s; } catch (e) { return "s-" + Math.random().toString(36).slice(2, 10); } })();
 const VISITOR = (() => { const v = ls.get("ga3_vid", null); if (v) return {id: v, returning: true}; const n = "v-" + Math.random().toString(36).slice(2, 10); ls.set("ga3_vid", n); return {id: n, returning: false}; })();
@@ -149,14 +139,14 @@ function computeMetrics(events) {
   const pct = (a, b) => b ? +(a / b * 100).toFixed(1) : null;
   return {sessions: sessions.size, counts,
     metrics: [
-      {name: "Conversion rate", formula: "Completed purchases / Eligible sessions × 100", num: counts.purchase_completed, den: sessions.size, value: null, status: "not measurable", note: "The prototype has no checkout, so no purchase is ever confirmed. Clicks to thomann.de are tracked as a proxy below, not as purchases."},
+      {name: "Conversion rate", formula: "Completed purchases / Eligible sessions × 100", num: counts.purchase_completed, den: sessions.size, value: null, status: "not measurable", note: "The prototype has no checkout, so no purchase is ever confirmed. Product page views are tracked as a proxy below, not as purchases."},
       {name: "Average order value", formula: "Total confirmed order revenue / Number of completed orders", num: 0, den: 0, value: null, status: "not measurable", note: "No confirmed orders."},
       {name: "Cart completion rate", formula: "Completed carts / Carts created × 100", num: 0, den: sess("add_to_cart").size, value: null, status: "not measurable", note: "No checkout. Proxy: sessions that reviewed their cart / sessions with a cart = " + (pct(sess("cart_reviewed").size, sess("add_to_cart").size) ?? "–") + "%."},
       {name: "Cart value (proxy, average of each session's last cart)", formula: "Sum of product prices × quantities", num: +cartVals.reduce((a, b) => a + b, 0).toFixed(2), den: cartVals.length, value: cartVals.length ? +(cartVals.reduce((a, b) => a + b, 0) / cartVals.length).toFixed(2) : null, status: "proxy", note: "Cart contents at the time of the last add-to-cart in each session; not an order value."},
       {name: "Repeat customer rate", formula: "Returning purchasing customers / Total purchasing customers × 100", num: 0, den: 0, value: null, status: "not measurable", note: "No purchases or accounts. Proxy: sessions where a returning profile loaded = " + sess("returning_profile_loaded").size + " of " + sessions.size + "."},
       {name: "Handoff rate", formula: "Conversations transferred to humans / Total conversations × 100", num: [...handoff].filter(s => chat.has(s)).length, den: chat.size, value: pct([...handoff].filter(s => chat.has(s)).length, chat.size), status: "measured (simulated handoff)", note: "Handoffs are simulated in the prototype; counts are real clicks."},
       {name: "Recommendation acceptance rate", formula: "Recommended products added to cart / Eligible recommended products × 100", num: [...recAdded].filter(x => recs.has(x)).length, den: recs.size, value: pct([...recAdded].filter(x => recs.has(x)).length, recs.size), status: "measured", note: "Per session: a product counts once when the advisor showed it and once if it was then added to the cart."},
-      {name: "Thomann link click rate (purchase-intent proxy)", formula: "Sessions with a thomann.de product-link click / Sessions × 100", num: sess("thomann_product_link_clicked").size, den: sessions.size, value: pct(sess("thomann_product_link_clicked").size, sessions.size), status: "proxy", note: "Intent, not a purchase."},
+      {name: "Product page view rate (purchase-intent proxy)", formula: "Sessions that opened a product page / Sessions × 100", num: sess("product_page_viewed").size, den: sessions.size, value: pct(sess("product_page_viewed").size, sessions.size), status: "proxy", note: "Intent, not a purchase. (Links to thomann.de were removed, so link clicks are no longer measured.)"},
     ]};
 }
 /* demo data for presentations: generated, labelled, never stored with real events */
@@ -167,7 +157,7 @@ function demoEvents() {
     push("chat_started"); if (rnd() < .7) push("needs_assessment_completed");
     const id = ["i1", "m4", "t457271"][i % 3]; push("product_recommended", {ids: [id]});
     if (rnd() < (v === "B" ? .5 : .35)) push("add_to_cart", {id, recommended: true, cartValue: +(100 + rnd() * 400).toFixed(2)});
-    if (rnd() < .2) push("human_handoff_requested"); if (rnd() < .3) push("thomann_product_link_clicked");
+    if (rnd() < .2) push("human_handoff_requested"); if (rnd() < .6) push("product_page_viewed");
   }
   return out;
 }
