@@ -5,7 +5,7 @@ function miniProduct(p,extra=""){
   return `<div class="mini"><div class="info"><div>${esc(p.n)}</div><div class="sub">${p.r?"★ "+p.r+" · ":""}${stockText(p)}${p.tv?` · <span class="vtag">verified ${esc(p.tv.verified)}</span>`:" · demo"}${extra?" · "+extra:""}</div></div><span class="price" style="font-size:14px">${eur(p.p)}</span><button class="btn small" data-detail="${p.id}">View</button><button class="btn small primary" data-add="${p.id}">Add</button>${typeof saveBtn==="function"?saveBtn(p.id):""}</div>`;
 }
 function stockText(p){if(p.tv)return p.tv.availEn;return p.st?(p.st<15?p.st+" left":"in stock"):"back in ~"+(p.restock||10)+" days"}
-const card=(title,tags,body)=>`<div class="card"><h5>${esc(title)} ${tags||""}</h5>${body}</div>`;
+const card=(title,tags,body)=>`<div class="card"><h5>${esc(title)} ${tags||""}${typeof cardMark==="function"?cardMark(title):""}</h5>${body}</div>`;
 const sim='<span class="tag sim">simulated</span>';
 const USE_SPECS={studio:/input|eingäng|phantom|abtast|sample|bit|gain|noise|rausch|impedan|usb|frequen|charakter|pattern|type/i,live:/watt|leistung|spl|schalldruck|weight|gewicht|battery|batter|robust|charakter|feedback|channels|kanäle/i,home:/headphone|kopfhörer|bluetooth|watt|leistung|speaker|lautsprecher|weight|gewicht|size|abmess/i,producing:/usb|midi|software|version|input|eingäng|pad|key|tasten/i,teaching:/key|tasten|sounds|metronom|speaker|lautsprecher/i,rehearsal:/watt|leistung|speaker|lautsprecher|channels|kanäle/i};
 let CMP_USE="";
@@ -42,7 +42,7 @@ const TOOLS = [
  {name:"show_products",description:"Display product cards to the customer (with View and Add-to-basket buttons). Use whenever you recommend specific items. Returns 'shown'.",
   inputSchema:{type:"object",properties:{ids:{type:"array",items:{type:"string"}},heading:{type:"string"},notes:{type:"object",description:"optional map id -> short reason (max 8 words)"}},required:["ids"]},
   execute(i){const l=ids(i.ids).filter(id=>!BY[id].conflict);if(!l.length)throw new Error("No valid ids (items whose price is being rechecked cannot be shown)");const notes=i.notes||{};
-   push(card(i.heading||"Suggestions","",l.map(id=>miniProduct(BY[id],notes[id]?esc(notes[id]):"")).join("")));shownLog.push("products("+l.join(",")+")");pick(l.map(id=>({id,why:notes[id]?String(notes[id]):""})),"suggested");return "shown "+l.length}},
+   push(card(i.heading||"Suggestions",typeof mk==="function"?mk("ai"):"",l.map(id=>miniProduct(BY[id],notes[id]?esc(notes[id]):"")).join("")));shownLog.push("products("+l.join(",")+")");pick(l.map(id=>({id,why:notes[id]?String(notes[id]):""})),"suggested");return "shown "+l.length}},
  {name:"compare_products",description:"Show a side-by-side comparison table of 2-4 products and return the spec matrix so you can explain trade-offs. Pass use_case so the specs that matter for it come first and are highlighted.",
   inputSchema:{type:"object",properties:{ids:{type:"array",items:{type:"string"}},use_case:{type:"string",enum:["home","live","studio","teaching","producing","rehearsal","other"]}},required:["ids"]},
   execute(i){const l=ids(i.ids).slice(0,4).map(id=>BY[id]);if(l.length<2)throw new Error("Need 2-4 valid ids");setStatus("Comparing…");CMP_USE=i.use_case||"";if(typeof track==="function")track("product_compared",{ids:l.map(p=>p.id)});
