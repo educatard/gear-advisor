@@ -583,6 +583,47 @@ a.btn.extlink{text-decoration:none;font-size:13px}
 .agentbox{border-color:#f97316}
 details.rtpbox>summary{cursor:pointer;list-style:none}details.rtpbox>summary::-webkit-details-marker{display:none}
 details.rtpbox>summary h4{display:inline}details.rtpbox:not([open])>summary h4::after{content:" ▸";color:var(--muted)}
+.rigtitle{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.profchip{display:inline-flex;align-items:center;gap:4px;flex-wrap:wrap;font-size:13px;background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:4px 12px;color:var(--muted)}
+.profchip .linkish{color:var(--purple);text-decoration:underline;font-weight:700}
+.rigsum{margin:6px 0 0;font-size:15px;font-weight:600}
+.presline{margin:6px 0 0;font-size:12.5px}
+.rigsec{margin-top:24px}
+.rigsec h2{font-size:21px;font-weight:800;margin:0 0 10px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.issues{display:flex;flex-direction:column;gap:8px}
+.issue{display:flex;align-items:center;gap:14px;border:1px solid var(--line);border-left:4px solid var(--warn);border-radius:8px;padding:10px 14px;background:var(--bg)}
+.issue.bad{border-left-color:var(--bad,#c62828)}
+.issue .it,.up .it{flex:1;min-width:0;font-size:14px;line-height:1.4}
+.issue .btn,.up .btn{flex:none}
+.okline{margin:0;color:var(--ok);font-weight:700}
+details.rigmore{margin-top:8px}
+details.rigmore>summary,details.fromorders>summary{cursor:pointer;font-size:14px;font-weight:600;color:var(--muted);padding:4px 0}
+details.rigmore .issues{margin-top:6px}
+ul.passed{margin:4px 0 0;padding-left:20px;font-size:14px;color:var(--muted);line-height:1.6}
+.rigsec .chains{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,560px),1fr));gap:12px;margin:0}
+.gearhead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+details.fromorders{border:1px dashed var(--line);border-radius:8px;padding:6px 12px;margin-bottom:10px}
+details.fromorders[open]{padding-bottom:10px}
+.rigpage .gearlist{display:flex;flex-direction:column;gap:0;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+details.grow+details.grow{border-top:1px solid var(--line)}
+details.grow>summary{list-style:none;display:flex;align-items:center;gap:12px;padding:8px 14px;cursor:pointer}
+details.grow>summary::-webkit-details-marker{display:none}
+details.grow>summary:hover{background:var(--soft2)}
+details.grow>summary .sil{width:46px;flex:none;aspect-ratio:3/2}
+details.grow .gn{flex:1;min-width:0;display:flex;flex-direction:column;font-size:14px;line-height:1.3}
+details.grow .gn b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+details.grow .gn .muted{font-size:12.5px}
+details.grow .gb{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+details.grow .chev{width:18px;flex:none;transition:transform .15s}
+details.grow[open] .chev{transform:rotate(180deg)}
+details.grow .gbody{padding:4px 14px 14px 72px}
+details.grow .gbody .meta{font-size:12.5px;color:var(--muted);margin:0 0 6px}
+details.grow .gbody .acts{display:flex;gap:6px;flex-wrap:wrap}
+.ups{display:flex;flex-direction:column;gap:8px}
+.up{display:flex;align-items:center;gap:14px;background:var(--soft);border-radius:8px;padding:10px 14px}
+.up .it .muted{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.up .price{font-weight:800;flex:none}
+@media (max-width:600px){.issue,.up{flex-wrap:wrap}.issue .it{flex-basis:100%}.issue .btn,.up .btn{margin-left:auto}details.grow .gbody{padding-left:14px}details.grow>summary{flex-wrap:wrap}details.grow .gb{order:3;flex-basis:100%;justify-content:flex-start;padding-left:58px}details.grow .gb:empty{display:none}.righead .cta{width:100%}}
 </style>
 
 <div class="promo gut"><b>Concept prototype</b> · AI advisor for Thomann · demo catalogue, prices, orders and specialists · nothing can be bought</div>
@@ -663,7 +704,7 @@ const S={
   profile:{}, music:null, gearFormFor:null, present:store.get("present",false), editing:null, sumHidden:store.get("sumHidden",false), sumNow:null, sumCtx:null,
   view:{name:"home",q:"",cats:[],top:"",sub:"",src:"",brand:"",inst:"",min:"",max:"",stock:false,sort:"rel",sit:"",limit:24}, viewing:null,
   contact:{enquiry:null,category:null,need:null,method:null,product:null}, chatCtx:null, turns:[], busy:false, ctl:null,
-  chat:"closed", mode:"ai", expert:null, started:false, apiMode:false,
+  chat:"closed", mode:"ai", expert:null, started:false, toolsOK:null,
   picks:store.get("saved",[]), offered:{}, variant:store.get("variant","B"), rtpTier:"bal", answers:0, pickSel:[], pickCmp:null, pickFit:null, ctab:"chat", topic:"",
 };
 const $=s=>document.querySelector(s);
@@ -1059,7 +1100,6 @@ function sumFacts(t){
 }
 async function aiSummaryText(t){
   const facts=sumFacts(t);
-  if(S.apiMode){const r=await fetch("api/summary",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({facts})});if(!r.ok)throw new Error("summary "+r.status);return (await r.json()).text}
   if(sample){const r=await sample(SUMMARY_RULES+"\n\n"+facts,{modelTier:"quick",cache:false});return r.text}
   throw new Error("no ai");
 }
@@ -1298,31 +1338,31 @@ function warrantyTags(r){
 function rigHealth(){
   const items=rigItems(),kind=k=>items.filter(x=>x.cp?.kind===k),out=[];
   const str=kind("strings")[0];
-  if(str){const d=daysSince(str.since);if(d!==null)out.push(d>90?{s:"warn",t:`Your strings were changed ${d} days ago. Most players change them every 2–3 months.`,ask:"My strings are over 3 months old. Which ones should I get?"}:{s:"ok",t:`Strings changed ${d} days ago.`})}
+  if(str){const d=daysSince(str.since);if(d!==null)out.push(d>90?{k:"strings",s:"warn",t:`Your strings were changed ${d} days ago. Most players change them every 2–3 months.`,ask:"My strings are over 3 months old. Which ones should I get?"}:{k:"strings",s:"ok",t:`Strings changed ${d} days ago.`})}
   const pedals=kind("pedal"),psu=kind("psu")[0];
-  if(pedals.length&&!psu)out.push({s:"warn",t:`${pedals.length} pedal${pedals.length>1?"s run":" runs"} on batteries. A 9 V supply saves batteries and noise.`,ask:"Which power supply should I get for my pedals?"});
-  if(psu)for(const pd of pedals)if(!psu.cp.outputs.some(o=>o.mA>=pd.cp.mA))out.push({s:"bad",t:`${pd.name} needs ${pd.cp.mA} mA; no output on your ${psu.name} gives that.`,ask:`My ${psu.name} can't power my ${pd.name}. What should I do?`});
+  if(pedals.length&&!psu)out.push({k:"power",s:"warn",t:`${pedals.length} pedal${pedals.length>1?"s run":" runs"} on batteries. A 9 V supply saves batteries and noise.`,ask:"Which power supply should I get for my pedals?"});
+  if(psu)for(const pd of pedals)if(!psu.cp.outputs.some(o=>o.mA>=pd.cp.mA))out.push({k:"power",s:"bad",t:`${pd.name} needs ${pd.cp.mA} mA; no output on your ${psu.name} gives that.`,ask:`My ${psu.name} can't power my ${pd.name}. What should I do?`});
   const g=kind("electric guitar"),amp=kind("amp")[0];
-  if(g.length&&!amp&&!pedals.some(p=>p.cp.headphoneOut))out.push({s:"warn",t:"You have an electric guitar but no amp or headphone amp.",ask:"I need an amp for my guitar. What fits my rig?"});
-  if(g.length&&amp)out.push({s:"ok",t:`${g[0].name} → ${amp.name}: ready to play.`});
+  if(g.length&&!amp&&!pedals.some(p=>p.cp.headphoneOut))out.push({k:"amp",s:"warn",t:"You have an electric guitar but no amp or headphone amp.",ask:"I need an amp for my guitar. What fits my rig?"});
+  if(g.length&&amp)out.push({k:"play",s:"ok",t:`${g[0].name} → ${amp.name}: ready to play.`});
   const itf=kind("interface")[0],comp=profileComputer()||kind("computer")[0];
-  if(itf&&comp){const u=usbCheck(itf.name,itf.cp.usb,comp);out.push({s:u.status,t:u.note})}
+  if(itf&&comp){const u=usbCheck(itf.name,itf.cp.usb,comp);out.push({k:"usb",s:u.status,t:u.note})}
   for(const h of kind("headphones")){
-    if(itf)out.push(h.cp.ohm<=itf.cp.hpMax?{s:"ok",t:`${h.name} (${h.cp.ohm} Ω) are driven fine by your ${itf.name}.`}:{s:"warn",t:`${h.name} (${h.cp.ohm} Ω) may be quiet on your ${itf.name}.`});
-    if(h.cp.ohm>=250)out.push({s:"warn",t:`${h.name} are ${h.cp.ohm} Ω: quiet when plugged into a phone or laptop directly.`});
+    if(itf)out.push(h.cp.ohm<=itf.cp.hpMax?{k:"hp",s:"ok",t:`${h.name} (${h.cp.ohm} Ω) are driven fine by your ${itf.name}.`}:{k:"hp",s:"warn",t:`${h.name} (${h.cp.ohm} Ω) may be quiet on your ${itf.name}.`});
+    if(h.cp.ohm>=250)out.push({k:"hp250",s:"warn",t:`${h.name} are ${h.cp.ohm} Ω: quiet when plugged into a phone or laptop directly.`});
   }
   for(const m of kind("mic")){
-    if(!itf){out.push({s:"bad",t:`${m.name}: no interface to plug it into.`,ask:"I need an audio interface for my mic. What fits?"});continue}
-    if(m.cp.needsPhantom&&!itf.cp.phantom)out.push({s:"bad",t:`${m.name} needs phantom power; ${itf.name} has none.`});
+    if(!itf){out.push({k:"interface",s:"bad",t:`${m.name}: no interface to plug it into.`,ask:"I need an audio interface for my mic. What fits?"});continue}
+    if(m.cp.needsPhantom&&!itf.cp.phantom)out.push({k:"phantom",s:"bad",t:`${m.name} needs phantom power; ${itf.name} has none.`});
     const boost=kind("booster")[0],gain=itf.cp.gain+(boost?boost.cp.boost:0);
-    out.push(gain>=m.cp.gainNeed?{s:"ok",t:`${m.name}: enough gain from your ${itf.name}${boost?" + "+boost.name:""}.`}:{s:"warn",t:`${m.name} needs about ${m.cp.gainNeed} dB; your ${itf.name} gives ${itf.cp.gain} dB.`,ask:`My ${m.name} is too quiet on my ${itf.name}. What can I do?`});
+    out.push(gain>=m.cp.gainNeed?{k:"gain",s:"ok",t:`${m.name}: enough gain from your ${itf.name}${boost?" + "+boost.name:""}.`}:{k:"gain",s:"warn",t:`${m.name} needs about ${m.cp.gainNeed} dB; your ${itf.name} gives ${itf.cp.gain} dB.`,ask:`My ${m.name} is too quiet on my ${itf.name}. What can I do?`});
   }
-  if(itf&&kind("mic").length>itf.cp.xlr)out.push({s:"warn",t:`${kind("mic").length} mics but ${itf.cp.xlr} mic input on your ${itf.name}.`});
+  if(itf&&kind("mic").length>itf.cp.xlr)out.push({k:"xlr",s:"warn",t:`${kind("mic").length} mics but ${itf.cp.xlr} mic input on your ${itf.name}.`});
   for(const r of items){const w=warrantyOf(r),left=warrantyLeft(w);
-    if(w&&left>0&&left<183)out.push({s:"warn",t:`${r.name}: warranty ends in ${left} days (${isoDay(w.end)}). Check it works properly now.`,ask:`My ${r.name}'s warranty ends on ${isoDay(w.end)}. What should I check before then?`});
-    if(w?.returnDays>0)out.push({s:"ok",t:`${r.name}: you can still return it for ${w.returnDays} days.`});
+    if(w&&left>0&&left<183)out.push({k:"war",s:"warn",t:`${r.name}: warranty ends in ${left} days (${isoDay(w.end)}). Check it works properly now.`,ask:`My ${r.name}'s warranty ends on ${isoDay(w.end)}. What should I check before then?`});
+    if(w?.returnDays>0)out.push({k:"ret",s:"ok",t:`${r.name}: you can still return it for ${w.returnDays} days.`});
   }
-  if(!out.length)out.push({s:"ok",t:"No issues found in your rig."});
+  if(!out.length)out.push({k:"none",s:"ok",t:"No issues found in your rig."});
   return out;
 }
 function rigChains(){
@@ -1543,74 +1583,141 @@ function updateFocusBar(){
   bar.hidden=m.instruments.length<2;
   $("#focusSel").innerHTML=`<option value="">All instruments (ask me)</option>${m.instruments.map(i=>`<option value="${i.id}"${m.active===i.id?" selected":""}>${esc(insName(i))}</option>`).join("")}`;
 }
-function gearCardHtml(r,i){
+function gearTypeOf(x){return x.custom?(CUSTOM_KINDS[Object.keys(CUSTOM_KINDS).find(k=>CUSTOM_KINDS[k][1]===x.cat)]?.[0]||"Other"):CATS[x.c]}
+/* only the badge that matters for a collapsed row */
+function gearBadge(r,x){
+  const w=warrantyOf(r),left=warrantyLeft(w),out=[];
+  if(w?.returnDays>0)out.push(`<span class="wt blue">return window: ${w.returnDays} days left</span>`);
+  if(w&&left>0&&left<=60)out.push(`<span class="wt yellow">warranty ends in ${left} days</span>`);
+  if(x.cp?.kind==="strings"){const d=daysSince(r.since);if(d!==null&&d>90)out.push(`<span class="wt yellow">strings: ${d} days old</span>`)}
+  return out.join("");
+}
+function gearRowHtml(r,i){
   const x=rigItems().find(y=>y.key===(r.custom?r.name:r.id));if(!x)return "";
   const silCat=x.custom?(x.cat==="computer"?"interfaces":["guitars","amps","pedals","interfaces","mics","headphones","keys"].includes(x.cat)?x.cat:"accessories"):x.c;
-  const type=x.custom?(CUSTOM_KINDS[Object.keys(CUSTOM_KINDS).find(k=>CUSTOM_KINDS[k][1]===x.cat)]?.[0]||"Other"):CATS[x.c];
-  const w=warrantyOf(r),left=warrantyLeft(w);
+  const type=gearTypeOf(x),w=warrantyOf(r),left=warrantyLeft(w),open=S.editing===i||S.rigOpen===i;
+  let body;
   if(S.editing===i){
     const locked=r.bought==="thomann"&&r.order;
-    return `<div class="gear">${sil(silCat)}<div style="min-width:0"><h4>${esc(x.name)}</h4>
-     <div class="editform">
+    body=`<div class="editform">
       <label>Bought at<select id="ef-bought"${locked?" disabled":""}><option value="thomann"${r.bought==="thomann"?" selected":""}>Thomann</option><option value="elsewhere"${r.bought!=="thomann"?" selected":""}>Somewhere else</option></select></label>
       <label>Owned since<input id="ef-since" type="${locked?"date":"month"}" value="${esc(locked?String(r.since).slice(0,10):String(r.since||"").slice(0,7))}"${locked?" disabled":""}></label>
       <label class="full" id="ef-warwrap"${r.bought==="thomann"?" hidden":""}>Warranty until (optional)<input id="ef-war" type="date" value="${esc(r.warrantyUntil||"")}"></label>
       <label class="full">Note<input id="ef-note" value="${esc(r.note||"")}" placeholder="e.g. serial number, repairs, setup"></label>
       ${locked?`<div class="full muted">Bought at Thomann (order ${esc(r.order)}): date and 3-year warranty come from the order.</div>`:""}
       <div class="full prow"><button class="btn primary" data-ef-save="${i}">Save</button><button class="btn" data-ef-cancel>Cancel</button></div>
-     </div></div></div>`;
-  }
-  const warAsk=w&&left>0?`My ${x.name} has a fault. It's covered by ${w.src} until ${isoDay(w.end)}. Can you help?`:"";
-  return `<div class="gear">${sil(silCat)}
-   <div style="min-width:0"><h4>${esc(x.name)}</h4><div class="meta">${esc(type)}${r.specs?" · "+esc(r.specs):""}${r.inst?.length?" · for "+esc(r.inst.map(id=>S.music.instruments.find(i=>i.id===id)).filter(Boolean).map(insName).join(", ")):""} · ${esc(ownedFor(r.since))}${!x.custom?` · now ${eur(x.p)}`:""}${r.note?` · ${esc(r.note)}`:""}</div>
+     </div>`;
+  }else{
+    const warAsk=w&&left>0?`My ${x.name} has a fault. It's covered by ${w.src} until ${isoDay(w.end)}. Can you help?`:"";
+    body=`<div class="meta">${esc(type)}${r.specs?" · "+esc(r.specs):""}${r.inst?.length?" · for "+esc(r.inst.map(id=>S.music.instruments.find(i=>i.id===id)).filter(Boolean).map(insName).join(", ")):""} · ${esc(ownedFor(r.since))}${!x.custom?` · now ${eur(x.p)}`:""}${r.note?` · ${esc(r.note)}`:""}</div>
     <div class="wtags">${warrantyTags(r)}</div>
-    <div class="acts">${!x.custom?`<button class="btn" data-detail="${x.id}">View</button>`:""}<button class="btn" data-edit="${i}">Edit</button>${warAsk?`<button class="btn" data-ask="${esc(warAsk)}">Use warranty</button>`:""}<button class="btn" data-prefill="My ${esc(x.name)} has a problem: ">Having a problem?</button><button class="btn" data-ask="How do I set up and look after my ${esc(x.name)}? Short checklist, please.">Setup & care</button><button class="btn" data-ask="Is there a worthwhile upgrade for my ${esc(x.name)}?">Upgrade?</button><button class="btn" data-rig-rm="${i}" aria-label="Remove ${esc(x.name)}">Remove</button></div></div></div>`;
+    <div class="acts">${!x.custom?`<button class="btn" data-detail="${x.id}">View</button>`:""}<button class="btn" data-edit="${i}">Edit</button><button class="btn" data-prefill="My ${esc(x.name)} has a problem: ">Having a problem?</button><button class="btn" data-ask="How do I set up and look after my ${esc(x.name)}? Short checklist, please.">Setup & care</button><button class="btn" data-ask="Is there a worthwhile upgrade for my ${esc(x.name)}?">Upgrade?</button>${warAsk?`<button class="btn" data-ask="${esc(warAsk)}">Use warranty</button>`:""}<button class="btn" data-rig-rm="${i}" aria-label="Remove ${esc(x.name)}">Remove</button></div>`;
+  }
+  return `<details class="grow" data-grow="${i}"${open?" open":""}><summary>${sil(silCat)}<span class="gn"><b>${esc(x.name)}</b><span class="muted">${esc(type)}</span></span><span class="gb">${gearBadge(r,x)}</span><svg class="i chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></summary><div class="gbody">${body}</div></details>`;
+}
+/* One answer to "Is my rig OK, and what should I do next?": merges rig health, chain gaps,
+   the roadmap's Now steps, warranty and return deadlines into deduplicated issues. */
+function rigFromOrders(){const owned=new Set(S.rig.map(r=>r.id));return ORDERS.flatMap(o=>o.items.map(([id])=>({id,o}))).filter(x=>!owned.has(x.id)&&BY[x.id].c!=="accessories")}
+function rigOverview(){
+  const health=rigHealth(),chains=rigChains(),sug=rigSuggestions();
+  const rm=S.variant==="A"?[]:upgradeRoadmap(),steps=rm.flatMap(r=>r.steps);
+  const topicOf=id=>{const p=BY[id];if(!p)return null;const k=p.cp?.kind;return k==="psu"||k==="battery"?"power":k==="amp"?"amp":k==="mic"?"mic":k==="interface"?"interface":null};
+  const iss=new Map();
+  const add=(key,o)=>{const c=iss.get(key);if(!c){iss.set(key,Object.assign({key,s:"warn"},o));return}
+    c.urg=Math.min(c.urg,o.urg);if(o.s==="bad")c.s="bad";for(const f in o)if(c[f]===undefined)c[f]=o[f]};
+  const URG={power:2,amp:2,interface:1,phantom:1,gain:2,usb:2,xlr:3,hp:3,hp250:6,strings:4};
+  for(const h of health){if(h.s==="ok"||h.k==="war"||h.k==="ret"||h.k==="none")continue;
+    const one=["power","amp","interface","strings"].includes(h.k);
+    add(one?h.k:h.k+":"+h.t,{k:h.k,s:h.s,urg:h.s==="bad"?0:(URG[h.k]??3),text:h.t,ask:h.ask})}
+  const MISS={"Pedal power":"power","Amp":"amp","Microphone":"mic","Interface":"interface"};
+  for(const c of chains)for(const n of c.flow)if(n.missing){const k=MISS[n.missing]||"miss:"+n.missing;add(k,{k,urg:k==="mic"?5:2,ask:n.ask,miss:n.missing})}
+  for(const st of steps.filter(x=>x.when==="Now")){const t=topicOf(st.id);
+    if(t==="power"&&BY[st.id].cp?.kind==="battery")add("power",{k:"power",urg:2,stop:st.id});
+    else add(t||"need:"+st.id,{k:t||"need",urg:t?2:3,rec:st.id,why:st.why})}
+  for(const o of sug){const t=topicOf(o.p.id);if(t&&iss.has(t)){const c=iss.get(t);if(!c.rec||BY[c.rec].cp?.kind==="battery")c.rec=o.p.id}}
+  for(const r of S.rig){const x=rigItems().find(y=>y.key===(r.custom?r.name:r.id));if(!x)continue;const w=warrantyOf(r),left=warrantyLeft(w);
+    if(w&&left>0&&left<=60)add("war:"+x.name,{k:"war",urg:left<=30?1:3,name:x.name,days:left,end:w.end});
+    if(w?.returnDays>0)add("ret:"+x.name,{k:"ret",urg:w.returnDays<=14?1:5,name:x.name,days:w.returnDays,end:w.returnUntil})}
+  const pn=id=>esc(BY[id].n),pp=id=>eur(BY[id].p),ordered=rigFromOrders();
+  const issues=[...iss.values()].map(i=>{
+    const view=i.rec?{label:BY[i.rec].n.length<=20?"View "+BY[i.rec].n:"View product",attr:`data-detail="${i.rec}"`}:null;
+    const ask=(l,q)=>({label:l,attr:`data-ask="${esc(q)}"`});
+    const ord=i.k!=="power"&&ordered.find(x=>x.id===i.rec||topicOf(x.id)===i.key);
+    if(ord)return {...i,rec:ord.id,title:i.k==="mic"?"Nothing plugged into your mic input":"Missing: "+(i.miss?esc(i.miss):pn(ord.id)),line:`Your <b>${pn(ord.id)}</b> is on its way (order ${esc(ord.o.id)}, ${esc(ord.o.status.toLowerCase())}). Add it to your rig so the advisor checks against it.`,act:{label:"Add to rig",attr:`data-rig-order="${ord.id}|${ord.o.id}"`}};
+    if(i.k==="power"){const ped=rigItems().filter(x=>x.cp?.kind==="pedal").map(x=>esc(x.name)).join(", ");
+      return {...i,title:i.s==="bad"?"Your power supply can't run a pedal":"Your pedals have no power supply",
+        line:i.s==="bad"?esc(i.text):`${ped} ${i.text&&/^1 pedal/.test(i.text)?"runs":"run"} on 9 V batteries.${i.rec?` Recommended: a supply such as <b>${pn(i.rec)}</b> (${pp(i.rec)}).`:" A 9 V supply saves batteries and noise."}${i.stop?` Until then, a 9 V battery (${pn(i.stop)}, ${pp(i.stop)}) does the job.`:""}`,
+        act:i.s==="bad"?ask("Ask the advisor",i.ask):i.rec?{label:"View the supply",attr:`data-detail="${i.rec}"`}:ask("Which supply?",i.ask)}}
+    if(i.k==="war")return {...i,title:`Warranty ends in ${i.days} days`,line:`${esc(i.name)}: covered until ${isoDay(i.end)}. Check it works properly now.`,act:ask("What to check",`My ${i.name}'s warranty ends on ${isoDay(i.end)}. What should I check before then?`)};
+    if(i.k==="ret")return {...i,title:`Return window: ${i.days} days left`,line:`${esc(i.name)}: you can still return it until ${isoDay(i.end)}. Test it properly before then.`,act:ask("What to test",`I can still return my ${i.name} for ${i.days} days. What should I test before I decide to keep it?`)};
+    if(i.k==="strings")return {...i,title:"Time for new strings",line:esc(i.text),act:ask("Pick strings",i.ask)};
+    if(i.k==="mic")return {...i,title:"Nothing plugged into your mic input",line:`Your interface has a mic input but no microphone.${i.rec?` A good match: <b>${pn(i.rec)}</b> (${pp(i.rec)}).`:""}`,act:view||ask("Ask the advisor",i.ask)};
+    if(i.k==="amp")return {...i,title:"No amp yet",line:`${esc(i.text||"Your guitar has nothing to play through.")}${i.rec?` Recommended: <b>${pn(i.rec)}</b> (${pp(i.rec)}).`:""}`,act:view||ask("Ask the advisor",i.ask)};
+    if(i.k==="need")return {...i,title:`Missing: ${pn(i.rec)}`,line:`${esc(i.why.charAt(0).toUpperCase()+i.why.slice(1))} (${pp(i.rec)}).`,act:view};
+    if(i.miss)return {...i,title:"Missing: "+esc(i.miss),line:esc(i.text||"Nothing fills this spot in your setup yet."),act:view||ask("Ask the advisor",i.ask)};
+    return {...i,title:i.s==="bad"?"Won't work as it is":"Worth checking",line:esc(i.text),act:i.ask?ask("Ask the advisor",i.ask):ask("Ask the advisor",i.text+" What can I do?")};
+  }).sort((a,b)=>a.urg-b.urg);
+  const passed=health.filter(h=>h.s==="ok"&&h.k!=="ret"&&h.k!=="none");
+  const used=new Set([...issues.flatMap(i=>[i.rec,i.stop]),...ordered.map(x=>x.id)].filter(Boolean)),keys=new Set(issues.map(i=>i.key));
+  const ups=[];
+  for(const st of steps)if(st.when!=="Now"&&!used.has(st.id)&&!ups.some(u=>u.id===st.id))ups.push({id:st.id,why:(st.when==="Later"?"Later, above your budget: ":"")+st.why.charAt(0).toUpperCase()+st.why.slice(1)});
+  for(const o of sug){const t=topicOf(o.p.id);if(used.has(o.p.id)||(t&&keys.has(t))||ups.some(u=>u.id===o.p.id))continue;ups.push({id:o.p.id,why:o.why+(o.warn?" · fits with notes":" · fits your rig")})}
+  return {issues,passed,ups:ups.slice(0,3),budget:rm.map(r=>r.budget).find(Boolean)||null};
 }
 function rigView(){
-  const items=rigItems(),health=rigHealth(),attn=health.filter(h=>h.s!=="ok").length;
-  const value=items.reduce((a,x)=>a+(x.p||0),0);
+  const items=rigItems(),ov=rigOverview(),top=ov.issues.slice(0,3),more=ov.issues.slice(3);
   const owned=new Set(S.rig.map(r=>r.id));
-  const fromOrders=ORDERS.flatMap(o=>o.items.map(([id])=>({id,o}))).filter(x=>!owned.has(x.id)&&BY[x.id].c!=="accessories");
-  const sug=rigSuggestions();
+  const inIssue=new Set(ov.issues.map(i=>i.rec)),fromOrders=rigFromOrders().filter(x=>!inIssue.has(x.id));
   const node=x=>x.missing?`<button class="node missing" data-ask="${esc(x.ask)}">+ ${esc(x.missing)}</button>`:`<div class="node">${sil(x.custom?(x.cat==="computer"?"interfaces":x.cat):x.c)}${esc(x.name)}</div>`;
   const arrow=`<svg class="i arr" style="width:18px" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`;
-  const underWar=S.rig.filter(r=>{const l=warrantyLeft(warrantyOf(r));return l>0}).length;
+  const m=S.music,n=ov.issues.length;
+  const chip=`<span class="profchip">${m.instruments.length?m.instruments.map(i=>esc([insName(i),i.level?MP_LEVELS[i.level]:"",i.uses.length?labList(MP_USES,i.uses):""].filter(Boolean).join(" · "))).join(" | "):"No instruments in your Music Profile"} · <button class="linkish" data-open="profile">${m.instruments.length?"Edit":"Add"}</button></span>`;
+  const issueHtml=i=>`<div class="issue ${i.s}"><div class="it"><b>${i.title}</b><div>${i.line}</div></div>${i.act?`<button class="btn" ${i.act.attr}>${esc(i.act.label)}</button>`:""}</div>`;
+  const pres=S.present?`<p class="muted presline"><span class="tag moat">moat</span> <span class="tag sim">demo data</span> Presentation mode · value at today's shop prices: ${eur(Math.round(items.reduce((a,x)=>a+(x.p||0),0)))} · ${S.rig.filter(r=>warrantyLeft(warrantyOf(r))>0).length} items under warranty</p>`:"";
+  const chains=rigChains();
   return `<div class="wrap rigpage">
   <div class="crumbs"><span>⌂</span><span>My account</span><span class="last">My rig</span></div>
-  <div class="righead"><div><h1 class="page" style="margin:0">My rig</h1><p class="muted" style="margin:4px 0 0">Signed in as Demo customer · the AI advisor checks new gear against this list <span class="tag moat">moat</span> <span class="tag sim">demo data</span></p></div>
+  <div class="righead"><div style="min-width:0"><div class="rigtitle"><h1 class="page" style="margin:0">My rig</h1>${chip}</div>
+   <p class="rigsum">${items.length} item${items.length===1?"":"s"} · ${n?`${n} thing${n===1?"":"s"} need${n===1?"s":""} attention`:"nothing needs attention"} · ${ov.ups.length} upgrade${ov.ups.length===1?"":"s"} suggested</p>${pres}</div>
    <button class="cta purple" style="padding:11px 22px" data-ask="Look at my whole rig. What should I upgrade first, and why?">Ask the advisor about my rig</button></div>
-  ${profileSummaryHtml()}
-  ${roadmapHtml()}
-  <div class="stats">
-   <div class="stat"><b>${items.length}</b><span>items you own · ${underWar} under warranty</span></div>
-   <div class="stat"><b>${eur(Math.round(value))}</b><span>value at today's shop prices</span></div>
-   <div class="stat${attn?" alert":""}"><b>${attn}</b><span>${attn===1?"thing needs":"things need"} attention</span></div>
-  </div>
-  <div class="riggrid">
-   <div style="min-width:0">
-    ${rigChains().length?`<h2>How it connects</h2><div class="chains">${rigChains().map(c=>`<div class="chain"><h3>${esc(c.title)}</h3><div class="flow">${c.flow.map(node).join(arrow)}</div></div>`).join("")}</div>`:""}
-    <h2>Your gear <span class="muted" style="font-weight:400;font-size:14px">${items.length} items</span></h2>
-    <div class="gearlist">${S.rig.map(gearCardHtml).join("")}</div>
-    <div class="addgear"><b>Add gear you own</b>
-     <div class="row2"><input id="rigSearch" list="rigList" placeholder="Search the catalogue, e.g. Katana" aria-label="Search the catalogue"><datalist id="rigList">${P.filter(p=>!owned.has(p.id)).map(p=>`<option value="${esc(p.n)}">`).join("")}</datalist><button class="btn primary" id="rigAddCat" style="padding:8px 16px">Add</button></div>
-     <div class="muted">Not in our catalogue, or bought somewhere else? Add it by name, then set when you bought it and its warranty.</div>
-     <div class="row2"><input id="rigName" placeholder="e.g. MacBook Pro, Gibson SG" aria-label="Gear name"><select id="rigKind" aria-label="Type">${Object.entries(CUSTOM_KINDS).map(([k,v])=>`<option value="${k}">${v[0]}</option>`).join("")}</select><button class="btn" id="rigAddCustom" style="padding:8px 16px">Add</button></div>
-     <button class="btn" id="rigReset2" style="align-self:flex-start">Reset demo rig</button>
-    </div>
-   </div>
-   <aside class="side">
-    <div class="box health" style="border-color:var(--purple)"><h4><span class="aiav sm" style="width:26px;height:26px">${AISVG}</span>Rig health</h4>
-     ${health.map(h=>`<div class="fitline"><span class="badge ${h.s}">${h.s.toUpperCase()}</span><span style="flex:1">${esc(h.t)}${h.ask?` <button class="btn" style="margin-top:4px" data-ask="${esc(h.ask)}">Fix this</button>`:""}</span></div>`).join("")}</div>
-    ${fromOrders.length?`<div class="box"><h4>From your orders</h4>${fromOrders.map(({id,o})=>`<div class="mini"><div class="info"><div>${esc(BY[id].n)}</div><div class="sub">${o.id} · ${esc(o.status)}${o.status!=="Delivered"?" · arrives "+esc(o.eta):""}</div></div><button class="btn" data-rig-order="${id}|${o.id}">${o.status==="Delivered"?"Add to rig":"Add now"}</button></div>`).join("")}</div>`:""}
-    ${sug.length?`<div class="box"><h4>Goes well with your rig</h4>${sug.map(o=>`<div class="mini"><div class="info"><div>${esc(o.p.n)}</div><div class="sub">${esc(o.why)} · ${o.warn?"fits with notes":"fits your rig"}</div></div><span class="price">${eur(o.p.p)}</span><button class="btn" data-detail="${o.p.id}">View</button></div>`).join("")}</div>`:""}
-    <div class="box"><h4>Ask about your rig</h4><div class="chips">${["What should I upgrade first?","Is my rig good for recording guitar at home?","Which of my gear is still under warranty?"].map(t=>`<button class="chip" data-ask="${esc(t)}">${esc(t)}</button>`).join("")}</div></div>
-   </aside>
-  </div></div>`;
+  <section class="rigsec"><h2>Needs attention</h2>
+   ${top.length?`<div class="issues">${top.map(issueHtml).join("")}</div>`:`<p class="okline">✓ Your rig is ready to play. Nothing needs fixing.</p>`}
+   ${more.length?`<details class="rigmore"><summary>${more.length} more to check</summary><div class="issues">${more.map(issueHtml).join("")}</div></details>`:""}
+   ${ov.passed.length?`<details class="rigmore"><summary>✓ ${ov.passed.length} check${ov.passed.length===1?"":"s"} passed</summary><ul class="passed">${ov.passed.map(h=>`<li>${esc(h.t)}</li>`).join("")}</ul></details>`:""}
+  </section>
+  ${chains.length?`<section class="rigsec"><h2>How it connects</h2><div class="chains">${chains.map(c=>`<div class="chain"><h3>${esc(c.title)}</h3><div class="flow">${c.flow.map(node).join(arrow)}</div></div>`).join("")}</div></section>`:""}
+  <section class="rigsec"><div class="gearhead"><h2>Your gear <span class="muted" style="font-weight:400;font-size:14px">${items.length} items</span></h2><button class="btn" id="rigAddOpen">+ Add gear</button></div>
+   ${fromOrders.length?`<details class="fromorders"><summary>${fromOrders.length} item${fromOrders.length===1?"":"s"} from your orders can be added · <u>Add</u></summary>${fromOrders.map(({id,o})=>`<div class="mini"><div class="info"><div>${esc(BY[id].n)}</div><div class="sub">${o.id} · ${esc(o.status)}${o.status!=="Delivered"?" · arrives "+esc(o.eta):""}</div></div><button class="btn" data-rig-order="${id}|${o.id}">${o.status==="Delivered"?"Add to rig":"Add now"}</button></div>`).join("")}</details>`:""}
+   <div class="gearlist">${S.rig.map(gearRowHtml).join("")||`<p class="muted">No gear yet. Add what you own so the advisor can check new gear against it.</p>`}</div>
+  </section>
+  ${ov.ups.length?`<section class="rigsec"><h2>Next upgrades <span class="muted" style="font-weight:400;font-size:14px">${S.variant==="A"?"goes well with your rig":"from your Music Profile and gear"+(ov.budget?` · budget €${ov.budget}`:"")}</span></h2><div class="ups">${ov.ups.map(u=>`<div class="up"><div class="it"><b>${esc(BY[u.id].n)}</b><div class="muted">${esc(u.why)}</div></div><span class="price">${eur(BY[u.id].p)}</span><button class="btn" data-detail="${u.id}">View</button></div>`).join("")}</div></section>`:""}
+  </div>`;
 }
+function openAddGear(){
+  const owned=new Set(S.rig.map(r=>r.id));
+  drawer("Add gear you own",`<div class="addgear">
+     <b>From the catalogue</b>
+     <div class="row2"><input id="rigSearch" list="rigList" placeholder="Search the catalogue, e.g. Katana" aria-label="Search the catalogue"><datalist id="rigList">${P.filter(p=>!owned.has(p.id)).map(p=>`<option value="${esc(p.n)}">`).join("")}</datalist><button class="btn primary" id="rigAddCat" style="padding:8px 16px">Add</button></div>
+     <b>Not in our catalogue, or bought somewhere else?</b>
+     <div class="muted">Add it by name, then set when you bought it and its warranty.</div>
+     <div class="row2"><input id="rigName" placeholder="e.g. MacBook Pro, Gibson SG" aria-label="Gear name"><select id="rigKind" aria-label="Type">${Object.entries(CUSTOM_KINDS).map(([k,v])=>`<option value="${k}">${v[0]}</option>`).join("")}</select><button class="btn" id="rigAddCustom" style="padding:8px 16px">Add</button></div>
+    </div>`,()=>{
+    $("#rigAddCat").onclick=()=>{const v=$("#rigSearch").value.trim().toLowerCase();const p=P.find(x=>x.n.toLowerCase()===v)||P.find(x=>x.n.toLowerCase().includes(v)&&v.length>2);
+      if(!p){toast("Not found in the catalogue. Add it by name below.");return}if(S.rig.some(r=>r.id===p.id)){toast("Already in My rig");return}closeDrawer();addRig(p.id)};
+    $("#rigSearch").onkeydown=e=>{if(e.key==="Enter")$("#rigAddCat").click()};
+    $("#rigAddCustom").onclick=()=>{const n=$("#rigName").value.trim();if(!n){toast("Type the gear's name first");return}
+      const [,cat,kind]=CUSTOM_KINDS[$("#rigKind").value];
+      S.rig.push({custom:true,name:n,cat,cp:kind==="computer"?{kind,ports:["USB-C"]}:kind==="electric guitar"?{kind}:{kind:"custom-"+kind},since:TODAY.toISOString().slice(0,7),bought:"elsewhere"});
+      S.editing=S.rig.length-1;store.set("rig",S.rig);closeDrawer();render();toast("Added "+n+". Set when you bought it and its warranty.")};
+    setTimeout(()=>$("#rigSearch")?.focus(),30);
+  });
+}
+function resetDemoRig(){S.rig=JSON.parse(JSON.stringify(DEFAULT_RIG));S.music=clone(DEFAULT_MUSIC);autoLinkGear();saveMusic();S.editing=null;S.rigOpen=null;store.set("rig",S.rig);render();toast("Demo rig and Music Profile restored")}
 function bindRig(){
   const after=()=>{store.set("rig",S.rig);render()};
-  document.querySelectorAll("[data-rig-rm]").forEach(b=>b.onclick=()=>{const [gone]=S.rig.splice(+b.dataset.rigRm,1);S.editing=null;after();toast("Removed "+(gone.custom?gone.name:BY[gone.id].n)+" from My rig")});
-  document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>{S.editing=+b.dataset.edit;render()});
+  document.querySelectorAll("[data-grow]").forEach(d=>d.ontoggle=()=>{const i=+d.dataset.grow;if(d.open)S.rigOpen=i;else if(S.rigOpen===i)S.rigOpen=null});
+  document.querySelectorAll("[data-rig-rm]").forEach(b=>b.onclick=()=>{const [gone]=S.rig.splice(+b.dataset.rigRm,1);S.editing=null;S.rigOpen=null;after();toast("Removed "+(gone.custom?gone.name:BY[gone.id].n)+" from My rig")});
+  document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>{S.editing=+b.dataset.edit;S.rigOpen=S.editing;render()});
   document.querySelectorAll("[data-ef-cancel]").forEach(b=>b.onclick=()=>{S.editing=null;render()});
   const bsel=$("#ef-bought");if(bsel)bsel.onchange=()=>{$("#ef-warwrap").hidden=bsel.value==="thomann"};
   document.querySelectorAll("[data-ef-save]").forEach(b=>b.onclick=()=>{
@@ -1621,14 +1728,7 @@ function bindRig(){
     S.editing=null;after();toast("Saved");
   });
   document.querySelectorAll("[data-rig-order]").forEach(b=>b.onclick=()=>{const [id,oid]=b.dataset.rigOrder.split("|"),o=ORDERS.find(x=>x.id===oid);addRig(id,{bought:"thomann",order:oid,since:o.delivered||o.eta})});
-  $("#rigAddCat").onclick=()=>{const v=$("#rigSearch").value.trim().toLowerCase();const p=P.find(x=>x.n.toLowerCase()===v)||P.find(x=>x.n.toLowerCase().includes(v)&&v.length>2);
-    if(!p){toast("Not found in the catalogue. Add it by name below.");return}if(S.rig.some(r=>r.id===p.id)){toast("Already in My rig");return}addRig(p.id)};
-  $("#rigSearch").onkeydown=e=>{if(e.key==="Enter")$("#rigAddCat").click()};
-  $("#rigAddCustom").onclick=()=>{const n=$("#rigName").value.trim();if(!n){toast("Type the gear's name first");return}
-    const [,cat,kind]=CUSTOM_KINDS[$("#rigKind").value];
-    S.rig.push({custom:true,name:n,cat,cp:kind==="computer"?{kind,ports:["USB-C"]}:kind==="electric guitar"?{kind}:{kind:"custom-"+kind},since:TODAY.toISOString().slice(0,7),bought:"elsewhere"});
-    S.editing=S.rig.length-1;after();toast("Added "+n+". Set when you bought it and its warranty.")};
-  $("#rigReset2").onclick=()=>{S.rig=JSON.parse(JSON.stringify(DEFAULT_RIG));S.music=clone(DEFAULT_MUSIC);autoLinkGear();saveMusic();S.editing=null;after();toast("Demo rig and Music Profile restored")};
+  $("#rigAddOpen").onclick=openAddGear;
 }
 /* ---------------- Saved products: only what the customer saves ---------------- */
 const PICK_SRC={suggested:"Suggested by the advisor",compared:"Compared by the advisor",cheaper:"Cheaper option from the advisor",setup:"Part of an advisor setup",you:"Saved by you"};
@@ -1863,9 +1963,9 @@ const FEATURES=[
 ];
 function openGuide(){
   const lab={basic:'<span class="tag">basic</span>',edge:'<span class="tag edge">Thomann edge</span>',moat:'<span class="tag moat">moat</span>',open:'<span class="tag sim">decide with Thomann</span>'};
-  drawer("Test guide",`<p class="muted" style="margin:0">For the person running the test. Entry points to try: the search box, “Need help?”, Contact us → Live chat, and the product page boxes.</p>
+  drawer("Test guide",`<p class="aistatus" style="margin:0 0 8px;font-weight:600">AI status: ${sampleState==="ready"?"ready":sampleState==="loading"?"connecting":"unavailable"} · page tools: ${S.toolsOK===false?"no":S.toolsOK?"yes":"unknown"} · reason: ${esc(aiReason||"none")}</p><p class="muted" style="margin:0">For the person running the test. Entry points to try: the search box, “Need help?”, Contact us → Live chat, and the product page boxes.</p>
    <label class="switch"><input type="checkbox" id="onl"${S.online?" checked":""}> Specialists online (uncheck to test out-of-hours)</label>
-   <label class="switch"><input type="checkbox" id="pres"${S.present?" checked":""}> Presentation mode: show how AI tools read each product (AI-ready data) on product pages</label>
+   <label class="switch"><input type="checkbox" id="pres"${S.present?" checked":""}> Presentation mode: show how AI tools read each product (AI-ready data) on product pages, and the demo tags on My rig</label>
    <div class="switch">A/B test variant <select id="abVariant" class="search"><option value="B"${S.variant!=="A"?" selected":""}>B: explainable comparisons, Ready-to-Play, savings, selective handoff</option><option value="A"${S.variant==="A"?" selected":""}>A: standard recommendations</option></select></div>
    <details class="abform"><summary>Record this test session (variant ${S.variant})</summary>
     <div class="abq">Task completed? ${["yes","no"].map(v=>`<label><input type="radio" name="abTask" value="${v}"> ${v}</label>`).join("")}</div>
@@ -1879,11 +1979,12 @@ function openGuide(){
    <div class="switch">Advisor speed <select id="tier" class="search"><option value="quick"${S.tier==="quick"?" selected":""}>Fast</option><option value="default"${S.tier!=="quick"?" selected":""}>Thorough (slower)</option></select></div>
    ${FEATURES.map(f=>`<div class="feat"><div class="h"><span class="n">${f.stage}</span>${esc(f.n)} ${lab[f.kind]}</div><p>${esc(f.d)}</p>
     ${f.try?`<div><button class="btn" data-ask="${esc(f.try)}">Try: “${esc(f.try)}”</button></div>`:f.action==="data"?`<div><button class="btn" data-detail="m2" data-close>Open a product page</button></div>`:f.action==="dashboard"?`<div class="prow"><button class="btn" data-go="dashboard" data-close>Open the dashboard</button></div>`:f.action==="categories"?`<div class="prow"><button class="btn" data-go="categories" data-close>Open all categories</button><button class="btn" data-go="coverage" data-close>Coverage report and import</button></div>`:f.action==="summary"?`<div class="prow"><button class="btn" data-cat="guitars" data-close>Try: Guitars</button><button class="btn" data-sumq="SM58" data-close>Try: “SM58”</button></div>`:`<div><button class="btn" data-platform>Open the advisor full screen</button></div>`}</div>`).join("")}
-   <button class="btn" id="resetAll">Reset demo (profile, rig, basket, saved, chat)</button>`,(b)=>{
+   <div class="prow"><button class="btn" id="resetRigOnly">Reset demo rig</button><button class="btn" id="resetAll">Reset demo (profile, rig, basket, saved, chat)</button></div>`,(b)=>{
     $("#onl").onchange=e=>{S.online=e.target.checked;store.set("online",S.online);updateOnline();if(S.view.name==="contact")render()};
     $("#tier").onchange=e=>{S.tier=e.target.value;store.set("tier",S.tier)};
     $("#abVariant").onchange=e=>{S.variant=e.target.value;store.set("variant",S.variant);toast("Variant "+S.variant+" active for new messages");render();openGuide()};
-    $("#pres").onchange=e=>{S.present=e.target.checked;store.set("present",S.present);if(S.view.name==="product")render()};
+    $("#pres").onchange=e=>{S.present=e.target.checked;store.set("present",S.present);if(["product","rig"].includes(S.view.name))render()};
+    $("#resetRigOnly").onclick=()=>{resetDemoRig();closeDrawer()};
     $("#resetAll").onclick=()=>{S.rig=JSON.parse(JSON.stringify(DEFAULT_RIG));S.music=clone(DEFAULT_MUSIC);autoLinkGear();saveMusic();S.basket=[];S.picks=[];S.offered={};S.pickSel=[];S.pickCmp=null;savePicks();store.set("rig",S.rig);store.set("basket",[]);bcount();resetChat();closeDrawer();render();toast("Demo reset")};
   },null,true);
 }
@@ -2025,41 +2126,30 @@ TOOLS.push(
 })();
 
 let sample=null,sampleState="loading",toolList=TOOLS;
-/* API mode: when the page is served by the Gear Advisor server (not claude.ai), the server calls Claude
-   with the operator's key. Same contract as claude.use("sample"): the page runs the tools, the server runs the model. */
-function apiSample(input,opts={}){
-  return (async()=>{
-    const msgs=typeof input==="string"?[{role:"user",content:input}]:input.map(m=>({role:m.role,content:m.content}));
-    const tools=(opts.tools||[]).map(t=>({name:t.name,description:t.description,input_schema:t.inputSchema||{type:"object",properties:{}}}));
-    const byName=Object.fromEntries((opts.tools||[]).map(t=>[t.name,t]));
-    let text="";
-    for(let round=0;round<8;round++){
-      let res;
-      try{res=await fetch("api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:msgs,tools,tier:opts.modelTier}),signal:opts.signal})}
-      catch(e){throw {code:opts.signal?.aborted?"cancelled":"upstream_error",text}}
-      const data=await res.json().catch(()=>({}));
-      if(!res.ok)throw {code:{rate_limited:"rate_limited",not_configured:"api_unavailable"}[data.error]||"upstream_error",message:data.message||"",text};
-      if(data.stop_reason==="refusal")throw {code:"refused"};
-      const add=data.content.filter(b=>b.type==="text").map(b=>b.text).join("");
-      if(add.trim()){const delta=(text?"\n\n":"")+add;text+=delta;opts.onText?.({text,delta})}
-      msgs.push({role:"assistant",content:data.content});
-      const uses=data.content.filter(b=>b.type==="tool_use");
-      if(data.stop_reason!=="tool_use"||!uses.length)return {text,truncated:data.stop_reason==="max_tokens"};
-      const results=await Promise.all(uses.map(async u=>{
-        try{
-          const t=byName[u.name];if(!t)throw new Error("Unknown tool "+u.name);
-          const out=await t.execute(u.input||{},{signal:opts.signal});
-          const str=typeof out==="string"?out:JSON.stringify(out);
-          return {type:"tool_result",tool_use_id:u.id,content:str.slice(0,32000)};
-        }catch(e){return {type:"tool_result",tool_use_id:u.id,content:"Error: "+(e?.message||e),is_error:true}}
-      }));
-      if(opts.signal?.aborted)throw {code:"cancelled",text};
-      msgs.push({role:"user",content:results});
-    }
-    return {text,truncated:true};
-  })();
+/* ---------------- AI availability: one reason, one message ---------------- */
+let aiReason="loading",permNS=null;
+const AI_MSG={
+  loading:"Connecting to Claude…",
+  no_claude:"Open this page from its claude.ai link, not a downloaded file or a separate tab.",
+  signed_out:"The AI advisor needs you to be signed in to claude.ai in this browser. If you opened the link inside WeChat or another app, copy it into the browser where you use Claude, then reload.",
+  not_granted:"This page isn't allowed to use Claude. Reload and choose Allow when asked.",
+  sampling_disabled:"Claude isn't available for this account here (some work or school accounts block it). Try a personal Claude account.",
+  session_expired:"Your Claude session expired. Sign in again and reload.",
+  rate_limited:"You've reached a usage limit. Try again later.",
+  unavailable:"The AI advisor can't run in this view. Open the link at claude.ai in a desktop browser."
+};
+/* codes that turn the chat off for this page load; everything else keeps it on */
+const AI_OFF={not_granted:"not_granted",sampling_disabled:"sampling_disabled",session_expired:"session_expired",not_declared:"unavailable",capability_disabled:"unavailable",capability_removed:"unavailable"};
+const PLAIN_NOTE="Simplified mode: product cards and setup checks aren't available in this app. For the full advisor, open the link in a desktop browser at claude.ai.";
+const noAI=()=>AI_MSG[aiReason]||AI_MSG.unavailable;
+const permsBtn=()=>aiReason==="not_granted"&&permNS?` <button type="button" class="btn small" data-perms>Open permissions</button>`:"";
+function aiOff(reason){sample=null;sampleState="none";aiReason=reason;updateAcct()}
+async function openPerms(){
+  if(!permNS)return;
+  try{await permNS.manage()}catch(e){toast("Use the Permissions menu of this artifact instead.");return}
+  const st=await permNS.state("sample");
+  if(st==="granted"||st==="prompt"){try{sample=await window.claude.use("sample")}catch(e){sample=null}if(sample){sampleState="ready";aiReason=null;updateAcct();toast("The AI advisor is back on.")}}
 }
-const SIGNIN="To chat with the AI advisor, sign in to Claude (claude.ai) and reload this page. It runs on your own Claude account. You can still browse the shop and ask for a specialist.";
 const clog=$("#clog");
 function scrollLog(){clog.scrollTop=clog.scrollHeight}
 function setChat(st){
@@ -2072,11 +2162,11 @@ function updateOnline(){
   $("#startNote").textContent=S.online?"You'll start with our AI advisor. A specialist can join any time.":"You'll chat with our AI advisor. Specialists are back at 9:00.";
   renderWho();
 }
-const noAI=()=>window.claude?SIGNIN:"The AI advisor isn't available right now. You can still browse the shop and ask for a specialist.";
 function updateAcct(){
   const n=$("#acctNote");
-  if(sampleState==="none"){n.className="warn";n.textContent=noAI()}
-  else if(S.apiMode){n.className="";n.textContent="Free to use in this test. Please don't share personal details in the chat."}
+  if(sampleState==="none"){n.className="warn";n.innerHTML=esc(noAI())+permsBtn()}
+  else if(sampleState==="loading"){n.className="";n.textContent=AI_MSG.loading}
+  else if(aiReason==="rate_limited"){n.className="warn";n.textContent=AI_MSG.rate_limited}
   else{n.className="";n.textContent="The AI advisor runs on your own Claude account and counts toward your Claude usage. Claude asks you once to allow it."}
 }
 function renderWho(){
@@ -2113,7 +2203,8 @@ function startConversation(ctx){
   const intro=`<p>Hi! I'm Thomann's <b>AI advisor</b>. I can find the right gear, check it works with what you own, compare prices and B-Stock, and track orders.</p>${known.length?`<p>I already know: <b>${esc(known.join(" · "))}</b>. Tell me more, or pick one:</p>`:"<p>Where would you like to start?</p>"}<p class="muted" style="margin-top:6px">Tap <b>☆ Save</b> on anything I suggest to keep it under <b>Saved</b> above. Prefer a person? Tap <b>Find a live agent</b> at any time.</p>`;
   const m=botMsg(intro);
   m.querySelector(".cards").innerHTML=`<div class="intents">${INTENTS.map(([label,say])=>`<button class="intent" data-say="${esc(say)}">${esc(label)}</button>`).join("")}</div>`;
-  if(sampleState==="none") m.querySelector(".cards").insertAdjacentHTML("beforeend",`<div class="endnote">${noAI()}</div>`);
+  if(sampleState==="none") m.querySelector(".cards").insertAdjacentHTML("beforeend",`<div class="endnote">${esc(noAI())}${permsBtn()}</div>`);
+  else if(S.toolsOK===false) m.querySelector(".cards").insertAdjacentHTML("beforeend",`<div class="endnote">${esc(PLAIN_NOTE)}</div>`);
 }
 function resetChat(){if(S.ctl)S.ctl.abort();S.turns=[];S.started=false;S.mode="ai";S.expert=null;clog.innerHTML="";composer(true);if(S.chat==="open")setChat("open")}
 function openChat(ctx){if(ctx)S.chatCtx=ctx;setChat("open")}
@@ -2214,14 +2305,31 @@ Saved products (saved by the customer, newest first): ${S.picks.slice(0,20).map(
 Orders: ${ORDERS.map(o=>`${o.id} ${o.status} (${o.items.map(([id])=>BY[id].n).join(", ")})`).join("; ")}${S.sumCtx?`
 The customer just read this AI summary of ${S.sumCtx.label} on the results page: ${S.sumCtx.txt.replace(/\n/g," ")}`:""}]`;
 }
-const ERR={api_unavailable:"The AI advisor isn't set up on this server yet. Tap Find a live agent instead.",not_granted:"You didn't allow this page to use your Claude account, so the AI advisor can't answer. Reload the page to be asked again, or tap Find a live agent.",sampling_disabled:"Claude isn't available for this account.",rate_limited:"You've reached your Claude usage limit for now, or sent many messages quickly. Wait a little and try again, or tap Find a live agent.",session_expired:"You're signed out of Claude. Sign in at claude.ai, then reload this page.",refused:"I can't help with that one. Try rephrasing, or tap Find a live agent.",empty_completion:"No answer came back. Try asking differently.",prompt_too_large:"This chat got too long. Start a new conversation from the Test guide.",tools_unavailable:"This viewer can't run the shop tools. Try the latest Claude app or claude.ai."};
+const ERR={not_granted:AI_MSG.not_granted,sampling_disabled:AI_MSG.sampling_disabled,rate_limited:AI_MSG.rate_limited,session_expired:AI_MSG.session_expired,not_declared:AI_MSG.unavailable,capability_disabled:AI_MSG.unavailable,capability_removed:AI_MSG.unavailable,refused:"I can't help with that one. Try rephrasing, or tap Find a live agent.",empty_completion:"No answer came back. Try asking differently.",prompt_too_large:"This chat got too long. Start a new conversation from the Test guide."};
+/* plain mode: no page tools, so the prompt carries a compact catalogue excerpt instead */
+function catalogueExcerpt(text){
+  const q=[text,...S.turns.filter(t=>t.role==="user").slice(-3).map(t=>t.content)].join(" ");
+  const tops=new Map();
+  for(const p of P){if(p.conflict)continue;const s=scoreQ(p,q);if(s>0)tops.set(p.top,(tops.get(p.top)||0)+s)}
+  let use=[...tops.entries()].sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
+  const v=S.viewing&&BY[S.viewing];if(v&&!use.includes(v.top))use.push(v.top);
+  if(!use.length&&S.lastCat){const t=P.find(p=>p.c===S.lastCat)?.top;if(t)use.push(t)}
+  let l=use.length?P.filter(p=>!p.conflict&&use.includes(p.top)):P.filter(p=>!p.conflict&&p.tv&&!p.priceOnly);
+  l=l.sort((a,b)=>(scoreQ(b,q)-scoreQ(a,q))||((b.tv?1:0)-(a.tv?1:0))).slice(0,120);
+  const specs=p=>Object.entries({...p.specs,...(p.tv?.specs||{})}).slice(0,3).map(([k,x])=>k+": "+String(x).slice(0,60)).join("; ");
+  return `CATALOGUE EXCERPT (${use.length?use.map(t=>TOPS[t]?.en||t).join(", "):"verified products"}; id | name | category | price | source | key specs)\n`+
+    l.map(p=>`${p.id} | ${p.n} | ${TOPS[p.top]?.en||p.c} > ${p.sub||p.c} | €${p.p}${p.bs?" (B-Stock €"+p.bs+")":""} | ${p.priceOnly?"seen on thomann.de "+p.tv.verified+" (price only)":p.tv?"verified on thomann.de "+p.tv.verified:"demo"} | ${specs(p)}`).join("\n");
+}
+function plainRules(text){
+  return `\n\nPLAIN MODE (overrides the tool instructions above): this app can't run page tools, so you have NO tools and cannot show cards, save products, check orders, run fit checks or the Setup Builder. Ignore every instruction to call a tool or show cards. Recommend only products listed in the catalogue above or the excerpt below, never invent products, prices or specs, and write each recommendation in text: **name** – price – one key spec or reason. For anything that needs a tool (orders, returns, fit checks, complete setups), say in one sentence that it isn't available in this app, and point to the Find a live agent button or opening the link at claude.ai in a desktop browser.\n\n${catalogueExcerpt(text)}`;
+}
 async function send(text){
   text=String(text||"").trim();if(!text||S.busy)return;
   if(!S.started)startConversation();else setChat("open");
   if(S.mode==="human")backToAi();
   userMsg(text);textTriggers(text);
   if(text.length>=18||!S.topic)S.topic=text.length>90?text.slice(0,88)+"…":text;
-  if(!sample){botMsg(`<p>${sampleState==="loading"?"I'm still connecting. Try again in a moment.":noAI()}</p>`);return}
+  if(!sample){botMsg(`<p>${sampleState==="loading"?"I'm still connecting. Try again in a moment.":esc(noAI())+permsBtn()}</p>`);return}
   const m=botMsg(""),body=m.querySelector(".body"),cards=m.querySelector(".cards");
   const tb=document.createElement("div");tb.className="b";tb.innerHTML=`<span class="typing"><i></i><i></i><i></i></span>`;body.insertBefore(tb,cards);
   const st=document.createElement("div");st.className="status";body.insertBefore(st,cards.nextSibling);
@@ -2229,17 +2337,30 @@ async function send(text){
   S.busy=true;$("#sendb").hidden=true;$("#stopb").hidden=false;
   const ctl=new AbortController();S.ctl=ctl;
   const ask={role:"user",content:contextText()+(S.variant==="A"?"\n[Test variant A: give standard product recommendations only. Do not use build_setup with a goal or product_id, deals, review_setup or readiness_summary, do not offer savings unless asked, and keep explanations brief.]":"")+"\n\nCustomer: "+text};
-  const input=S.apiMode?[...S.turns.slice(-16),ask]:[{role:"user",content:rulesText()},...S.turns.slice(-16),ask];
   let fin="";
+  const run=()=>{const plain=S.toolsOK===false;
+    const input=[{role:"user",content:rulesText()+(plain?plainRules(text):"")},...S.turns.slice(-16),ask];
+    const opts={cache:false,signal:ctl.signal,modelTier:S.tier,onText:({text:t})=>{fin=t;tb.innerHTML=md(t);st.textContent="";scrollLog()}};
+    if(!plain)opts.tools=S.variant==="A"?toolList.filter(x=>!VARIANT_B_TOOLS.includes(x.name)):toolList;
+    return sample(input,opts)};
   try{
-    const r=await sample(input,{cache:false,signal:ctl.signal,modelTier:S.tier,tools:S.variant==="A"?toolList.filter(x=>!VARIANT_B_TOOLS.includes(x.name)):toolList,onText:({text:t})=>{fin=t;tb.innerHTML=md(t);st.textContent="";scrollLog()}});
-    fin=r.text;if(r.text.trim())tb.innerHTML=md(r.text);else tb.remove();if(r.truncated)tb.insertAdjacentHTML("beforeend",`<p class="muted">Cut short. Ask for less at a time.</p>`);
+    let r;
+    try{r=await run()}
+    catch(e){
+      if(e?.code!=="tools_unavailable"||S.toolsOK===false)throw e;
+      /* this view can't run page tools: switch to plain mode and resend this message once */
+      S.toolsOK=false;sysLine(PLAIN_NOTE);fin="";tb.innerHTML=`<span class="typing"><i></i><i></i><i></i></span>`;
+      r=await run();
+    }
+    fin=r.text;if(aiReason==="rate_limited"){aiReason=null;updateAcct()}if(r.text.trim())tb.innerHTML=md(r.text);else tb.remove();if(r.truncated)tb.insertAdjacentHTML("beforeend",`<p class="muted">Cut short. Ask for less at a time.</p>`);
   }catch(e){
     fin=e?.text||"";
     if(e?.code==="refused"){tb.innerHTML=`<p>${ERR.refused}</p>`;fin=""}
     else if(e?.code==="cancelled"){if(fin)tb.innerHTML=md(fin)+`<p class="muted">Stopped.</p>`;else tb.remove()}
     else tb.innerHTML=(fin?md(fin):"")+`<p class="muted">${esc(ERR[e?.code]||"Something went wrong reaching the advisor. Try again.")}</p>`;
-    if(["not_granted","sampling_disabled","tools_unavailable","session_expired","api_unavailable"].includes(e?.code)){sample=null;sampleState="none";updateAcct()}
+    if(AI_OFF[e?.code])aiOff(AI_OFF[e.code]);
+    if(e?.code==="not_granted")tb.insertAdjacentHTML("beforeend",permsBtn());
+    else if(e?.code==="rate_limited"){aiReason="rate_limited";updateAcct()}
   }finally{st.remove();currentCards=null;S.busy=false;S.ctl=null;$("#sendb").hidden=false;$("#stopb").hidden=true;sendState()}
   const lastIds=shownLog.join(",").match(/[a-z]{1,2}\d+/g)?.filter(id=>BY[id]&&BY[id].c!=="accessories");if(lastIds?.length)S.lastCat=BY[lastIds[0]].c;
   if(lastIds?.some(id=>BY[id].p>HIGH_PRICE))flagAgent("price");
@@ -2304,7 +2425,7 @@ document.addEventListener("click",e=>{
   if(!t.closest(".searchbox"))ac.hidden=true;
   ["shop","svc","acc"].forEach(k=>{if(!t.closest("#"+k+"Btn"))$("#"+k+"DD").hidden=true});
   if(!t.closest("#plus,#plusmenu"))$("#plusmenu").hidden=true;
-  const a=t.closest("[data-go],[data-detail],[data-cat],[data-add],[data-addq],[data-ask],[data-say],[data-open],[data-rig-add],[data-toast],[data-close],[data-step],[data-step-edit],[data-step-reset],[data-method],[data-handover],[data-backai],[data-cb],[data-platform],[data-spec],[data-live-agent],[data-advmode],[data-notright],[data-anchor],[data-prefill],[data-sit],[data-expert],[data-send-contact],[data-consult],[data-ctab],[data-pick-star],[data-pick-rm],[data-pick-fit],[data-pick-cmp],[data-pick-cmpclose],[data-pick-clearsel],[data-picks-clear],[data-save],[data-save-all],[data-sumhide],[data-sumshow],[data-sumask],[data-sumq],[data-top],[data-topsub],[data-more],[data-import],[data-bell],[data-sim-go],[data-review],[data-goal],[data-addsetup],[data-rv-yes],[data-rv-no],[data-rv-redo],[data-rtp-tier],[data-rtp-add],[data-rtp-proj],[data-rtp-allow],[data-proj-new],[data-proj-cart],[data-proj-del],[data-proj-rmitem],[data-proj-setup],[data-dash-reset],[data-spec-consult],[data-ab-save]");
+  const a=t.closest("[data-go],[data-detail],[data-cat],[data-add],[data-addq],[data-ask],[data-say],[data-open],[data-rig-add],[data-toast],[data-close],[data-step],[data-step-edit],[data-step-reset],[data-method],[data-handover],[data-backai],[data-cb],[data-platform],[data-spec],[data-perms],[data-live-agent],[data-advmode],[data-notright],[data-anchor],[data-prefill],[data-sit],[data-expert],[data-send-contact],[data-consult],[data-ctab],[data-pick-star],[data-pick-rm],[data-pick-fit],[data-pick-cmp],[data-pick-cmpclose],[data-pick-clearsel],[data-picks-clear],[data-save],[data-save-all],[data-sumhide],[data-sumshow],[data-sumask],[data-sumq],[data-top],[data-topsub],[data-more],[data-import],[data-bell],[data-sim-go],[data-review],[data-goal],[data-addsetup],[data-rv-yes],[data-rv-no],[data-rv-redo],[data-rtp-tier],[data-rtp-add],[data-rtp-proj],[data-rtp-allow],[data-proj-new],[data-proj-cart],[data-proj-del],[data-proj-rmitem],[data-proj-setup],[data-dash-reset],[data-spec-consult],[data-ab-save]");
   if(!a)return;
   if(a.matches("a"))e.preventDefault();
   const d=a.dataset;
@@ -2369,6 +2490,7 @@ document.addEventListener("click",e=>{
   else if(d.projRmitem){const [pid,k]=d.projRmitem.split("|"),l=getProjects(),p=l.find(x=>x.id===pid);p.items.splice(+k,1);p.updated=new Date().toISOString().slice(0,10);saveProjects(l);render()}
   else if(d.dashReset!==undefined){if(!confirm("Delete all recorded events and A/B sessions on this device?"))return;ls.set(EV_KEY,[]);ls.set(AB_KEY,[]);render()}
   else if(d.specConsult!==undefined){openConsult()}
+  else if(d.perms!==undefined){openPerms()}
   else if(d.liveAgent!==undefined){const p=BY[d.liveAgent];closeDrawer();if(p){S.viewing=p.id;if(p.p>HIGH_PRICE)flagAgent("price",true)}if(!S.started)startConversation();else setChat("open");handover(p?DEPT2EXP[DEPT(p.c)]:undefined)}
   else if(d.advmode){store.set("advmode",d.advmode);renderMode();if(S.started)sysLine(d.advmode==="beginner"?"Beginner mode: step-by-step guidance and setup completeness checks.":"Experienced mode: parameters, stock and delivery, and sound comparisons.")}
   else if(d.notright){const n=+d.notright;if(S.wrong.has(n)){S.wrong.delete(n);a.setAttribute("aria-pressed","false")}else markWrong(n)}
@@ -2434,14 +2556,16 @@ new MutationObserver(()=>{if(S.mode==="human"&&!S.__handDone){S.__handDone=true;
 const hadMusic=!!store.get("music",null);S.music=migrateMusic();autoLinkGear();syncLegacy();store.set("music",S.music);updateFocusBar();
 if(VISITOR.returning&&hadMusic&&S.music.instruments.length)track("returning_profile_loaded",{instruments:S.music.instruments.length});
 bcount();updateOnline();updateAcct();updatePickCount();updateAlertCount();render();
-(async()=>{
-  if(window.claude){
-    try{sample=await window.claude.use("sample")}catch(e){sample=null}
-    if(sample){try{const lim=await sample.limits();if(!lim.tools)sample=null;else if(lim.tools.maxCount<TOOLS.length)toolList=TOOLS.slice(0,lim.tools.maxCount)}catch(e){}}
-  }else{
-    try{const h=await fetch("api/health").then(r=>r.ok?r.json():null);if(h?.ok){sample=apiSample;S.apiMode=true}}catch(e){}
-  }
-  sampleState=sample?"ready":"none";updateAcct();
-})();
+async function bootAI(){
+  sample=null;S.toolsOK=null;toolList=TOOLS;
+  if(!window.claude){aiReason="no_claude";sampleState="none";updateAcct();return}
+  window.claude.use("permissions").then(p=>{permNS=p;updateAcct()}).catch(()=>{});
+  try{sample=await window.claude.use("sample")}catch(e){sample=null}
+  if(!sample){aiReason="signed_out";sampleState="none";updateAcct();return}
+  try{const lim=await sample.limits();S.toolsOK=!!lim.tools;if(lim.tools&&lim.tools.maxCount<TOOLS.length)toolList=TOOLS.slice(0,lim.tools.maxCount)}
+  catch(e){S.toolsOK=null}/* unknown: try tools; a tools_unavailable answer switches to plain mode */
+  aiReason=null;sampleState="ready";updateAcct();
+}
+bootAI();
 </script>
 </body></html>
