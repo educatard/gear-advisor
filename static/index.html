@@ -704,7 +704,7 @@ const S={
   profile:{}, music:null, gearFormFor:null, present:store.get("present",false), editing:null, sumHidden:store.get("sumHidden",false), sumNow:null, sumCtx:null,
   view:{name:"home",q:"",cats:[],top:"",sub:"",src:"",brand:"",inst:"",min:"",max:"",stock:false,sort:"rel",sit:"",limit:24}, viewing:null,
   contact:{enquiry:null,category:null,need:null,method:null,product:null}, chatCtx:null, turns:[], busy:false, ctl:null,
-  chat:"closed", mode:"ai", expert:null, started:false, toolsOK:null,
+  chat:"closed", mode:"ai", expert:null, started:false, toolsOK:null, apiMode:false,
   picks:store.get("saved",[]), offered:{}, variant:store.get("variant","B"), rtpTier:"bal", answers:0, pickSel:[], pickCmp:null, pickFit:null, ctab:"chat", topic:"",
 };
 const $=s=>document.querySelector(s);
@@ -1100,6 +1100,7 @@ function sumFacts(t){
 }
 async function aiSummaryText(t){
   const facts=sumFacts(t);
+  if(S.apiMode){const r=await fetch("api/summary",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({facts})});if(!r.ok)throw new Error("summary "+r.status);return (await r.json()).text}
   if(sample){const r=await sample(SUMMARY_RULES+"\n\n"+facts,{modelTier:"quick",cache:false});return r.text}
   throw new Error("no ai");
 }
@@ -1963,7 +1964,7 @@ const FEATURES=[
 ];
 function openGuide(){
   const lab={basic:'<span class="tag">basic</span>',edge:'<span class="tag edge">Thomann edge</span>',moat:'<span class="tag moat">moat</span>',open:'<span class="tag sim">decide with Thomann</span>'};
-  drawer("Test guide",`<p class="aistatus" style="margin:0 0 8px;font-weight:600">AI status: ${sampleState==="ready"?"ready":sampleState==="loading"?"connecting":"unavailable"} · page tools: ${S.toolsOK===false?"no":S.toolsOK?"yes":"unknown"} · reason: ${esc(aiReason||"none")}</p><p class="muted" style="margin:0">For the person running the test. Entry points to try: the search box, “Need help?”, Contact us → Live chat, and the product page boxes.</p>
+  drawer("Test guide",`<p class="aistatus" style="margin:0 0 8px;font-weight:600">AI status: ${sampleState==="ready"?"ready":sampleState==="loading"?"connecting":"unavailable"} · page tools: ${S.toolsOK===false?"no":S.toolsOK?"yes":"unknown"}${S.apiMode?" · via Render server":""} · reason: ${esc(aiReason||"none")}</p><p class="muted" style="margin:0">For the person running the test. Entry points to try: the search box, “Need help?”, Contact us → Live chat, and the product page boxes.</p>
    <label class="switch"><input type="checkbox" id="onl"${S.online?" checked":""}> Specialists online (uncheck to test out-of-hours)</label>
    <label class="switch"><input type="checkbox" id="pres"${S.present?" checked":""}> Presentation mode: show how AI tools read each product (AI-ready data) on product pages, and the demo tags on My rig</label>
    <div class="switch">A/B test variant <select id="abVariant" class="search"><option value="B"${S.variant!=="A"?" selected":""}>B: explainable comparisons, Ready-to-Play, savings, selective handoff</option><option value="A"${S.variant==="A"?" selected":""}>A: standard recommendations</option></select></div>
@@ -2136,7 +2137,8 @@ const AI_MSG={
   sampling_disabled:"Claude isn't available for this account here (some work or school accounts block it). Try a personal Claude account.",
   session_expired:"Your Claude session expired. Sign in again and reload.",
   rate_limited:"You've reached a usage limit. Try again later.",
-  unavailable:"The AI advisor can't run in this view. Open the link at claude.ai in a desktop browser."
+  unavailable:"The AI advisor can't run in this view. Open the link at claude.ai in a desktop browser.",
+  api_unavailable:"The advisor's server isn't set up right now. Please try again later."
 };
 /* codes that turn the chat off for this page load; everything else keeps it on */
 const AI_OFF={not_granted:"not_granted",sampling_disabled:"sampling_disabled",session_expired:"session_expired",not_declared:"unavailable",capability_disabled:"unavailable",capability_removed:"unavailable"};
@@ -2167,6 +2169,7 @@ function updateAcct(){
   if(sampleState==="none"){n.className="warn";n.innerHTML=esc(noAI())+permsBtn()}
   else if(sampleState==="loading"){n.className="";n.textContent=AI_MSG.loading}
   else if(aiReason==="rate_limited"){n.className="warn";n.textContent=AI_MSG.rate_limited}
+  else if(S.apiMode){n.className="";n.textContent="Free to use in this test. Please don't share personal details in the chat."}
   else{n.className="";n.textContent="The AI advisor runs on your own Claude account and counts toward your Claude usage. Claude asks you once to allow it."}
 }
 function renderWho(){
@@ -2305,7 +2308,7 @@ Saved products (saved by the customer, newest first): ${S.picks.slice(0,20).map(
 Orders: ${ORDERS.map(o=>`${o.id} ${o.status} (${o.items.map(([id])=>BY[id].n).join(", ")})`).join("; ")}${S.sumCtx?`
 The customer just read this AI summary of ${S.sumCtx.label} on the results page: ${S.sumCtx.txt.replace(/\n/g," ")}`:""}]`;
 }
-const ERR={not_granted:AI_MSG.not_granted,sampling_disabled:AI_MSG.sampling_disabled,rate_limited:AI_MSG.rate_limited,session_expired:AI_MSG.session_expired,not_declared:AI_MSG.unavailable,capability_disabled:AI_MSG.unavailable,capability_removed:AI_MSG.unavailable,refused:"I can't help with that one. Try rephrasing, or tap Find a live agent.",empty_completion:"No answer came back. Try asking differently.",prompt_too_large:"This chat got too long. Start a new conversation from the Test guide."};
+const ERR={api_unavailable:AI_MSG.api_unavailable,not_granted:AI_MSG.not_granted,sampling_disabled:AI_MSG.sampling_disabled,rate_limited:AI_MSG.rate_limited,session_expired:AI_MSG.session_expired,not_declared:AI_MSG.unavailable,capability_disabled:AI_MSG.unavailable,capability_removed:AI_MSG.unavailable,refused:"I can't help with that one. Try rephrasing, or tap Find a live agent.",empty_completion:"No answer came back. Try asking differently.",prompt_too_large:"This chat got too long. Start a new conversation from the Test guide."};
 /* plain mode: no page tools, so the prompt carries a compact catalogue excerpt instead */
 function catalogueExcerpt(text){
   const q=[text,...S.turns.filter(t=>t.role==="user").slice(-3).map(t=>t.content)].join(" ");
@@ -2339,7 +2342,7 @@ async function send(text){
   const ask={role:"user",content:contextText()+(S.variant==="A"?"\n[Test variant A: give standard product recommendations only. Do not use build_setup with a goal or product_id, deals, review_setup or readiness_summary, do not offer savings unless asked, and keep explanations brief.]":"")+"\n\nCustomer: "+text};
   let fin="";
   const run=()=>{const plain=S.toolsOK===false;
-    const input=[{role:"user",content:rulesText()+(plain?plainRules(text):"")},...S.turns.slice(-16),ask];
+    const input=S.apiMode?[...S.turns.slice(-16),ask]:[{role:"user",content:rulesText()+(plain?plainRules(text):"")},...S.turns.slice(-16),ask];
     const opts={cache:false,signal:ctl.signal,modelTier:S.tier,onText:({text:t})=>{fin=t;tb.innerHTML=md(t);st.textContent="";scrollLog()}};
     if(!plain)opts.tools=S.variant==="A"?toolList.filter(x=>!VARIANT_B_TOOLS.includes(x.name)):toolList;
     return sample(input,opts)};
@@ -2556,9 +2559,46 @@ new MutationObserver(()=>{if(S.mode==="human"&&!S.__handDone){S.__handDone=true;
 const hadMusic=!!store.get("music",null);S.music=migrateMusic();autoLinkGear();syncLegacy();store.set("music",S.music);updateFocusBar();
 if(VISITOR.returning&&hadMusic&&S.music.instruments.length)track("returning_profile_loaded",{instruments:S.music.instruments.length});
 bcount();updateOnline();updateAcct();updatePickCount();updateAlertCount();render();
+/* API mode: when the page is served by the Gear Advisor server (not claude.ai), the server calls Claude
+   with the operator's key. Same contract as claude.use("sample"): the page runs the tools, the server runs the model. */
+function apiSample(input,opts={}){
+  return (async()=>{
+    const msgs=typeof input==="string"?[{role:"user",content:input}]:input.map(m=>({role:m.role,content:m.content}));
+    const tools=(opts.tools||[]).map(t=>({name:t.name,description:t.description,input_schema:t.inputSchema||{type:"object",properties:{}}}));
+    const byName=Object.fromEntries((opts.tools||[]).map(t=>[t.name,t]));
+    let text="";
+    for(let round=0;round<8;round++){
+      let res;
+      try{res=await fetch("api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:msgs,tools,tier:opts.modelTier}),signal:opts.signal})}
+      catch(e){throw {code:opts.signal?.aborted?"cancelled":"upstream_error",text}}
+      const data=await res.json().catch(()=>({}));
+      if(!res.ok)throw {code:{rate_limited:"rate_limited",not_configured:"api_unavailable"}[data.error]||"upstream_error",message:data.message||"",text};
+      if(data.stop_reason==="refusal")throw {code:"refused"};
+      const add=data.content.filter(b=>b.type==="text").map(b=>b.text).join("");
+      if(add.trim()){const delta=(text?"\n\n":"")+add;text+=delta;opts.onText?.({text,delta})}
+      msgs.push({role:"assistant",content:data.content});
+      const uses=data.content.filter(b=>b.type==="tool_use");
+      if(data.stop_reason!=="tool_use"||!uses.length)return {text,truncated:data.stop_reason==="max_tokens"};
+      const results=await Promise.all(uses.map(async u=>{
+        try{
+          const t=byName[u.name];if(!t)throw new Error("Unknown tool "+u.name);
+          const out=await t.execute(u.input||{},{signal:opts.signal});
+          const str=typeof out==="string"?out:JSON.stringify(out);
+          return {type:"tool_result",tool_use_id:u.id,content:str.slice(0,32000)};
+        }catch(e){return {type:"tool_result",tool_use_id:u.id,content:"Error: "+(e?.message||e),is_error:true}}
+      }));
+      if(opts.signal?.aborted)throw {code:"cancelled",text};
+      msgs.push({role:"user",content:results});
+    }
+    return {text,truncated:true};
+  })();
+}
 async function bootAI(){
-  sample=null;S.toolsOK=null;toolList=TOOLS;
-  if(!window.claude){aiReason="no_claude";sampleState="none";updateAcct();return}
+  sample=null;S.toolsOK=null;S.apiMode=false;toolList=TOOLS;
+  if(!window.claude){
+    /* Served by the Gear Advisor server (Render)? It runs the model with the operator's key; the page keeps its tools. */
+    try{const h=await fetch("api/health").then(r=>r.ok?r.json():null);if(h?.ok){sample=apiSample;S.apiMode=true;S.toolsOK=true;aiReason=null;sampleState="ready";updateAcct();return}}catch(e){}
+    aiReason="no_claude";sampleState="none";updateAcct();return}
   window.claude.use("permissions").then(p=>{permNS=p;updateAcct()}).catch(()=>{});
   try{sample=await window.claude.use("sample")}catch(e){sample=null}
   if(!sample){aiReason="signed_out";sampleState="none";updateAcct();return}
