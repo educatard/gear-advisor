@@ -648,17 +648,17 @@ body[data-view="rig"] .needhelp .avatars{display:none}
 .banner.b2 .bbrand,.banner.b2 .bdate,.banner.b2 .bnote{grid-column:1;max-width:100%;text-align:center}
 .banner.b2 .bbrand{font-size:clamp(28px,4.4vw,70px);overflow-wrap:anywhere}
 .banner.b2 .bbadge{position:static;transform:none;grid-column:2;grid-row:1 / span 3;width:clamp(70px,9vw,140px)}
-.wb{border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:18px 0 14px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,.8fr);gap:12px 24px;background:var(--bg)}
-.wb h1{font-size:22px;font-weight:800;margin:0 0 4px;grid-column:1 / -1}
-.wb .wbcol{min-width:0;font-size:14px;line-height:1.4}
-.wb .wbcol+.wbcol{border-left:1px solid var(--line);padding-left:20px}
-.wb .wbh{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:4px}
-.wb .prow{margin-top:8px;gap:6px}
-.wb .wbfoot{grid-column:1 / -1;display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
-.wb .wbfoot details summary{cursor:pointer;text-decoration:underline}
-.wbdot{display:inline-block;width:11px;height:11px;border-radius:50%;background:var(--ok);margin-right:6px;vertical-align:baseline}
-.wbdot.amber{background:var(--warn)}.wbdot.red{background:var(--bad,#c62828)}
-@media (max-width:820px){.wb{grid-template-columns:1fr}.wb .wbcol+.wbcol{border-left:0;padding-left:0;border-top:1px solid var(--line);padding-top:10px}}
+.wb{--tb:#0a69c7;--tb-soft:#eaf3fc;display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap;background:var(--tb-soft);border:1px solid #c9def3;border-left:4px solid var(--tb);border-radius:8px;padding:10px 16px;margin:16px 0 14px;font-size:14px}
+.wb .wbq{margin:0;flex:1 1 360px;min-width:0;line-height:1.4}
+.wb .wbans{display:flex;gap:6px;flex-wrap:wrap}
+.wb .btn{border-color:var(--tb);color:var(--tb);background:#fff;padding:5px 12px;font-size:13px}
+.wb .btn.wbmain{background:var(--tb);color:#fff}
+.wb .wbfoot{display:flex;gap:12px;align-items:center;font-size:12px;color:var(--muted)}
+.wb .wbfoot summary{cursor:pointer;text-decoration:underline}
+.wb .wbfoot details[open]{flex-basis:100%}
+.wb .wbfoot details span{display:block;margin-top:2px}
+.wb .wbfoot .linkish{font-weight:600;text-decoration:underline;color:var(--muted)}
+@media (max-width:600px){.wb .wbfoot{flex-wrap:wrap}}
 </style>
 
 <div class="promo gut"><b>Concept prototype</b> · AI advisor for Thomann · demo catalogue, prices, orders and specialists · nothing can be bought</div>
@@ -1028,25 +1028,16 @@ function welcomeCheckin(){
   return c;
 }
 function checkinFacts(c){return `order ${c.order||"not from a Thomann order"}${c.sinceDays!==null?`, delivered ${c.sinceDays} days ago`:""}; ${c.returnDays?`return window: ${c.returnDays} days left`:"return window closed"}; ${c.warEnd?`warranty (${c.warSrc}) until ${c.warEnd}`:"no warranty date"}`}
-function welcomeSuggestion(st){
-  const owned=new Set(S.rig.map(r=>r.id)),inBasket=new Set(S.basket.map(b=>b.id)),free=id=>id&&BY[id]&&!owned.has(id)&&!inBasket.has(id);
-  const gap=st.ov.issues.find(i=>i.area!=="war"&&i.k!=="war"&&i.k!=="ret"&&free(i.rec));
-  if(gap)return {title:gap.title,line:gap.line,attr:gap.act?.attr||`data-detail="${gap.rec}"`,id:gap.rec};
-  const u=st.ov.ups.find(u=>free(u.id));
-  return u?{title:esc(BY[u.id].n),line:esc(u.why)+` (${eur(BY[u.id].p)})`,attr:`data-detail="${u.id}"`,id:u.id}:null;
-}
 function welcomeHtml(){
   if(!isReturning()||wbHidden())return "";
-  const st=rigStatus(),c=welcomeCheckin(),sg=welcomeSuggestion(st),name=(S.music.general.name||"").trim();
-  if(!S.wbTracked){S.wbTracked=true;track("welcome_card_shown",{checkin:c?.id||null,suggestion:sg?.id||null,status:st.level})}
-  const thanks=S.wbThanks?`<div class="wbcol"><div class="wbh">Your recent purchase</div>Thanks for letting us know. Enjoy your ${esc(S.wbThanks)}! We won't ask about it again.</div>`:"";
+  const c=S.wbThanks?null:welcomeCheckin(),name=(S.music.general.name||"").trim();
+  if(!c&&!S.wbThanks)return "";/* nothing to ask: the home page keeps its normal headline */
+  if(c&&!S.wbTracked){S.wbTracked=true;track("welcome_card_shown",{checkin:c.id})}
+  const hello=`<b>Welcome back${name?", "+esc(name):""}!</b> `;
   return `<section class="wb" aria-label="Welcome back">
-   <h1>Welcome back${name?", "+esc(name):""}</h1>
-   ${thanks||(c?`<div class="wbcol"><div class="wbh">Your recent purchase</div>${esc(c.q)}
-     <div class="prow"><button class="btn" data-checkin="good|${c.id}">All good</button><button class="btn" data-checkin="broken|${c.id}">Something's not working</button><button class="btn" data-checkin="notyet|${c.id}">Haven't set it up yet</button></div></div>`:"")}
-   ${sg?`<div class="wbcol"><div class="wbh">For your rig</div><b>${sg.title}</b><div class="muted">${sg.line}</div><div class="prow"><button class="btn" data-wb-sugg ${sg.attr}>See options</button></div></div>`:""}
-   <div class="wbcol"><div class="wbh">Rig health</div><b><span class="wbdot ${st.level}" aria-hidden="true"></span>${esc(st.label)}</b><div class="muted">${esc(st.counts)}</div><div class="prow"><button class="btn" data-wb-rig>Open My rig →</button></div></div>
-   <div class="wbfoot"><details><summary>Why am I seeing this?</summary>Based on your orders and My rig. Stored on this device only.</details><button class="linkish" data-wb-hide style="text-decoration:underline;font-weight:600">Not now</button></div>
+   <p class="wbq">${hello}${S.wbThanks?`Thanks for letting us know. Enjoy your ${esc(S.wbThanks)}!`:esc(c.q)}</p>
+   ${c?`<div class="wbans"><button class="btn" data-checkin="good|${c.id}">All good</button><button class="btn wbmain" data-checkin="broken|${c.id}">Something's not working</button><button class="btn" data-checkin="notyet|${c.id}">Haven't set it up yet</button></div>`:""}
+   <div class="wbfoot"><details><summary>Why am I seeing this?</summary><span>Based on your orders and My rig. Stored on this device only.</span></details><button class="linkish" data-wb-hide>Not now</button></div>
   </section>`;
 }
 function checkinAnswer(answer,id){
@@ -1065,8 +1056,6 @@ function checkinAnswer(answer,id){
 }
 document.addEventListener("click",e=>{
   const ck=e.target.closest("[data-checkin]");if(ck){const [a,id]=ck.dataset.checkin.split("|");checkinAnswer(a,id);return}
-  if(e.target.closest("[data-wb-sugg]")){const b=e.target.closest("[data-wb-sugg]");track("welcome_suggestion_clicked",{productId:(b.dataset.detail||b.dataset.rigOrder||"").split("|")[0]||null});return}
-  if(e.target.closest("[data-wb-rig]")){track("welcome_open_rig");go({name:"rig"});window.scrollTo(0,0);return}
   if(e.target.closest("[data-wb-hide]")){try{sessionStorage.setItem("ga3_wbhide","1")}catch(err){S.wbHide=true}render();return}
   if(e.target.closest("[data-welcome-demo]")){S.customer="returning";store.set("customer","returning");try{sessionStorage.removeItem("ga3_wbhide")}catch(err){}S.wbHide=false;S.wbThanks=null;go({name:"home"});window.scrollTo(0,0)}
 },true);
@@ -1137,13 +1126,11 @@ function dashboardView(){
 function loyaltyTableHtml(events){
   const ev=events||ls.get(EV_KEY,[]);
   const by=n=>ev.filter(x=>x.e===n),sess=n=>new Set(by(n).map(x=>x.s)),pct=(a,b)=>b?(a/b*100).toFixed(1)+"%":"–";
-  const shownS=sess("welcome_card_shown"),ans=by("checkin_answered"),clickS=new Set(by("welcome_suggestion_clicked").map(x=>x.s).filter(s=>shownS.has(s))),rigS=new Set(by("welcome_open_rig").map(x=>x.s).filter(s=>shownS.has(s)));
+  const shownS=sess("welcome_card_shown"),ans=by("checkin_answered");
   const cnt=a=>ans.filter(x=>x.answer===a).length;
-  return `<h2 class="mph">Loyalty check-ins <span class="muted">Welcome back card · shown in both variants</span></h2><div class="tblwrap"><table class="cmp covtbl"><thead><tr><th>Measure</th><th>Numerator / denominator</th><th>Value</th><th>Note</th></tr></thead><tbody>
+  return `<h2 class="mph">Loyalty check-ins <span class="muted">Welcome back check-in · shown in both variants</span></h2><div class="tblwrap"><table class="cmp covtbl"><thead><tr><th>Measure</th><th>Numerator / denominator</th><th>Value</th><th>Note</th></tr></thead><tbody>
    <tr><th>Cards shown</th><td>${shownS.size} sessions</td><td>${by("welcome_card_shown").length} views</td><td class="muted">A session counts once, however often the home page is opened.</td></tr>
    ${[["good","All good"],["broken","Something's not working"],["notyet","Haven't set it up yet"]].map(([k,l])=>`<tr><th>Check-in answer: ${l}</th><td>${cnt(k)} / ${ans.length} answers</td><td>${pct(cnt(k),ans.length)}</td><td class="muted">Share of all check-in answers.</td></tr>`).join("")}
-   <tr><th>Suggestion click rate</th><td>${clickS.size} / ${shownS.size} sessions</td><td>${pct(clickS.size,shownS.size)}</td><td class="muted"><b>Proxy</b> for interest: a click opens the product, it isn't a purchase.</td></tr>
-   <tr><th>Open My rig rate</th><td>${rigS.size} / ${shownS.size} sessions</td><td>${pct(rigS.size,shownS.size)}</td><td class="muted"><b>Proxy</b> for engagement with My rig.</td></tr>
   </tbody></table></div>`;
 }
 /* ---------------- AI summary above search results ---------------- */
@@ -2100,7 +2087,7 @@ const FEATURES=[
  {stage:"Own",kind:"moat",n:"Roadmap, projects, consultation",d:"My rig shows an upgrade roadmap per instrument; Projects store planned setups; a consent-based summary prepares a (simulated) specialist consultation.",try:"What should I upgrade next for each instrument I play?"},
  {stage:"Measure",kind:"open",n:"Dashboard and A/B test",d:"Test guide: switch variant A/B, record a test session, and open the performance dashboard (anonymous events, correct denominators, no invented results; demo data clearly labelled).",action:"dashboard"},
  {stage:"Own",kind:"moat",n:"Music Profile",d:"Account menu → My Music Profile: several instruments, each with its own level, uses, genres, budget, goal and gear, plus general preferences. Optional and stored on this device. The advisor uses it, asks which instrument when unclear, avoids gear you own, and only saves changes after you confirm.",try:"I play piano at an advanced level and I just started guitar. What should I get next?"},
- {stage:"Own",kind:"moat",n:"Welcome back check-in",d:"Home page card for returning customers: one check-in about a recent purchase (All good / Something's not working / Haven't set it up yet), one rig suggestion and the same rig health as My rig. Never pops up; Not now hides it for the session.",action:"welcome"},
+ {stage:"Own",kind:"moat",n:"Welcome back check-in",d:"Home page strip for returning customers: one check-in about a recent purchase (All good / Something's not working / Haven't set it up yet). Never pops up; Not now hides it for the session.",action:"welcome"},
  {stage:"Own",kind:"moat",n:"Warranty in My rig",d:"Warranty and return days left for Thomann purchases; your own dates for gear bought elsewhere.",try:"Which of my gear is still under warranty?"},
 ];
 function openGuide(){
