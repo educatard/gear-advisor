@@ -579,6 +579,12 @@ a.btn.extlink{text-decoration:none;font-size:13px}
 .modebar button[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .modebar small{color:var(--muted);margin-left:auto}
 .notright{font-size:12px;color:var(--muted);padding:2px 0;margin-top:2px}
+.ansfoot{display:flex;gap:6px 12px;align-items:center;flex-wrap:wrap;margin:4px 0 2px}.ansfoot .aiwritten{display:inline;margin:0}
+.fbrow{display:inline-flex;gap:4px;align-items:center;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.fbb{width:26px;height:26px;border-radius:50%;font-size:14px;line-height:1;filter:grayscale(1);opacity:.65}
+.fbb:hover,.fbb:focus-visible{filter:none;opacity:1;background:var(--soft)}
+.fbb[aria-pressed=true]{filter:none;opacity:1;background:var(--purple-soft)}
+.fbwhy{display:flex;gap:5px;flex-wrap:wrap;flex-basis:100%;margin-top:4px}.fbwhy .chip{font-size:12px;padding:3px 10px}
 .notright[aria-pressed=true]{color:var(--bad);font-weight:700}
 .agentbox{border-color:#f97316}
 details.rtpbox>summary{cursor:pointer;list-style:none}details.rtpbox>summary::-webkit-details-marker{display:none}
@@ -1187,6 +1193,7 @@ function dashboardView(){
    ${m.metrics.map(x=>`<tr><th>${esc(x.name)}</th><td>${esc(x.formula)}</td><td>${x.status==="not measurable"?"–":`${f(x.num)} / ${f(x.den)}`}</td><td>${x.value===null?"–":(/rate/i.test(x.name)?x.value+"%":eur(x.value))}</td><td><span class="badge ${x.status==="not measurable"?"warn":"ok"}">${esc(x.status.toUpperCase())}</span><div class="muted" style="font-size:12px">${esc(x.note)}</div></td></tr>`).join("")}</tbody></table></div>
   <h2 class="mph">Event counts</h2><div class="tblwrap"><table class="cmp covtbl"><tbody>${EVENT_NAMES.map(n=>`<tr><th>${n}</th><td>${m.counts[n]}</td><td class="muted">${n==="purchase_completed"?"never fired: no real purchase confirmation exists":n==="thomann_product_link_clicked"?"no longer fired: external links were removed":n==="human_handoff_completed"?"simulated handoff":""}</td></tr>`).join("")}</tbody></table></div>
   ${loyaltyTableHtml(demo?demoEvents():undefined)}
+  ${feedbackTableHtml(demo?demoEvents():undefined)}
   <h2 class="mph">A/B test <span class="muted">A = standard recommendations · B = explainable comparisons, Ready-to-Play, savings, selective handoff</span></h2>
   <div class="tblwrap"><table class="cmp covtbl"><thead><tr><th></th><th>Variant A</th><th>Variant B</th></tr></thead><tbody>
    ${[["Sessions recorded","n"],["Task completion %","taskCompletion"],["Minutes to decision","minutesToDecision"],["Compatibility correct %","compatCorrect"],["Cart items","cartItems"],["Cart value €","cartValue"],["Trust (1–5)","trust"],["Usefulness (1–5)","usefulness"],["Willingness to buy (1–5)","willingness"],["Handoff helpful","handoffHelpful"]].map(([lab,k])=>`<tr><th>${lab}</th><td>${f(ab.A[k])}</td><td>${f(ab.B[k])}</td></tr>`).join("")}</tbody></table></div>
@@ -1201,6 +1208,14 @@ function loyaltyTableHtml(events){
   return `<h2 class="mph">Loyalty check-ins <span class="muted">Welcome back check-in · shown in both variants</span></h2><div class="tblwrap"><table class="cmp covtbl"><thead><tr><th>Measure</th><th>Numerator / denominator</th><th>Value</th><th>Note</th></tr></thead><tbody>
    <tr><th>Cards shown</th><td>${shownS.size} sessions</td><td>${by("welcome_card_shown").length} views</td><td class="muted">A session counts once, however often the home page is opened.</td></tr>
    ${[["good","All good"],["broken","Something's not working"],["notyet","Haven't set it up yet"]].map(([k,l])=>`<tr><th>Check-in answer: ${l}</th><td>${cnt(k)} / ${ans.length} answers</td><td>${pct(cnt(k),ans.length)}</td><td class="muted">Share of all check-in answers.</td></tr>`).join("")}
+  </tbody></table></div>`;
+}
+function feedbackTableHtml(events){
+  const ev=(events||ls.get(EV_KEY,[])).filter(x=>x.e==="answer_feedback"),up=ev.filter(x=>x.value==="up").length,down=ev.filter(x=>x.value==="down").length,rs=ev.filter(x=>x.value==="reason");
+  const pct=(a,b)=>b?(a/b*100).toFixed(1)+"%":"–";
+  return `<h2 class="mph">Answer feedback <span class="muted">Helpful? 👍 👎 under advice answers · both variants</span></h2><div class="tblwrap"><table class="cmp covtbl"><thead><tr><th>Measure</th><th>Numerator / denominator</th><th>Value</th><th>Note</th></tr></thead><tbody>
+   <tr><th>Helpful answers</th><td>👍 ${up} / ${up+down} rated</td><td>${pct(up,up+down)}</td><td class="muted">👍 ${up} · 👎 ${down}. Only answers someone rated count; most answers aren't rated.</td></tr>
+   ${FB_REASONS.map(([k,l])=>{const c=rs.filter(x=>x.reason===k).length;return `<tr><th>👎 reason: ${l}</th><td>${c} / ${down} 👎</td><td>${pct(c,down)}</td><td class="muted">Reason chips are optional.</td></tr>`}).join("")}
   </tbody></table></div>`;
 }
 /* ---------------- AI summary above search results ---------------- */
@@ -2180,7 +2195,7 @@ const FEATURES=[
  {stage:"Discover",kind:"basic",n:"Needs interview",d:"Asks level, style, budget and owned gear before recommending.",try:"I want to start playing electric guitar."},
  {stage:"Discover",kind:"edge",n:"Sound match",d:"“Sound like X” mapped to pickups, amps and effects.",try:"I want John Mayer's clean tone. What do I need?"},
  {stage:"Discover",kind:"edge",n:"Setup Builder",d:"One builder for complete setups (Shop → Setup Builder, the basket, Deals, the chat). Start from a goal or a main product (“Complete this setup” on product pages). Same three levels everywhere: Lowest Cost, Best Value, Upgrade-Friendly. Skips what you own or have in the basket; respects your budget.",try:"Build me a podcast setup for two people under €600."},
- {stage:"All stages",kind:"edge",n:"Find a live agent",d:"Always visible at the top of the chat, in Need help? and on product pages. It turns orange with the reason when a live agent is recommended: an item over €1,000, a new player's first setup, two wrong answers in a row (👎 Not right), a faulty product, or a dispute. Nobody is transferred automatically.",try:"My new amp arrived damaged and I want a refund."},
+ {stage:"All stages",kind:"edge",n:"Find a live agent",d:"Always visible at the top of the chat, in Need help? and on product pages. It turns orange with the reason when a live agent is recommended: an item over €1,000, a new player's first setup, two 👎 answers in a row (Helpful? 👍 👎 shows under advice answers), a faulty product, or a dispute. Nobody is transferred automatically.",try:"My new amp arrived damaged and I want a refund."},
  {stage:"All stages",kind:"edge",n:"Beginner / Experienced mode",d:"Set from the instrument's level in your Music Profile, or switched at the top of the chat. Beginner: step-by-step guidance and setup completeness checks. Experienced: parameters, stock and delivery, and sound comparisons in words.",try:"Compare the Scarlett 2i2 and the Volt 2 for recording guitar."},
  {stage:"Decide",kind:"basic",n:"Comparison",d:"Specs and trade-offs side by side.",try:"Compare the Scarlett Solo, Scarlett 2i2 and Volt 2."},
  {stage:"Decide",kind:"basic",n:"Price check",d:"Cheaper similar items, B-Stock and bundles.",try:"Is there a cheaper option than the Rode NT1 for vocals?"},
@@ -2590,6 +2605,7 @@ async function send(text){
   text=String(text||"").trim();if(!text||S.busy)return;
   if(!S.started)startConversation();else setChat("open");
   if(S.mode==="human")backToAi();
+  document.querySelectorAll(".fbrow:not(.rated)").forEach(x=>x.remove());/* only the latest answer asks for feedback */
   userMsg(text);textTriggers(text);
   if(text.length>=18||!S.topic)S.topic=text.length>90?text.slice(0,88)+"…":text;
   if(!sample){botMsg(`<p>${sampleState==="loading"?"I'm still connecting. Try again in a moment.":esc(noAI())+permsBtn()}</p>`);return}
@@ -2627,7 +2643,9 @@ async function send(text){
   }finally{st.remove();currentCards=null;S.busy=false;S.ctl=null;$("#sendb").hidden=false;$("#stopb").hidden=true;sendState()}
   const lastIds=shownLog.join(",").match(/[a-z]{1,2}\d+/g)?.filter(id=>BY[id]&&BY[id].c!=="accessories");if(lastIds?.length)S.lastCat=BY[lastIds[0]].c;
   if(lastIds?.some(id=>BY[id].p>HIGH_PRICE))flagAgent("price");
-  if(fin.trim()){const n=++S.aiN;body.insertAdjacentHTML("beforeend",`<span class="aiwritten">${mk("ai")}</span><button type="button" class="notright" data-notright="${n}" aria-pressed="false">👎 Not right</button>`)}
+  /* feedback only under advice: cards that recommend or check something, or a real answer; never under interview questions */
+  const words=fin.trim()?fin.trim().split(/\s+/).length:0,advice=!cards.querySelector(".choices")&&(words>25||!!cards.querySelector(".card"));
+  if(fin.trim()||advice){const n=++S.aiN;body.insertAdjacentHTML("beforeend",`<div class="ansfoot">${fin.trim()?`<span class="aiwritten">${mk("ai")}</span>`:""}${advice?fbRowHtml(n):""}</div>`)}
   if(["rig","product","picks","profile"].includes(S.view.name))render();
   S.turns.push({role:"user",content:text});
   S.turns.push({role:"assistant",content:(fin||"(no text)")+(shownLog.length?`\n[cards shown: ${shownLog.join("; ")}]`:"")});
@@ -2647,8 +2665,25 @@ function flagAgent(code,quiet){
   if(!AGENT_WHY[code])return;const was=S.agent;S.agent=code;renderAgent();
   if(was!==code){track("live_agent_suggested",{reason:code});if(!quiet&&S.started&&S.mode==="ai")sysLine("A live agent is recommended: "+AGENT_WHY[code]+". Tap Find a live agent at the top whenever you like.")}
 }
+const FB_REASONS=[["asked","Not what I asked","That's not what I asked."],["gear","Doesn't fit my gear","That doesn't fit my gear. Please check it against My rig."],["price","Too expensive","That's too expensive for me. Something cheaper, please."],["other","Something else",""]];
+function fbRowHtml(n){return `<span class="fbrow" data-fb-row="${n}">Helpful? <button type="button" class="fbb" data-fb="up|${n}" aria-pressed="false" aria-label="Helpful">👍</button><button type="button" class="fbb" data-fb="down|${n}" aria-pressed="false" aria-label="Not helpful">👎</button></span>`}
+function rateAnswer(v,n){
+  const row=document.querySelector(`[data-fb-row="${n}"]`);if(!row||row.classList.contains("rated"))return;
+  row.classList.add("rated");track("answer_feedback",{value:v});
+  if(v==="up"){row.textContent="Thanks!";return}
+  markWrong(n);
+  row.innerHTML=`<button type="button" class="fbb" aria-pressed="true" disabled aria-label="Not helpful">👎</button> Thanks for telling us. What was off?<span class="fbwhy">${FB_REASONS.map(([k,l])=>`<button type="button" class="chip" data-fbr="${k}|${n}">${l}</button>`).join("")}</span>`;
+}
+document.addEventListener("click",e=>{
+  const f=e.target.closest("[data-fb]"),r=e.target.closest("[data-fbr]");if(!f&&!r)return;
+  e.stopPropagation();
+  if(f){const [v,n]=f.dataset.fb.split("|");rateAnswer(v,+n);return}
+  const [k,n]=r.dataset.fbr.split("|"),why=FB_REASONS.find(x=>x[0]===k),w=r.closest(".fbwhy");track("answer_feedback",{value:"reason",reason:k});
+  if(w)w.replaceWith(Object.assign(document.createElement("span"),{className:"fbwhy",textContent:"Noted: "+why[1]+"."}));
+  if(why[2])send(why[2]);else{cin.focus()}
+},true);
 function markWrong(n){
-  S.wrong.add(n);document.querySelector(`[data-notright="${n}"]`)?.setAttribute("aria-pressed","true");
+  S.wrong.add(n);document.querySelector(`[data-fb="down|${n}"]`)?.setAttribute("aria-pressed","true");
   if(S.wrong.has(n-1)||S.wrong.has(n+1))flagAgent("wrong");
 }
 const WRONG_RE=/\b(that'?s (wrong|not right|incorrect)|not what i (asked|meant)|you'?re wrong|wrong answer|das (ist|stimmt) (falsch|nicht))\b/i;
@@ -2756,7 +2791,6 @@ document.addEventListener("click",e=>{
   else if(d.perms!==undefined){openPerms()}
   else if(d.liveAgent!==undefined){const p=BY[d.liveAgent];closeDrawer();if(p){S.viewing=p.id;if(p.p>HIGH_PRICE)flagAgent("price",true)}if(!S.started)startConversation();else setChat("open");handover(p?DEPT2EXP[DEPT(p.c)]:undefined)}
   else if(d.advmode){store.set("advmode",d.advmode);renderMode();if(S.started)sysLine(d.advmode==="beginner"?"Beginner mode: step-by-step guidance and setup completeness checks.":"Experienced mode: parameters, stock and delivery, and sound comparisons.")}
-  else if(d.notright){const n=+d.notright;if(S.wrong.has(n)){S.wrong.delete(n);a.setAttribute("aria-pressed","false")}else markWrong(n)}
   else if(d.anchor!==undefined){const id=$("#anchorSel").value;if(!id){toast("Choose a product first");return}S.view.anchor=id;S.rtpBudget=+($("#anchorBudget").value.replace(/\D/g,""))||null;S.rtpAllow=false;render()}
   else if(d.abSave!==undefined){const g=n=>document.querySelector(`[name="${n}"]:checked`)?.value||$("#"+n)?.value;const rec=recordABSession({taskCompleted:g("abTask"),compatAccuracy:g("abCompat"),trust:g("abTrust"),usefulness:g("abUse"),willingness:g("abWill"),handoffHelpful:g("abHand")});closeDrawer();toast(`Session recorded for variant ${rec.variant}`)}
   else if(d.ctab)setCtab(d.ctab);

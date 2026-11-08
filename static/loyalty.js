@@ -117,7 +117,7 @@ function consultSummary() {
 }
 
 /* ---------- Anonymous event tracking ---------- */
-const EVENT_NAMES = ["chat_started", "needs_assessment_completed", "product_recommended", "product_compared", "compatibility_checked", "setup_completed", "bundle_viewed", "deal_viewed", "price_alert_created", "product_saved", "live_agent_suggested", "add_to_cart", "cart_reviewed", "human_handoff_requested", "human_handoff_completed", "thomann_product_link_clicked", "returning_profile_loaded", "purchase_completed", "product_page_viewed", "welcome_card_shown", "checkin_answered"];
+const EVENT_NAMES = ["chat_started", "needs_assessment_completed", "product_recommended", "product_compared", "compatibility_checked", "setup_completed", "bundle_viewed", "deal_viewed", "price_alert_created", "product_saved", "live_agent_suggested", "add_to_cart", "cart_reviewed", "human_handoff_requested", "human_handoff_completed", "thomann_product_link_clicked", "returning_profile_loaded", "purchase_completed", "product_page_viewed", "welcome_card_shown", "checkin_answered", "answer_feedback"];
 const EV_KEY = "ga3_events";
 const SESSION_ID = (() => { try { let s = sessionStorage.getItem("ga3_sid"); if (!s) { s = "s-" + Math.random().toString(36).slice(2, 10); sessionStorage.setItem("ga3_sid", s); } return s; } catch (e) { return "s-" + Math.random().toString(36).slice(2, 10); } })();
 const VISITOR = (() => { const v = ls.get("ga3_vid", null); if (v) return {id: v, returning: true}; const n = "v-" + Math.random().toString(36).slice(2, 10); ls.set("ga3_vid", n); return {id: n, returning: false}; })();
@@ -159,6 +159,7 @@ function demoEvents() {
     const id = ["i1", "m4", "t457271"][i % 3]; push("product_recommended", {ids: [id]});
     if (rnd() < (v === "B" ? .5 : .35)) push("add_to_cart", {id, recommended: true, cartValue: +(100 + rnd() * 400).toFixed(2)});
     if (rnd() < .2) push("human_handoff_requested"); if (rnd() < .6) push("product_page_viewed");
+    if (i % 3 === 0) push("answer_feedback", {value: i % 12 === 0 ? "down" : "up"}); if (i % 24 === 0) push("answer_feedback", {value: "reason", reason: "gear"});
   }
   return out;
 }
