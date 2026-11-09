@@ -34,7 +34,7 @@ EFFORT = {"quick": "low", "default": "medium"}
 ALLOWED_TOOLS = {
     "search_products", "get_product_details", "show_products", "compare_products",
     "price_check", "check_fit", "build_setup", "flag_live_agent", "stock_and_delivery",
-    "orders", "setup_help", "expert_handoff", "offer_choices", "update_rig", "update_profile", "save_to_picks", "deals", "price_alert", "review_setup", "readiness_summary", "upgrade_roadmap",
+    "orders", "setup_help", "expert_handoff", "offer_choices", "update_rig", "update_profile", "save_to_picks", "deals", "price_alert", "review_summary", "review_setup", "readiness_summary", "upgrade_roadmap",
 }
 MAX_MESSAGES = 80
 MAX_BODY_CHARS = 400_000
@@ -52,6 +52,7 @@ HOW TO WORK
 - NEEDS INTERVIEW: the customer came through Live chat to get advice. If a buying request lacks key facts (instrument, level, style or genre, budget, what they already own), ask before recommending: call offer_choices with ONE question, then end your turn with at most one short sentence. Max 2 rounds. Skip what My rig, the entry context or the message already answers.
 - SOUND MATCH: translate a described sound, artist or song into gear traits (pickups, amp, effects), search by tags, explain the link briefly.
 - GEAR FIT: before recommending anything that connects to their gear, call check_fit. Report problems plainly and name the fix.
+- REVIEWS: when the customer asks what people, reviewers or customers say about a product, whether it's reliable or any good, or its common problems, call review_summary (up to 3 ids; use it for comparisons too). Then write 2-3 sentences for THIS customer (their Music Profile and rig) using ONLY the themes and numbers the tool returns. Never quote or invent reviews or reviewer opinions; never say what reviewers think about a product without review data from the tool. If ratings are under 20, say the picture is thin. For simulated data say "in our simulated demo reviews". The card shows the numbers, so don't repeat them all.
 - TRANSPARENCY: Point out cheaper options and B-Stock (price_check), including house brands like Harley Benton and the sssnake. Never pressure.
 - ADVISE, NEVER BUY: you cannot order or add to the basket; the customer uses the buttons on the cards.
 - ORDERS & RETURNS: 30-day money-back guarantee and 3-year warranty. Before a fault return, offer setup_help first; use orders(start_return) only if they still want to return.

@@ -4,7 +4,7 @@ Verified on thomann.de (German store, EUR) on 2026-11-07. A category is complete
 
 | Top-level category | Verified records | Status |
 |---|---|---|
-| Guitars and Basses | 6 | complete |
+| Guitars and Basses | 7 | complete |
 | Drums and Percussion | 6 | complete |
 | Keys | 6 | complete |
 | Studio and Recording Equipment | 6 | complete |
@@ -22,6 +22,6 @@ Verified on thomann.de (German store, EUR) on 2026-11-07. A category is complete
 | Cables and Connectors | 6 | complete |
 | Accessories and Headphones | 7 | complete |
 
-**Total: 103 verified records.**
+**Total: 104 verified records.**
 
 Not stored for any record (not verified): ratings, review counts, return data, stock counts, product images. Bundles are only marked when the page lists the contents. Price references keep Thomann's label (UVP = manufacturer's list price; 30-Tage-Bestpreis = lowest price in the last 30 days).

@@ -584,6 +584,15 @@ a.btn.extlink{text-decoration:none;font-size:13px}
 .fbb{width:26px;height:26px;border-radius:50%;font-size:14px;line-height:1;filter:grayscale(1);opacity:.65}
 .fbb:hover,.fbb:focus-visible{filter:none;opacity:1;background:var(--soft)}
 .fbb[aria-pressed=true]{filter:none;opacity:1;background:var(--purple-soft)}
+.rvline{display:flex;gap:6px 12px;align-items:center;flex-wrap:wrap}
+.rvgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;font-size:13px}
+.rvcol{min-width:0}.rvcol ul{margin:2px 0 6px;padding-left:16px}.rvcol li{margin:1px 0}
+.rvstars{display:flex;gap:4px;align-items:baseline;flex-wrap:wrap;margin:2px 0 4px}
+.rvh{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-top:4px}
+.rvdist div{display:grid;grid-template-columns:24px 1fr 44px;gap:6px;align-items:center;font-size:11.5px;color:var(--muted)}
+.rvdist i{display:block;height:6px;border-radius:3px;background:linear-gradient(90deg,var(--warn) var(--w),var(--soft) var(--w))}
+.rvdist em{font-style:normal;text-align:right}
+.rvsrc{font-size:11.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:4px;margin-top:4px}.rvsrc.demo{font-weight:700}
 .fbwhy{display:flex;gap:5px;flex-wrap:wrap;flex-basis:100%;margin-top:4px}.fbwhy .chip{font-size:12px;padding:3px 10px}
 .notright[aria-pressed=true]{color:var(--bad);font-weight:700}
 .agentbox{border-color:#f97316}
@@ -768,6 +777,7 @@ body.focus .dropdot{box-shadow:none!important}
 <script src="tools.js"></script>
 <script src="savings.js"></script>
 <script src="loyalty.js"></script>
+<script src="reviews.js"></script>
 <script>
 /* ---------------- State & helpers ---------------- */
 const store={get(k,d){try{const v=localStorage.getItem("ga3_"+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem("ga3_"+k,JSON.stringify(v))}catch(e){}}};
@@ -810,7 +820,9 @@ const AISVG=`<svg viewBox="0 0 24 24"><path d="M12 2l1.8 5.6L19.5 9.5l-5.7 1.9L1
 
 /* category silhouettes, drawn because product photos can't load in the page */
 const SIL_ALIAS={guitars_basses:"guitars",studio:"interfaces",software:"interfaces",pa:"monitors",lighting:"power",dj:"keys",broadcast:"interfaces",fx:"interfaces",wind:"mics",traditional:"guitars",sheet:"accessories",cases:"amps",cables:"accessories"};
-const rateHtml=(p,big)=>p.r?`<div class="stars"${big?' style="font-size:18px"':""}>${stars(p.r)}<em>${big?"(":""}${p.rv.toLocaleString("en")}${big?")":""}</em></div>`:`<div class="muted" style="font-size:13px">No ratings in this prototype</div>`;
+/* stars: real thomann.de rating where we have one, otherwise the demo rating */
+const rateHtml=(p,big)=>{const rv=typeof reviewOf==="function"?reviewOf(p):null,r=rv?rv.stars:p.r,n=rv?rv.ratings:p.rv;
+  return r?`<div class="stars"${big?' style="font-size:18px"':""}>${stars(r)}<em>${big?"(":""}${n.toLocaleString("en")}${big?")":""}</em></div>`:`<div class="muted" style="font-size:13px">No ratings in this prototype</div>`};
 const srcTag=p=>p.conflict?`<span class="tag warnt">price being rechecked</span>`:p.priceOnly?`<span class="vtag">Deal seen ${esc(p.tv.verified)}</span>`:p.tv?`<span class="vtag">Verified on thomann.de · ${esc(p.tv.verified)}</span>`:`<span class="tag sim">demo product</span>`;
 function sil(c){
   const F='fill="var(--sil)"',G='fill="var(--sil2)"';
@@ -1060,7 +1072,7 @@ const MK_LEGEND="Advisor checks use Thomann's product data and your rig. AI-writ
 const MK_LAB={check:"Advisor check",ai:"AI-written",sum:"Summary"};
 function mk(kind,noStar){return `<span class="mk ${kind}">${noStar?"":"✦ "}${MK_LAB[kind]}<button type="button" class="mkq" data-mk-help aria-expanded="false" aria-label="What does ${MK_LAB[kind]} mean?">?</button></span>`}
 const askBtn=q=>`<button class="btn mkask" data-ask="${esc(q)}">Ask the advisor</button>`;
-const CHECK_CARD=/^(Fit check|Setup Builder|Basket review|Complete the setup|Ready to buy\?|Price check|Comparison|Your setup|Fix-it|Verified deals)/;
+const CHECK_CARD=/^(Reviews:|Fit check|Setup Builder|Basket review|Complete the setup|Ready to buy\?|Price check|Comparison|Your setup|Fix-it|Verified deals)/;
 function cardMark(title){return CHECK_CARD.test(String(title))?" "+mk("check"):""}
 document.addEventListener("click",e=>{
   let pop=document.getElementById("mkpop");const q=e.target.closest("[data-mk-help]");
@@ -1440,7 +1452,7 @@ function productView(p){
   <div class="prod">
    <div style="min-width:0">
     <h1>${esc(p.n)}</h1>
-    ${rateHtml(p,true)}
+    <div class="rvline">${rateHtml(p,true)}${reviewOf(p)?`<button class="btn mkask" data-review-ask="${p.id}">What reviewers say</button>`:""}</div>
     <div style="margin:8px 0 14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center"><span class="brandtag">${esc(p.b)}</span>${srcTag(p)}</div>
     ${sil(p.c)}
     <div class="section"><h2>Specifications</h2><table class="spect">${Object.entries(p.specs).map(([k,v])=>`<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`).join("")}</table>
@@ -2222,10 +2234,11 @@ const FEATURES=[
  {stage:"Own",kind:"moat",n:"Roadmap, projects, consultation",d:"My rig shows an upgrade roadmap per instrument; Projects store planned setups; a consent-based summary prepares a (simulated) specialist consultation.",try:"What should I upgrade next for each instrument I play?"},
  {stage:"Measure",kind:"open",n:"Dashboard and A/B test",d:"Test guide: switch variant A/B, record a test session, and open the performance dashboard (anonymous events, correct denominators, no invented results; demo data clearly labelled).",action:"dashboard"},
  {stage:"Own",kind:"moat",n:"Music Profile",d:"Account menu → My Music Profile: several instruments, each with its own level, uses, genres, budget, goal and gear, plus general preferences. Optional and stored on this device. The advisor uses it, asks which instrument when unclear, avoids gear you own, and only saves changes after you confirm.",try:"I play piano at an advanced level and I just started guitar. What should I get next?"},
+ {stage:"Decide",kind:"edge",n:"Review summary",d:"Ask what reviewers say (or tap “What reviewers say” on a product page): a card with stars, ratings and the praised and criticised themes, and a short summary for you from the AI. Real thomann.de review facts for 13 products (checked 9 Nov, themes in our words, no review text copied); simulated demo reviews for demo products. Up to 3 products side by side.",try:"What do people say about the Scarlett 2i2 4th Gen vs the Audient iD24?"},
  {stage:"Own",kind:"moat",n:"Welcome back check-in",d:"Home page strip for returning customers: one check-in about a recent purchase (All good / Something's not working / Haven't set it up yet), plus the rig health line, one suggestion and Open My rig. Never pops up; Not now hides it for the session.",action:"welcome"},
  {stage:"Own",kind:"moat",n:"Warranty in My rig",d:"Warranty and return days left for Thomann purchases; your own dates for gear bought elsewhere.",try:"Which of my gear is still under warranty?"},
 ];
-const CORE_FEATS=["Needs interview","Music Q&A","Sound match","Comparison","Price check","Gear fit check","Setup Builder","Review my setup","Decision confidence","Find a live agent","Expert handoff","Setup & fix-it","My rig","Welcome back check-in","AI-ready data"];
+const CORE_FEATS=["Needs interview","Music Q&A","Sound match","Comparison","Price check","Review summary","Gear fit check","Setup Builder","Review my setup","Decision confidence","Find a live agent","Expert handoff","Setup & fix-it","My rig","Welcome back check-in","AI-ready data"];
 const FOCUS_OFF_FEATS=new Set(["Smart Savings & Deals","Price tracking (bell)","Deals snapshot (6 Nov)","Roadmap, projects, consultation"]);
 function guideFeats(fn){
   if(!S.focus)return FEATURES.map(fn).join("");
@@ -2366,6 +2379,24 @@ TOOLS.push(
   inputSchema:{type:"object",properties:{}},
   execute(){const r=reviewCart();push(card("Basket review",'<span class="tag edge">review my setup</span>',`<div>${r.proposals.length} suggested change${r.proposals.length===1?"":"s"}, ${r.info.length} note${r.info.length===1?"":"s"} · basket ${eur(r.total)}</div>${r.proposals.slice(0,3).map(p=>`<div class="muted">• ${esc(p.title)} (${p.delta>0?"+":""}${eur(p.delta).replace("€-","-€")})</div>`).join("")}<div class="prow"><button class="btn small primary" data-review>Open the review</button></div>`));
    return {basketTotal:r.total,proposals:r.proposals.map(p=>({title:p.title,reason:p.reason,delta:p.delta})),notes:r.info.map(x=>x.text)}}});
+/* review summary: facts in the card (Advisor check), the summary in the AI's answer */
+const fmtDay=d=>new Date(d+"T12:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
+function reviewColHtml({p,r}){
+  if(!r)return `<div class="rvcol"><b>${esc(p.n)}</b><div class="muted">No reviews in this prototype.</div></div>`;
+  const tot=r.dist?r.dist.reduce((a,b)=>a+b,0):0,li=l=>`<ul>${l.map(([t,f])=>`<li>${esc(t)} <span class="muted">· ${esc(f)}</span></li>`).join("")}</ul>`;
+  return `<div class="rvcol"><b>${esc(p.n)}</b><div class="rvstars">${stars(r.stars)} <b>${r.stars}</b><span class="muted">· ${r.ratings.toLocaleString("en")} ratings${r.written?` · ${r.written.toLocaleString("en")} written reviews`:""}</span></div>
+   ${r.dist?`<div class="rvdist" aria-label="Star distribution">${r.dist.map((n,k)=>`<div><span>${5-k}★</span><i style="--w:${tot?Math.max(1,Math.round(n/tot*100)):0}%"></i><em>${n.toLocaleString("en")}</em></div>`).join("")}</div>`:""}
+   <div class="rvh">Praised</div>${li(r.praised)}${r.criticised.length?`<div class="rvh">Criticised</div>${li(r.criticised)}`:""}${r.note?`<div class="muted">${esc(r.note)}</div>`:""}
+   <div class="rvsrc ${r.kind}">${r.kind==="real"?`From ${r.ratings.toLocaleString("en")} customer ratings on thomann.de, checked ${fmtDay(REVIEWS_CHECKED)}. Themes in our own words.`:"Simulated demo reviews"}</div></div>`;
+}
+TOOLS.push({name:"review_summary",description:"Customer review facts for up to 3 products: star rating, number of ratings, and the themes reviewers praise or criticise with how often they come up. Real thomann.de review facts (dated) for some products, simulated demo reviews for demo products, none for the rest. Shows a card with the facts; you write a 2-3 sentence summary for this customer from these facts only.",
+ inputSchema:{type:"object",properties:{ids:{type:"array",items:{type:"string"}}},required:["ids"]},
+ execute(i){const l=ids(i.ids).slice(0,3);if(!l.length)throw new Error("No valid ids");setStatus("Reading the reviews…");
+  const rows=l.map(id=>({p:BY[id],r:reviewOf(BY[id])}));
+  push(card("Reviews: "+rows.map(x=>x.p.n).join(" vs "),"",`<div class="rvgrid">${rows.map(reviewColHtml).join("")}</div>`));
+  track("review_summary_shown",{ids:l,from:S.reviewFrom||"chat"});S.reviewFrom=null;shownLog.push("reviews("+l.join(",")+")");
+  return rows.map(({p,r})=>r?{product:p.n,id:p.id,source:r.kind==="real"?r.source:"SIMULATED demo reviews: say so",stars:r.stars,ratings:r.ratings,fewRatings:r.ratings<20,praised:r.praised.map(([t,f])=>t+" ("+f+")"),criticised:r.criticised.map(([t,f])=>t+" ("+f+")"),note:r.note||undefined}:{product:p.n,id:p.id,reviews:"none in this prototype: say so and don't guess what reviewers think"})}});
+document.addEventListener("click",e=>{const b=e.target.closest("[data-review-ask]");if(!b)return;e.stopPropagation();S.reviewFrom="product";send(`What do reviewers say about the ${BY[b.dataset.reviewAsk].n}?`)},true);
 const VARIANT_B_TOOLS=["ready_to_play","setup_options","deals","review_setup","readiness_summary","price_alert","upgrade_roadmap"];
 TOOLS.push(
  {name:"ready_to_play",description:"Ready-to-Play check for a main product: lists what else is Essential (needed to work), Recommended (clearly better) and Optional (convenience or growth), skipping what the customer owns or has in the basket, in three configurations: Minimum Complete, Balanced, Upgrade-Friendly. Respects the budget unless allow_over_budget is true (only with the customer's permission). Shows a card. Never adds to the basket.",
@@ -2553,6 +2584,7 @@ HOW TO WORK
 - NEEDS INTERVIEW: the customer came through Live chat to get advice. If a buying request lacks key facts (instrument, level, style or genre, budget, what they already own), ask before recommending: call offer_choices with ONE question, then end your turn with at most one short sentence. Max 2 rounds. Skip what My rig, the entry context or the message already answers.
 - SOUND MATCH: translate a described sound, artist or song into gear traits (pickups, amp, effects), search by tags, explain the link briefly.
 - GEAR FIT: before recommending anything that connects to their gear, call check_fit. Report problems plainly and name the fix.
+- REVIEWS: when the customer asks what people, reviewers or customers say about a product, whether it's reliable or any good, or its common problems, call review_summary (up to 3 ids; use it for comparisons too). Then write 2-3 sentences for THIS customer (their Music Profile and rig) using ONLY the themes and numbers the tool returns. Never quote or invent reviews or reviewer opinions; never say what reviewers think about a product without review data from the tool. If ratings are under 20, say the picture is thin. For simulated data say "in our simulated demo reviews". The card shows the numbers, so don't repeat them all.
 - TRANSPARENCY: Point out cheaper options and B-Stock (price_check), including house brands like Harley Benton and the sssnake. Never pressure.
 - ADVISE, NEVER BUY: you cannot order or add to the basket; the customer uses the buttons on the cards.
 - ORDERS & RETURNS: 30-day money-back guarantee and 3-year warranty. Before a fault return, offer setup_help first; use orders(start_return) only if they still want to return.

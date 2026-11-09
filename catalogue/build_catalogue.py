@@ -129,7 +129,7 @@ def build(raw_lines):
             "ref": parse_ref(d.get("ref")), "avail": d["avail"], "availEn": avail_en, "inStock": in_stock,
             "specs": specs, "compat": [f"{k}: {v}" for k, v in specs.items() if COMPAT_KEYS.search(k + " " + v)],
             "uses": SUB_USES.get(sub_en, []), "bundle": bundle, "image": None,
-            "verified": VERIFIED_ON, "source": BASE + r["url"],
+            "verified": r.get("verified", VERIFIED_ON), "source": BASE + r["url"],
         })
     return recs, errors
 
