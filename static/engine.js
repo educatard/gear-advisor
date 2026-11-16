@@ -13,10 +13,12 @@ function usbCheck(dev,usb,comp){
   if(port==="A")return {status:"ok",note:`${label}: the usual cable fits your ${comp.name}.`,type:"computer"};
   return {status:"warn",note:`${dev} uses ${label}; your ${comp.name} has USB-C. You need a ${label} to USB-C cable.`,fix:usb==="micro"?"x5":"x4",type:"computer"};
 }
-function fitCheck(prodIds){
-  const cands=prodIds.map(id=>BY[id]).filter(Boolean);
-  const rig=rigItems();
-  const all=[...rig.map(r=>({name:r.name,cp:r.cp||{}})),...cands.map(c=>({name:c.n,cp:c.cp,isNew:true}))];
+/* opt.ownedAsRig: ids already in My rig are the customer's own gear (checked as part of the rig), not a second purchase */
+function fitCheck(prodIds,opt={}){
+  const cands=[...new Set(prodIds)].map(id=>BY[id]).filter(Boolean);
+  const rig=rigItems(),rigIds=new Set(rig.map(r=>r.id).filter(Boolean));
+  const owned=new Set(opt.ownedAsRig?cands.filter(c=>rigIds.has(c.id)).map(c=>c.id):[]);
+  const all=[...rig.map(r=>({id:r.id,name:r.name,cp:r.cp||{}})),...cands.filter(c=>!owned.has(c.id)).map(c=>({id:c.id,name:c.n,cp:c.cp,isNew:true}))];
   const find=k=>all.filter(x=>x.cp.kind===k);
   const comp=profileComputer()||find("computer")[0];
   const checks=[];
@@ -39,13 +41,13 @@ function fitCheck(prodIds){
     }
     if(cp.kind==="interface"){
       if(comp) checks.push(usbCheck(c.n,cp.usb,comp));
-      for(const m of find("mic").filter(x=>!x.isNew)){
+      for(const m of find("mic").filter(x=>!x.isNew&&!cands.some(k=>k.id===x.id))){ /* mics checked in this same call get their own gain line */
         if(m.cp.needsPhantom&&!cp.phantom) add("bad",`${m.name} needs phantom power, which this interface lacks.`);
         const d=cp.gain-m.cp.gainNeed; add(d>=0?"ok":"warn",`Your ${m.name}: ${d>=0?"enough gain":"needs ~"+m.cp.gainNeed+" dB, this gives "+cp.gain+" dB"}.`,d>=0?undefined:"m7");
       }
       for(const h of find("headphones")) add(h.cp.ohm<=cp.hpMax?"ok":"warn",`Your ${h.name} (${h.cp.ohm} Ω) ${h.cp.ohm<=cp.hpMax?"are driven fine":"may be quiet on this headphone output"}.`);
       for(const mo of find("monitors")) add(mo.cp.inputs.includes(cp.out)?"ok":"warn",`Monitors ${mo.name}: ${mo.cp.inputs.includes(cp.out)?cp.out+" cables connect directly":"need "+cp.out+" to "+mo.cp.inputs[0]+" cables"}.`);
-      const old=find("interface").filter(x=>!x.isNew); if(old.length) add("warn",`You already own the ${old[0].name}. Check this one adds what you need (inputs, gain).`);
+      const old=find("interface").filter(x=>!x.isNew&&x.id!==c.id); if(old.length&&!owned.has(c.id)) add("warn",`You already own the ${old[0].name}. Check this one adds what you need (inputs, gain).`);
     }
     if(cp.kind==="pedal"){
       const psu=find("psu")[0];
@@ -57,7 +59,7 @@ function fitCheck(prodIds){
       } else if(cp.battery&&cp.mA<60) add("warn",`No pedal power supply in your rig. It runs on a 9 V battery for now; a 9 V supply saves batteries.`,"pw1");
       else add("bad",`It draws ${cp.mA} mA${cp.battery?" and drains batteries fast":" and has no battery option"}: you need a 9 V centre-negative supply with at least ${cp.mA} mA per output.`,cp.mA>100?"pw2":"pw1");
       const amp=find("amp")[0]; if(amp) add("ok",`Plugs into the input of your ${amp.name}.`); else add("warn","You have no amp in your rig: you'll need an amp or a headphone/multi-effects unit.","a1");
-      if(pedals.filter(x=>!x.isNew).length) add("ok",`Chains with your ${pedals.filter(x=>!x.isNew).map(x=>x.name).join(", ")}.`);
+      const otherPedals=pedals.filter(x=>!x.isNew&&x.id!==c.id); if(otherPedals.length) add("ok",`Chains with your ${otherPedals.map(x=>x.name).join(", ")}.`);
     }
     if(cp.kind==="psu"){
       for(const pd of find("pedal")) add(cp.outputs.some(o=>o.mA>=pd.cp.mA)?"ok":"bad",`${pd.name} (${pd.cp.mA} mA): ${cp.outputs.some(o=>o.mA>=pd.cp.mA)?"covered":"needs more current than any output gives"}.`,cp.outputs.some(o=>o.mA>=pd.cp.mA)?undefined:"pw2",undefined,true);
@@ -78,7 +80,7 @@ function fitCheck(prodIds){
       const amp=find("amp")[0];
       if(cp.kind==="electric guitar"&&!cp.bundle) add(amp?"ok":"warn",amp?`Plugs into your ${amp.name}.`:"You'll need an amp or a headphone amp.",amp?undefined:"a1");
       else if(cp.kind==="acoustic guitar") add("ok","Acoustic: no amp needed.");
-      const g=find("electric guitar").filter(x=>!x.isNew); if(g.length&&cp.kind==="electric guitar") add("ok",`Note: you already own the ${g[0].name}. Compare pickups to make sure this adds a new sound.`);
+      const g=find("electric guitar").filter(x=>!x.isNew&&x.id!==c.id); if(g.length&&cp.kind==="electric guitar"&&!owned.has(c.id)) add("ok",`Note: you already own the ${g[0].name}. Compare pickups to make sure this adds a new sound.`);
     }
     if(cp.kind==="strings"){
       const g=all.filter(x=>x.cp.kind==="electric guitar"||x.cp.kind==="acoustic guitar");
@@ -102,12 +104,17 @@ function fitCheck(prodIds){
     if(cp.kind==="usbcable"&&comp) add(comp.cp.ports.includes("USB-C")?"ok":"warn",comp.cp.ports.includes("USB-C")?`USB-C end fits your ${comp.name}.`:`Your ${comp.name} has USB-A ports; this cable has a USB-C end.`,undefined,"computer");
   }
   if(!checks.some(c=>c.type==="fit"||c.type==="computer")&&!cands.every(c=>c.vonly)) add("ok","No known conflicts with your rig.");
-  for(const c of cands) checks.push(...moreChecks(c));
-  return checks;
+  /* readiness, place and delivery notes per product; with several products, each note names its product */
+  const multi=cands.length>1,ids=cands.map(c=>c.id),more=[];
+  for(const c of cands) for(const x of moreChecks(c,{with:ids,owned:owned.has(c.id)})) more.push(multi?{...x,note:`${c.n}: ${x.note}`}:x);
+  const notReady=more.some(x=>x.type==="ready"&&x.status!=="ok");
+  const seen=new Set();
+  return [...checks,...more.filter(x=>!(notReady&&multi&&x.type==="ready"&&x.status==="ok"))].filter(x=>!seen.has(x.note)&&seen.add(x.note));
 }
 /* What else the shopper needs before they can play, counting their rig and basket */
-function missingFor(c){
-  const o=[...rigItems().map(r=>({id:r.id,cp:r.cp||{}})),...(typeof S!=="undefined"?S.basket:[]).map(b=>({id:b.id,cp:BY[b.id].cp}))];
+function missingFor(c,withIds=[]){
+  const o=[...rigItems().map(r=>({id:r.id,cp:r.cp||{}})),...(typeof S!=="undefined"?S.basket:[]).map(b=>({id:b.id,cp:BY[b.id].cp})),
+    ...withIds.filter(id=>id!==c.id&&BY[id]).map(id=>({id,cp:BY[id].cp}))];
   const hasKind=k=>o.some(x=>x.cp.kind===k),hasId=id=>o.some(x=>x.id===id),pr=PROFILE(),out=[],k=c.cp.kind;
   if(c.cp.bundle)return out;
   if(k==="electric guitar"){
@@ -129,11 +136,13 @@ function missingFor(c){
   if((k==="interface"||k==="edrums"||(k==="keys"&&c.cp.standalone&&pr.listen==="headphones"))&&!hasKind("headphones")&&!hasKind("monitors"))out.push({what:"headphones",fix:"h1"});
   return out;
 }
-function moreChecks(c){
+/* o.with: other products checked together (they count as present); o.owned: the product is already in My rig */
+function moreChecks(c,o={}){
+  if(o.owned){if(c.vonly)return [];return missingFor(c,o.with).map(m=>({status:"warn",note:`To use it you also need ${m.what}.`,fix:m.fix,type:"ready"}))}
   if(c.vonly)return [{status:"warn",note:"Compatibility and completeness aren't checked for this product in the prototype: only its listed specs are verified. Ask a specialist if anything is unclear.",type:"fit"},
     {status:c.tv.inStock?"ok":"warn",note:`${c.tv.availEn} (as listed on thomann.de on ${c.tv.verified}).`,type:"delivery"}];
   const out=[],pr=PROFILE(),cp=c.cp;
-  const miss=missingFor(c);
+  const miss=missingFor(c,o.with);
   for(const m of miss)out.push({status:"warn",note:`To start playing you also need ${m.what}.`,fix:m.fix,type:"ready"});
   if(!miss.length&&!["strings","cable","battery","picks","usbcable","booster","psu"].includes(cp.kind))
     out.push({status:"ok",note:cp.bundle?"Complete set: everything you need to start is in the box.":"Ready to play: nothing else needed with your rig.",type:"ready"});

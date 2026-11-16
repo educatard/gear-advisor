@@ -125,6 +125,21 @@ MAX_FACTS_CHARS = 12_000
 
 SYSTEM_PROMPT = RULES + "\nCATALOGUE (id | name | category | price | source | tags)\n" + build_catalogue()
 
+
+def load_prompt_new() -> str:
+    """The 'New' chat prompt, word for word, from the page's advisor-prompt.js (same text on claude.ai)."""
+    src = (STATIC / "advisor-prompt.js").read_text(encoding="utf8")
+    return json.loads(src[src.index("= ") + 2:src.rindex(";")])
+
+
+def names_prices() -> str:
+    rows = [ln.split(" | ") for ln in build_catalogue().splitlines()]
+    return "PRODUCT DATA (the products and prices in this shop, EUR):\n" + "\n".join(f"- {r[1]} – €{r[3].removeprefix('EUR ').split(' (')[0]}" for r in rows)
+
+
+# New prompt mode: the supplied text plus the catalogue list only; no tools
+SYSTEM_PROMPT_NEW = load_prompt_new() + "\n\n" + names_prices()
+
 client = anthropic.AsyncAnthropic(max_retries=2) if not MOCK else None
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 
@@ -201,20 +216,21 @@ async def chat(request: Request):
     messages, tools, err = validate(body)
     if err:
         return bad(err)
+    new = body.get("prompt") == "new"
 
     wait = rate_limited(client_ip(request))
     if wait:
         return JSONResponse({"error": "rate_limited", "retry_after": wait}, status_code=429, headers={"Retry-After": str(wait)})
 
     if MOCK:
-        return JSONResponse(mock_reply(messages, tools))
+        return JSONResponse(mock_reply(messages, [] if new else tools))
 
     try:
         resp = await client.beta.messages.create(
             model=MODEL,
             max_tokens=16000,
-            system=[{"type": "text", "text": SYSTEM_PROMPT}],
-            tools=tools or anthropic.omit,
+            system=[{"type": "text", "text": SYSTEM_PROMPT_NEW if new else SYSTEM_PROMPT}],
+            tools=(None if new else tools) or anthropic.omit,
             messages=messages,
             output_config={"effort": EFFORT.get(body.get("tier"), "low")},
             cache_control={"type": "ephemeral"},

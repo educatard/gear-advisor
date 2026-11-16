@@ -1,4 +1,5 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body><title>Thomann Gear Advisor</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body>
+<title>Thomann Gear Advisor</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap">
@@ -584,6 +585,9 @@ a.btn.extlink{text-decoration:none;font-size:13px}
 .fbb{width:26px;height:26px;border-radius:50%;font-size:14px;line-height:1;filter:grayscale(1);opacity:.65}
 .fbb:hover,.fbb:focus-visible{filter:none;opacity:1;background:var(--soft)}
 .fbb[aria-pressed=true]{filter:none;opacity:1;background:var(--purple-soft)}
+blockquote.mdq{margin:8px 0;padding:10px 12px;border-left:4px solid var(--purple);background:var(--purple-soft);border-radius:0 10px 10px 0}
+blockquote.mdq p{margin:2px 0}blockquote.mdq ol{margin:4px 0;padding-left:20px}
+.speclink{color:var(--purple);font-weight:700;text-decoration:underline;text-align:left}
 .rvline{display:flex;gap:6px 12px;align-items:center;flex-wrap:wrap}
 .rvgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;font-size:13px}
 .rvcol{min-width:0}.rvcol ul{margin:2px 0 6px;padding-left:16px}.rvcol li{margin:1px 0}
@@ -606,10 +610,54 @@ details.rtpbox>summary h4{display:inline}details.rtpbox:not([open])>summary h4::
 .rigsec{margin-top:24px}
 .rigsec h2{font-size:21px;font-weight:800;margin:0 0 10px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
 .issues{display:flex;flex-direction:column;gap:8px}
-.issue{display:flex;align-items:center;gap:14px;border:1px solid var(--line);border-left:4px solid var(--warn);border-radius:8px;padding:10px 14px;background:var(--bg)}
-.issue.bad{border-left-color:var(--bad,#c62828)}
-.issue .it,.up .it{flex:1;min-width:0;font-size:14px;line-height:1.4}
-.issue .btn,.up .btn{flex:none}
+.up .it{flex:1;min-width:0;font-size:14px;line-height:1.4}
+.up .btn{flex:none}
+/* Rig check: one compact card = status, areas, advisor's take, to-do rows, passed checks */
+.rigcheck{border:1px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden;margin-top:4px}
+.rchead{display:flex;align-items:center;gap:10px 18px;flex-wrap:wrap;padding:14px 18px;background:var(--soft2);border-bottom:1px solid var(--line)}
+.rcl{display:flex;align-items:center;gap:12px;min-width:0;flex:1 1 260px}
+.rcl .rceye{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.rcl .rceye .mk{text-transform:none;letter-spacing:0}
+.rcl b.rclabel{display:block;font-size:18px;font-weight:800;line-height:1.25}
+.rigcheck .rcicon{width:34px;height:34px;font-size:16px}
+.rigcheck.amber .rcicon{background:var(--warn)}.rigcheck.red .rcicon{background:var(--bad,#c62828)}
+.rigcheck .rcareas{gap:5px}
+.rigcheck .rcchip{padding:3px 9px;font-size:12px}
+.rigcheck .rtake{border:0;padding:12px 18px 0;font-size:14px;line-height:1.5}
+.rigcheck .rtake:empty{display:none}
+.rigcheck .rtake p{margin:0}
+.rigcheck .rtake .rth{display:inline-flex;margin:0 6px 0 0;vertical-align:1px}
+.rigcheck .rcbody{padding:4px 18px 0}
+.issue{display:grid;grid-template-columns:8px minmax(150px,230px) minmax(0,1fr) auto;align-items:center;column-gap:14px;padding:11px 0;border-top:1px solid var(--line);font-size:14px;line-height:1.4}
+.rcbody>.issues>.issue:first-child{border-top:0}
+.issue .idot{width:8px;height:8px;border-radius:50%;background:var(--warn)}
+.issue.bad .idot{background:var(--bad,#c62828)}
+.issue .ititle{font-weight:700;min-width:0}
+.issue .idet{color:var(--muted);min-width:0;font-size:13.5px}
+.issue .idet b{color:var(--ink);font-weight:600}
+.issue .btn{justify-self:end;white-space:nowrap}
+.rigcheck .issues{gap:0}
+.rigcheck details.rigmore{margin:0;border-top:1px solid var(--line)}
+.rigcheck details.rigmore>summary{padding:9px 0 9px 22px;font-size:13.5px}
+.rigcheck details.rigmore .issues{margin:0}
+.rigcheck .okline{padding:12px 0}
+.rcfoot{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:10px 16px;padding:10px 18px 14px;border-top:1px solid var(--line);margin-top:4px}
+.rcfoot details.passedbox{border-top:0}
+.rcfoot details.passedbox>summary{padding:9px 0;font-size:13.5px}
+.rcfoot ul.passed{margin:0 0 4px;font-size:13.5px}
+.rcfoot .cta{padding:9px 18px;font-size:14px}
+@media (max-width:700px){
+ .issue{grid-template-columns:8px minmax(0,1fr) auto;row-gap:2px}
+ .issue .idot{grid-row:1 / span 2;align-self:start;margin-top:6px}
+ .issue .ititle{grid-column:2}.issue .idet{grid-column:2;grid-row:2}
+ .issue .btn{grid-column:3;grid-row:1 / span 2}
+ .rchead{padding:12px 14px}.rigcheck .rtake{padding:10px 14px 0}.rigcheck .rcbody{padding:2px 14px 0}.rcfoot{padding:8px 14px 12px}
+}
+@media (max-width:520px){
+ .issue{grid-template-columns:8px minmax(0,1fr)}
+ .issue .btn{grid-column:2;grid-row:3;justify-self:start;margin-top:3px;border:0;padding:0;background:none;color:var(--purple);text-decoration:underline;font-size:13px}
+ .rcfoot{grid-template-columns:minmax(0,1fr)}.rcfoot .cta{width:100%}
+}
 .okline{margin:0;color:var(--ok);font-weight:700}
 details.rigmore{margin-top:8px}
 details.rigmore>summary,details.fromorders>summary{cursor:pointer;font-size:14px;font-weight:600;color:var(--muted);padding:4px 0}
@@ -638,7 +686,7 @@ details.grow .gbody .acts{display:flex;gap:6px;flex-wrap:wrap}
 .up{display:flex;align-items:center;gap:14px;background:var(--soft);border-radius:8px;padding:10px 14px}
 .up .it .muted{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .up .price{font-weight:800;flex:none}
-@media (max-width:600px){.issue,.up{flex-wrap:wrap}.issue .it{flex-basis:100%}.issue .btn,.up .btn{margin-left:auto}details.grow .gbody{padding-left:14px}details.grow>summary{flex-wrap:wrap}details.grow .gb{order:3;flex-basis:100%;justify-content:flex-start;padding-left:58px}details.grow .gb:empty{display:none}.righead .cta{width:100%}}
+@media (max-width:600px){.up{flex-wrap:wrap}.up .btn{margin-left:auto}details.grow .gbody{padding-left:14px}details.grow>summary{flex-wrap:wrap}details.grow .gb{order:3;flex-basis:100%;justify-content:flex-start;padding-left:58px}details.grow .gb:empty{display:none}.righead .cta{width:100%}}
 .rigtitle{margin-bottom:12px}
 .righead{align-items:center}
 .rigcard{flex:1 1 520px;min-width:0;display:flex;align-items:center;gap:12px 20px;flex-wrap:wrap;border:1px solid var(--line);border-left:6px solid var(--ok);border-radius:10px;padding:12px 16px;background:var(--bg)}
@@ -778,12 +826,13 @@ body.focus .dropdot{box-shadow:none!important}
 <script src="savings.js"></script>
 <script src="loyalty.js"></script>
 <script src="reviews.js"></script>
+<script src="advisor-prompt.js"></script>
 <script>
 /* ---------------- State & helpers ---------------- */
 const store={get(k,d){try{const v=localStorage.getItem("ga3_"+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem("ga3_"+k,JSON.stringify(v))}catch(e){}}};
 const S={
   rig:store.get("rig",JSON.parse(JSON.stringify(DEFAULT_RIG))), basket:store.get("basket",[]), tier:store.get("tier","quick"), online:store.get("online",true),
-  profile:{}, music:null, gearFormFor:null, present:store.get("present",false), focus:store.get("focus",false), editing:null, sumHidden:store.get("sumHidden",false), sumNow:null, sumCtx:null,
+  profile:{}, music:null, gearFormFor:null, present:store.get("present",false), promptMode:store.get("promptMode","new"), focus:store.get("focus",false), editing:null, sumHidden:store.get("sumHidden",false), sumNow:null, sumCtx:null,
   view:{name:"home",q:"",cats:[],top:"",sub:"",src:"",brand:"",inst:"",min:"",max:"",stock:false,sort:"rel",sit:"",limit:24}, viewing:null,
   contact:{enquiry:null,category:null,need:null,method:null,product:null}, chatCtx:null, turns:[], busy:false, ctl:null,
   chat:"closed", mode:"ai", expert:null, started:false, toolsOK:null, apiMode:false,
@@ -1123,7 +1172,7 @@ function welcomeHtml(){
   return `<section class="wb" aria-label="Welcome back">
    <p class="wbq">${hello}${S.wbThanks?`Thanks for letting us know. Enjoy your ${esc(S.wbThanks)}!`:c?esc(c.q):""}</p>
    ${c?`<div class="wbans"><button class="btn" data-checkin="good|${c.id}">All good</button><button class="btn wbmain" data-checkin="broken|${c.id}">Something's not working</button><button class="btn" data-checkin="notyet|${c.id}">Haven't set it up yet</button></div>`:""}
-   <div class="wbrig">${mk("check")}<span><span class="wbdot ${st.level}" aria-hidden="true"></span><b>Rig health: ${esc(st.label)}</b> · ${esc(st.counts)}</span>${sg?`<span>For your rig: <b>${sg.title}</b> · <button class="linkish" ${sg.attr}>See options</button></span>`:""}<button class="linkish" data-wb-rig>Open My rig →</button></div>
+   <div class="wbrig">${mk("check")}<span><span class="wbdot ${st.level}" aria-hidden="true"></span><b>Rig health: ${esc(st.label)}</b></span>${sg?`<span>For your rig: <b>${sg.title}</b> · <button class="linkish" ${sg.attr}>See options</button></span>`:""}<button class="linkish" data-wb-rig>Open My rig →</button></div>
    <div class="wbfoot"><details><summary>Why am I seeing this?</summary><span>Based on your orders and My rig. Stored on this device only.</span></details><button class="linkish" data-wb-hide>Not now</button></div>
   </section>`;
 }
@@ -1535,7 +1584,7 @@ function warrantyTags(r){
 function rigHealth(){
   const items=rigItems(),kind=k=>items.filter(x=>x.cp?.kind===k),out=[];
   const str=kind("strings")[0];
-  if(str){const d=daysSince(str.since);if(d!==null)out.push(d>90?{k:"strings",s:"warn",t:`Your strings were changed ${d} days ago. Most players change them every 2–3 months.`,ask:"My strings are over 3 months old. Which ones should I get?"}:{k:"strings",s:"ok",t:`Strings changed ${d} days ago.`})}
+  if(str){const d=daysSince(str.since);if(d!==null)out.push(d>90?{k:"strings",s:"warn",t:`Your strings were changed ${d} days ago. Most players change them every 2–3 months.`,short:`Changed ${d} days ago · most players change every 2–3 months`,ask:"My strings are over 3 months old. Which ones should I get?"}:{k:"strings",s:"ok",t:`Strings changed ${d} days ago.`})}
   const pedals=kind("pedal"),psu=kind("psu")[0];
   if(pedals.length&&!psu)out.push({k:"power",s:"warn",t:`${pedals.length} pedal${pedals.length>1?"s run":" runs"} on batteries. A 9 V supply saves batteries and noise.`,ask:"Which power supply should I get for my pedals?"});
   if(psu&&pedals.length&&pedals.every(pd=>psu.cp.outputs.some(o=>o.mA>=pd.cp.mA)))out.push({k:"power",s:"ok",t:`${psu.name} powers your ${pedals.length===1?pedals[0].name:pedals.length+" pedals"}.`});
@@ -1828,7 +1877,7 @@ function rigOverview(){
   for(const h of health){if(h.s==="ok"||h.k==="war"||h.k==="ret"||h.k==="none")continue;
     if(h.k==="hp250"&&hasItf){notes.push(h);continue}/* advice only: they're driven by your interface */
     const one=["power","amp","interface","strings"].includes(h.k);
-    add(one?h.k:h.k+":"+h.t,{k:h.k,s:h.s,urg:h.s==="bad"?0:(URG[h.k]??3),text:h.t,ask:h.ask})}
+    add(one?h.k:h.k+":"+h.t,{k:h.k,s:h.s,urg:h.s==="bad"?0:(URG[h.k]??3),text:h.t,short:h.short,ask:h.ask})}
   const MISS={"Pedal power":"power","Amp":"amp","Microphone":"mic","Interface":"interface"};
   for(const c of chains)for(const n of c.flow)if(n.missing){const k=MISS[n.missing]||"miss:"+n.missing;if(k==="mic")continue;/* an upgrade opportunity, not a health problem */add(k,{k,urg:k==="mic"?5:2,ask:n.ask,miss:n.missing})}
   for(const st of steps.filter(x=>x.when==="Now")){const t=topicOf(st.id);
@@ -1839,21 +1888,21 @@ function rigOverview(){
   for(const r of S.rig){const x=rigItems().find(y=>y.key===(r.custom?r.name:r.id));if(!x)continue;const w=warrantyOf(r),left=warrantyLeft(w);
     if(w&&left>0&&left<=60)add("war:"+x.name,{k:"war",urg:left<=30?1:3,name:x.name,days:left,end:w.end});
     if(w?.returnDays>0)add("ret:"+x.name,{k:"ret",urg:w.returnDays<=14?1:5,name:x.name,days:w.returnDays,end:w.returnUntil})}
-  const pn=id=>esc(BY[id].n),pp=id=>eur(BY[id].p),ordered=rigFromOrders();
+  const pn=id=>esc(BY[id].n),pp=id=>eur(BY[id].p),ordered=rigFromOrders(),nd=d=>d.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
   const issues=[...iss.values()].map(i=>{
     const view=i.rec?{label:BY[i.rec].n.length<=20?"View "+BY[i.rec].n:"View product",attr:`data-detail="${i.rec}"`}:null;
     const ask=(l,q)=>({label:l,attr:`data-ask="${esc(q)}"`});
     const ord=i.k!=="power"&&ordered.find(x=>x.id===i.rec||topicOf(x.id)===i.key);
-    if(ord)return {...i,rec:ord.id,title:i.k==="mic"?"Nothing plugged into your mic input":"Missing: "+(i.miss?esc(i.miss):pn(ord.id)),line:`Your <b>${pn(ord.id)}</b> is on its way (order ${esc(ord.o.id)}, ${esc(ord.o.status.toLowerCase())}). Add it to your rig so the advisor checks against it.`,act:{label:"Add to rig",attr:`data-rig-order="${ord.id}|${ord.o.id}"`}};
+    if(ord)return {...i,rec:ord.id,title:i.k==="mic"?"Nothing plugged into your mic input":"Missing: "+(i.miss?esc(i.miss):pn(ord.id)),line:`<b>${pn(ord.id)}</b> is on its way (order ${esc(ord.o.id)}) · add it so the advisor checks against it`,act:{label:"Add to rig",attr:`data-rig-order="${ord.id}|${ord.o.id}"`}};
     if(i.k==="power"){const ped=rigItems().filter(x=>x.cp?.kind==="pedal").map(x=>esc(x.name)).join(", ");
       return {...i,title:i.s==="bad"?"Your power supply can't run a pedal":"Your pedals have no power supply",
-        line:i.s==="bad"?esc(i.text):`${ped} ${i.text&&/^1 pedal/.test(i.text)?"runs":"run"} on 9 V batteries.${i.rec?` Recommended: a supply such as <b>${pn(i.rec)}</b> (${pp(i.rec)}).`:" A 9 V supply saves batteries and noise."}${i.stop?` Until then, a 9 V battery (${pn(i.stop)}, ${pp(i.stop)}) does the job.`:""}`,
+        line:i.s==="bad"?esc(i.text):`${ped} ${i.text&&/^1 pedal/.test(i.text)?"runs":"run"} on 9 V batteries${i.rec?` · try <b>${pn(i.rec)}</b> (${pp(i.rec)})`:" · a 9 V supply saves batteries and noise"}${i.stop?`, or a 9 V battery (${pp(i.stop)}) for now`:""}`,
         act:i.s==="bad"?ask("Ask the advisor",i.ask):i.rec?{label:"View the supply",attr:`data-detail="${i.rec}"`}:ask("Which supply?",i.ask)}}
-    if(i.k==="war")return {...i,title:`Warranty ends in ${i.days} days`,line:`${esc(i.name)}: covered until ${isoDay(i.end)}. Check it works properly now.`,act:ask("What to check",`My ${i.name}'s warranty ends on ${isoDay(i.end)}. What should I check before then?`)};
-    if(i.k==="ret")return {...i,title:`Return window: ${i.days} days left`,line:`${esc(i.name)}: you can still return it until ${isoDay(i.end)}. Test it properly before then.`,act:ask("What to test",`I can still return my ${i.name} for ${i.days} days. What should I test before I decide to keep it?`)};
-    if(i.k==="strings")return {...i,title:"Time for new strings",line:esc(i.text),act:ask("Pick strings",i.ask)};
-    if(i.k==="mic")return {...i,title:"Nothing plugged into your mic input",line:`Your interface has a mic input but no microphone.${i.rec?` A good match: <b>${pn(i.rec)}</b> (${pp(i.rec)}).`:""}`,act:view||ask("Ask the advisor",i.ask)};
-    if(i.k==="amp")return {...i,title:"No amp yet",line:`${esc(i.text||"Your guitar has nothing to play through.")}${i.rec?` Recommended: <b>${pn(i.rec)}</b> (${pp(i.rec)}).`:""}`,act:view||ask("Ask the advisor",i.ask)};
+    if(i.k==="war")return {...i,title:`Warranty ends in ${i.days} days`,line:`${esc(i.name)} · covered until ${nd(i.end)}`,act:ask("What to check",`My ${i.name}'s warranty ends on ${isoDay(i.end)}. What should I check before then?`)};
+    if(i.k==="ret")return {...i,title:`Return window: ${i.days} days left`,line:`${esc(i.name)} · returnable until ${nd(i.end)}`,act:ask("What to test",`I can still return my ${i.name} for ${i.days} days. What should I test before I decide to keep it?`)};
+    if(i.k==="strings")return {...i,title:"Time for new strings",line:esc(i.short||i.text),act:ask("Pick strings",i.ask)};
+    if(i.k==="mic")return {...i,title:"Nothing plugged into your mic input",line:`Your interface has a free mic input${i.rec?` · a good match: <b>${pn(i.rec)}</b> (${pp(i.rec)})`:""}`,act:view||ask("Ask the advisor",i.ask)};
+    if(i.k==="amp")return {...i,title:"No amp yet",line:`Your guitar has nothing to play through${i.rec?` · try <b>${pn(i.rec)}</b> (${pp(i.rec)})`:""}`,act:view||ask("Ask the advisor",i.ask)};
     if(i.k==="need")return {...i,title:`Missing: ${pn(i.rec)}`,line:`${esc(i.why.charAt(0).toUpperCase()+i.why.slice(1))} (${pp(i.rec)}).`,act:view};
     if(i.miss)return {...i,title:"Missing: "+esc(i.miss),line:esc(i.text||"Nothing fills this spot in your setup yet."),act:view||ask("Ask the advisor",i.ask)};
     return {...i,title:i.s==="bad"?"Won't work as it is":"Worth checking",line:esc(i.text),act:i.ask?ask("Ask the advisor",i.ask):ask("Ask the advisor",i.text+" What can I do?")};
@@ -1865,7 +1914,7 @@ function rigOverview(){
   for(const o of sug){const t=topicOf(o.p.id);if(used.has(o.p.id)||(t&&(keys.has(t)||orderedTopics.has(t)))||ups.some(u=>u.id===o.p.id))continue;ups.push({id:o.p.id,why:o.why+(o.warn?" · fits with notes":" · fits your rig")})}
   return {issues,passed,notes:notes.map(h=>({...h,area:rigArea(h.k)})),ups:ups.slice(0,3),budget:rm.map(r=>r.budget).find(Boolean)||null};
 }
-const RIG_AREAS=[["conn","Connections"],["power","Power"],["care","Strings & care"],["war","Warranty & returns"],["rec","Computer & recording"]];
+const RIG_AREAS=[["conn","Connections"],["power","Power"],["care","Strings"],["war","Warranty"],["rec","Recording"]];
 const rigArea=k=>({power:"power",strings:"care",war:"war",ret:"war",usb:"rec",hp:"rec",hp250:"rec",interface:"rec",phantom:"rec",gain:"rec",xlr:"rec"})[k]||"conn";
 /* The one rig status used everywhere (My rig card, Welcome back card). Upgrade opportunities never count. */
 function rigStatus(ov){
@@ -1878,9 +1927,18 @@ function rigStatus(ov){
     areas:RIG_AREAS.map(([id,name])=>{const bad=ov.issues.filter(i=>i.area===id),ok=ov.passed.filter(h=>h.area===id);return {id,name,state:bad.length?"warn":ok.length?"ok":"none"}})};
 }
 function rigCardHtml(st){
-  return `<div class="rigcard ${st.level}"><div class="rctitle">✦ Rig check by your advisor ${mk("check",true)}</div><div class="rcstat" role="status"><span class="rcicon" aria-hidden="true">${st.icon}</span><div><b>${esc(st.label)}</b><div class="muted">${esc(st.counts)}</div></div></div>
-   <div class="rcareas">${st.areas.map(a=>`<button class="rcchip ${a.state}" data-rig-area="${a.id}"${a.state==="none"?" disabled title=\"Nothing in your rig to check here\"":""}><span aria-hidden="true">${a.state==="warn"?"!":a.state==="ok"?"✓":"–"}</span>${esc(a.name)}<span class="sr">${a.state==="warn"?" needs attention":a.state==="ok"?" ok":" not checked"}</span></button>`).join("")}</div>
-   <div class="rtake" id="rigTake" aria-live="polite">${rigTakeInner(st)}</div></div>`;
+  const ov=st.ov,top=ov.issues.slice(0,3),more=ov.issues.slice(3);
+  const row=i=>`<div class="issue ${i.s}" data-area="${i.area}"><span class="idot" aria-hidden="true"></span><span class="ititle">${i.title}</span><span class="idet">${i.line}</span>${i.act?`<button class="btn" ${i.act.attr}>${esc(i.act.label)}</button>`:""}</div>`;
+  const chips=st.areas.map(a=>`<button class="rcchip ${a.state}" data-rig-area="${a.id}"${a.state==="none"?" disabled title=\"Nothing in your rig to check here\"":""}><span aria-hidden="true">${a.state==="warn"?"!":a.state==="ok"?"✓":"–"}</span>${esc(a.name)}<span class="sr">${a.state==="warn"?" needs attention":a.state==="ok"?" ok":" not checked"}</span></button>`).join("");
+  const passed=ov.passed.length||ov.notes.length?`<details class="rigmore passedbox"><summary>✓ ${ov.passed.length} check${ov.passed.length===1?"":"s"} passed${ov.notes.length?` · ${ov.notes.length} note${ov.notes.length===1?"":"s"}`:""}</summary><ul class="passed">${ov.passed.map(h=>`<li data-area="${h.area}">${esc(h.t)}</li>`).join("")}${ov.notes.map(h=>`<li data-area="${h.area}">Note: ${esc(h.t)}</li>`).join("")}</ul></details>`:"<span></span>";
+  return `<section class="rigcheck ${st.level}" aria-label="Rig check">
+   <div class="rchead"><div class="rcl" role="status"><span class="rcicon" aria-hidden="true">${st.icon}</span><div><div class="rceye">Rig check ${mk("check",true)}</div><b class="rclabel">${esc(st.label)}</b></div></div>
+    <div class="rcareas">${chips}</div></div>
+   <div class="rtake" id="rigTake" aria-live="polite">${rigTakeInner(st)}</div>
+   <div class="rcbody">${top.length?`<div class="issues">${top.map(row).join("")}</div>`:`<p class="okline">✓ Your rig is ready to play. Nothing needs fixing.</p>`}
+    ${more.length?`<details class="rigmore"><summary>${more.length} more to check</summary><div class="issues">${more.map(row).join("")}</div></details>`:""}</div>
+   <div class="rcfoot">${passed}<button class="cta purple" data-ask="Look at my whole rig. What should I upgrade first, and why?">Ask the advisor about my rig</button></div>
+  </section>`;
 }
 /* Advisor's take: 2-3 sentences written by the AI from the page's own facts only; cached per rig state */
 const TAKE_TTL=864e5,takeCache={};
@@ -1890,7 +1948,7 @@ function rigTakePrompt(st){
   const ov=st.ov,m=S.music;
   const prof=m.instruments.length?m.instruments.map(i=>[insName(i),i.level?"level "+MP_LEVELS[i.level]:"",i.uses.length?"plays/uses: "+labList(MP_USES,i.uses):"",i.goals?"goal: "+i.goals:""].filter(Boolean).join(", ")).join(" | "):"no instruments given";
   const L=a=>a.length?a.map(x=>String(x).replace(/[.\s]+$/,"")).join(" / "):"none";
-  return `RIG CHECK TAKE for the My rig page of a music shop (concept prototype, demo data). Write 2-3 short sentences (max 55 words in total) to this customer, as their advisor, in plain words and second person. Use ONLY the facts below. Name only products that appear below; never mention prices, amounts, discounts or dates other than those given; never invent problems. The overall status is "${st.label}": never contradict it (if there are things to do, don't say everything is fine). Lead with what matters most for their playing, then the one change they'll notice most. No greeting, no headings, no lists, no Markdown, no question at the end.
+  return `RIG CHECK TAKE for the My rig page of a music shop (concept prototype, demo data). Write 1-2 short sentences (max 35 words in total) to this customer, as their advisor, in plain words and second person. The to-do list is shown right below your text, so don't walk through every item: say what to do first and why it matters for their playing. Use ONLY the facts below. Name only products that appear below; never mention prices, amounts, discounts or dates other than those given; never invent problems. The overall status is "${st.label}": never contradict it (if there are things to do, don't say everything is fine). No greeting, no headings, no lists, no Markdown, no question at the end.
 Status: ${st.label} (${st.counts}).
 Music Profile: ${prof}.
 Rig: ${L(rigItems().map(r=>r.name))}.
@@ -1908,10 +1966,10 @@ function takeStored(p){try{const t=store.get("rigTake",null);return t&&t.p===p&&
 function rigTakeInner(st){
   const p=rigTakePrompt(st);S.takeNow=p;
   const c=takeCache[p]||(takeStored(p)?(takeCache[p]={state:"ai",text:takeStored(p)}):null);
-  const disc=`<button class="linkish" data-ask="${esc(`Let's talk about my rig check. Status: ${st.label} (${st.counts}).${st.ov.issues.length?" To do: "+st.ov.issues.slice(0,3).map(i=>noPrice(i.title)).join("; ")+".":""} What should I do first, and why?`)}">Discuss with the advisor →</button>`;
-  if(c?.state==="ai")return `<div class="rth">Advisor's take · ${mk("ai")}</div><p>${esc(c.text)}</p>${disc}`;
-  if(c?.state==="fail"||(!sample&&sampleState!=="loading"))return `<div class="rth">${mk("sum")}</div><p>${esc(rigRuleSummary(st))}</p>${disc}`;
-  return `<div class="rth">Advisor's take · ${mk("ai")}</div><p class="ph">Your advisor is looking at your rig…</p>${disc}`;
+  if(c?.state==="ai")return `<p><span class="rth">${mk("ai")}</span>${esc(c.text)}</p>`;
+  /* Without the AI, the status and the to-do rows already say it all: no extra line */
+  if(c?.state==="fail"||(!sample&&sampleState!=="loading"))return "";
+  return `<p class="ph"><span class="rth">${mk("ai")}</span>Your advisor is looking at your rig…</p>`;
 }
 async function kickTake(tries=0){
   const box=document.getElementById("rigTake");if(!box||S.view.name!=="rig")return;
@@ -1938,26 +1996,19 @@ function rigFocusArea(id){
   (li[0]||p).scrollIntoView({block:"center",behavior:"smooth"});li.forEach(flash);
 }
 function rigView(){
-  const items=rigItems(),ov=rigOverview(),top=ov.issues.slice(0,3),more=ov.issues.slice(3);
+  const items=rigItems(),ov=rigOverview();
   const owned=new Set(S.rig.map(r=>r.id));
   const inIssue=new Set(ov.issues.map(i=>i.rec)),fromOrders=rigFromOrders().filter(x=>!inIssue.has(x.id));
   const node=x=>x.missing?`<button class="node missing" data-ask="${esc(x.ask)}">+ ${esc(x.missing)}</button>`:`<div class="node">${sil(x.custom?(x.cat==="computer"?"interfaces":x.cat):x.c)}${esc(x.name)}</div>`;
   const arrow=`<svg class="i arr" style="width:18px" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`;
   const m=S.music,st=rigStatus(ov);
   const chip=`<span class="profchip">${m.instruments.length?m.instruments.map(i=>esc([insName(i),i.level?MP_LEVELS[i.level]:"",i.uses.length?labList(MP_USES,i.uses):""].filter(Boolean).join(" · "))).join(" | "):"No instruments in your Music Profile"} · <button class="linkish" data-open="profile">${m.instruments.length?"Edit":"Add"}</button></span>`;
-  const issueHtml=i=>`<div class="issue ${i.s}" data-area="${i.area}"><div class="it"><b>${i.title}</b><div>${i.line}</div></div>${i.act?`<button class="btn" ${i.act.attr}>${esc(i.act.label)}</button>`:""}</div>`;
   const pres=S.present?`<p class="muted presline"><span class="tag moat">moat</span> <span class="tag sim">demo data</span> Presentation mode · value at today's shop prices: ${eur(Math.round(items.reduce((a,x)=>a+(x.p||0),0)))} · ${S.rig.filter(r=>warrantyLeft(warrantyOf(r))>0).length} items under warranty</p>`:"";
   const chains=rigChains();
   return `<div class="wrap rigpage">
   <div class="crumbs"><span>⌂</span><span>My account</span><span class="last">My rig</span></div>
   <div class="rigtitle"><h1 class="page" style="margin:0">My rig</h1>${chip}</div>${pres}
-  <div class="righead">${rigCardHtml(st)}
-   <button class="cta purple" style="padding:11px 22px" data-ask="Look at my whole rig. What should I upgrade first, and why?">Ask the advisor about my rig</button></div>
-  <section class="rigsec"><h2>Needs attention ${mk("check")}</h2>
-   ${top.length?`<div class="issues">${top.map(issueHtml).join("")}</div>`:`<p class="okline">✓ Your rig is ready to play. Nothing needs fixing.</p>`}
-   ${more.length?`<details class="rigmore"><summary>${more.length} more to check</summary><div class="issues">${more.map(issueHtml).join("")}</div></details>`:""}
-   ${ov.passed.length||ov.notes.length?`<details class="rigmore passedbox"><summary>✓ ${ov.passed.length} check${ov.passed.length===1?"":"s"} passed${ov.notes.length?` · ${ov.notes.length} note${ov.notes.length===1?"":"s"}`:""}</summary><ul class="passed">${ov.passed.map(h=>`<li data-area="${h.area}">${esc(h.t)}</li>`).join("")}${ov.notes.map(h=>`<li data-area="${h.area}">Note: ${esc(h.t)}</li>`).join("")}</ul></details>`:""}
-  </section>
+  ${rigCardHtml(st)}
   ${chains.length?`<section class="rigsec"><h2>How it connects ${mk("check")}</h2><div class="chains">${chains.map(c=>`<div class="chain"><h3>${esc(c.title)}</h3><div class="flow">${c.flow.map(node).join(arrow)}</div></div>`).join("")}</div></section>`:""}
   <section class="rigsec"><div class="gearhead"><h2>Your gear <span class="muted" style="font-weight:400;font-size:14px">${items.length} items</span></h2><button class="btn" id="rigAddOpen">+ Add gear</button></div>
    ${fromOrders.length?`<details class="fromorders"><summary>${fromOrders.length} item${fromOrders.length===1?"":"s"} from your orders can be added · <u>Add</u></summary>${fromOrders.map(({id,o})=>`<div class="mini"><div class="info"><div>${esc(BY[id].n)}</div><div class="sub">${o.id} · ${esc(o.status)}${o.status!=="Delivered"?" · arrives "+esc(o.eta):""}</div></div><button class="btn" data-rig-order="${id}|${o.id}">${o.status==="Delivered"?"Add to rig":"Add now"}</button></div>`).join("")}</details>`:""}
@@ -2252,7 +2303,8 @@ function openGuide(){
    <label class="switch"><input type="checkbox" id="onl"${S.online?" checked":""}> Specialists online (uncheck to test out-of-hours)</label>
    <label class="switch"><input type="checkbox" id="pres"${S.present?" checked":""}> Presentation mode: show how AI tools read each product (AI-ready data) on product pages, and the demo tags on My rig</label>
    <label class="switch stack">Customer<select id="custType" class="search"><option value="returning"${S.customer!=="new"?" selected":""}>Returning (orders and My rig)</option><option value="new"${S.customer==="new"?" selected":""}>New</option></select></label>
-   <label class="switch stack">A/B test variant <select id="abVariant" class="search"><option value="B"${S.variant!=="A"?" selected":""}>B: explainable comparisons, Ready-to-Play, savings, selective handoff</option><option value="A"${S.variant==="A"?" selected":""}>A: standard recommendations</option></select></label>
+   <label class="switch stack">Advisor prompt <select id="promptSel" class="search"><option value="new"${promptNew()?" selected":""}>New: the supplied prompt only (no tools, fixed customer Alex)</option><option value="prev"${promptNew()?"":" selected"}>Previous: full advisor with tools and the live profile</option></select></label>
+   <label class="switch stack">A/B test variant${promptNew()?" (applies to the Previous prompt)":""} <select id="abVariant" class="search"><option value="B"${S.variant!=="A"?" selected":""}>B: explainable comparisons, Ready-to-Play, savings, selective handoff</option><option value="A"${S.variant==="A"?" selected":""}>A: standard recommendations</option></select></label>
    <details class="abform"><summary>Record this test session (variant ${S.variant})</summary>
     <div class="abq">Task completed? ${["yes","no"].map(v=>`<label><input type="radio" name="abTask" value="${v}"> ${v}</label>`).join("")}</div>
     <div class="abq">Compatibility advice was ${["correct","partly","wrong","n/a"].map(v=>`<label><input type="radio" name="abCompat" value="${v}"> ${v}</label>`).join("")}</div>
@@ -2266,6 +2318,7 @@ function openGuide(){
    ${guideFeats(f=>`<div class="feat"><div class="h"><span class="n">${f.stage}</span>${esc(f.n)} ${lab[f.kind]}${S.focus&&FOCUS_OFF_FEATS.has(f.n)?' <span class="tag sim">hidden in Focus mode</span>':""}</div><p>${esc(f.d)}</p>
     ${f.try?`<div><button class="btn" data-ask="${esc(f.try)}">Try: “${esc(f.try)}”</button></div>`:f.action==="data"?`<div><button class="btn" data-detail="m2" data-close>Open a product page</button></div>`:f.action==="dashboard"?`<div class="prow"><button class="btn" data-go="dashboard" data-close>Open the dashboard</button></div>`:f.action==="categories"?`<div class="prow"><button class="btn" data-go="categories" data-close>Open all categories</button><button class="btn" data-go="coverage" data-close>Coverage report and import</button></div>`:f.action==="welcome"?`<div class="prow"><button class="btn" data-welcome-demo data-close>Returning customer: open the home page</button></div>`:f.action==="summary"?`<div class="prow"><button class="btn" data-cat="guitars" data-close>Try: Guitars</button><button class="btn" data-sumq="SM58" data-close>Try: “SM58”</button></div>`:`<div><button class="btn" data-platform>Open the advisor full screen</button></div>`}</div>`)}
    <div class="prow"><button class="btn" id="resetRigOnly">Reset demo rig</button><button class="btn" id="resetAll">Reset demo (profile, rig, basket, saved, chat)</button></div>`,(b)=>{
+    $("#promptSel").onchange=e=>{S.promptMode=e.target.value;store.set("promptMode",S.promptMode);toast((promptNew()?"New":"Previous")+" prompt active for new messages");openGuide()};
     $("#focusSw").onchange=e=>{S.focus=e.target.checked;store.set("focus",S.focus);render();openGuide()};
     $("#onl").onchange=e=>{S.online=e.target.checked;store.set("online",S.online);updateOnline();if(S.view.name==="contact")render()};
     $("#tier").onchange=e=>{S.tier=e.target.value;store.set("tier",S.tier)};
@@ -2491,7 +2544,23 @@ function botMsg(html,who="ai"){
   clog.append(d);scrollLog();return d;
 }
 function userMsg(t){const d=document.createElement("div");d.className="m u";d.innerHTML=`<div class="body"><div class="b">${esc(t)}</div><div class="t">${now()}</div></div>`;clog.append(d);scrollLog()}
+/* markdown with "> " quote blocks (used for the celebration card in the New prompt) */
 function md(src){
+  const L=String(src).split("\n");if(!L.some(l=>/^\s*>/.test(l)))return mdBasic(src);
+  let out="",buf=[],q=[];const flush=()=>{if(buf.length){out+=mdBasic(buf.join("\n"));buf=[]}},fq=()=>{if(q.length){out+=`<blockquote class="mdq">${mdBasic(q.join("\n"))}</blockquote>`;q=[]}};
+  for(const l of L){const m=l.match(/^\s*>\s?(.*)$/);if(m){flush();q.push(m[1])}else{fq();buf.push(l)}}
+  flush();fq();return out;
+}
+/* the specialist lines the AI writes become buttons that open the specialist handover */
+const SPEC_LINE=/(\u{1F449}\s*Talk to a Thomann specialist|A Thomann specialist can help\s*\u2192)/u;
+function linkSpecialist(el){
+  el.querySelectorAll("p,li").forEach(n=>{if(!SPEC_LINE.test(n.textContent)||n.querySelector("[data-spec-link]"))return;
+    n.innerHTML=n.innerHTML.replace(new RegExp(SPEC_LINE.source,"u"),'<button type="button" class="linkish speclink" data-spec-link>$1</button>')});
+}
+document.addEventListener("click",e=>{if(!e.target.closest("[data-spec-link]"))return;e.stopPropagation();handover()},true);
+const promptNew=()=>S.promptMode!=="prev";
+function catalogueNamesPrices(){return "PRODUCT DATA (the products and prices in this shop, EUR):\n"+P.filter(p=>!p.conflict).map(p=>`- ${p.n} – €${p.p}`).join("\n")}
+function mdBasic(src){
   const lines=esc(src).split("\n");let out="",list=null;
   const inl=s=>s.replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/(^|[^*])\*([^*\n]+)\*/g,"$1<i>$2</i>").replace(/`([^`]+)`/g,"<code>$1</code>");
   const close=()=>{if(list){out+=`</${list}>`;list=null}};
@@ -2600,6 +2669,8 @@ HOW TO WORK
 - LIVE AGENT (every stage): real Thomann staff stand behind this chat, and a Find a live agent button is always visible. A live agent is recommended when an item costs over €1,000, a new player is buying their first setup, the customer says two answers in a row were wrong, a product is faulty, or there is a dispute (a complaint about an order, refund, delivery or warranty decision). The page spots most of these itself; when you see a defect or a dispute, call flag_live_agent. Then mention the button in one short sentence; never transfer anyone yourself. If they ask for a person, or the question needs one (installations, repairs, anything you'd be guessing), call expert_handoff with a short summary. Staff are currently ${S.online?"ONLINE and can join this chat now":"OFFLINE until 9:00; offer a call back"}.
 - MY RIG: the customer's owned gear is listed in the context. Use it for upgrades, refills (strings older than about 3 months) and compatibility. If they say they own or sold gear, call update_rig (it asks them to confirm).
 - Music theory, technique and general gear knowledge: answer from your own knowledge, briefly.
+- WRITE ONCE: call the tools you need first, then write the reply once. Don't write an answer before your tool calls and repeat it afterwards.
+- QUANTITIES: orders and the basket list quantities (e.g. 3× strings). Use them exactly.
 - Reply in the customer's language. Prices in EUR. Light Markdown only (bold, short lists); no tables.
 
 CATALOGUE (id | name | category | price | source | tags)
@@ -2612,7 +2683,7 @@ ${musicText()}
 My rig: ${rigItems().map(r=>{const w=warrantyOf(r);return `${r.name}${r.id?" ("+r.id+")":""} – ${r.bought==="thomann"?`bought at Thomann ${String(r.since).slice(0,10)}${r.order?" ("+r.order+")":""}`:`bought elsewhere, owned since ${r.since||"?"}`}${w?`, warranty until ${isoDay(w.end)}${warrantyLeft(w)<=0?" (ended)":""}`:", no warranty date"}${w?.returnDays>0?`, 30-day return open for ${w.returnDays} more days`:""}${r.note?" – "+r.note:""}`}).join("; ")||"empty"}
 Basket: ${S.basket.map(x=>`${x.qty}× ${BY[x.id].n}`).join("; ")||"empty"}
 Saved products (saved by the customer, newest first): ${S.picks.slice(0,20).map(x=>`${x.star?"★ ":""}${BY[x.id].n} (${x.id})${x.why?" – "+x.why:""}`).join("; ")||"none yet"}
-Orders: ${ORDERS.map(o=>`${o.id} ${o.status} (${o.items.map(([id])=>BY[id].n).join(", ")})`).join("; ")}${S.sumCtx?`
+Orders: ${ORDERS.map(o=>`${o.id} ${o.status} (${o.items.map(([id,q])=>`${q||1}× ${BY[id].n}`).join(", ")})`).join("; ")}${S.sumCtx?`
 The customer just read this AI summary of ${S.sumCtx.label} on the results page: ${S.sumCtx.txt.replace(/\n/g," ")}`:""}]`;
 }
 const ERR={api_unavailable:AI_MSG.api_unavailable,not_granted:AI_MSG.not_granted,sampling_disabled:AI_MSG.sampling_disabled,rate_limited:AI_MSG.rate_limited,session_expired:AI_MSG.session_expired,not_declared:AI_MSG.unavailable,capability_disabled:AI_MSG.unavailable,capability_removed:AI_MSG.unavailable,refused:"I can't help with that one. Try rephrasing, or tap Find a live agent.",empty_completion:"No answer came back. Try asking differently.",prompt_too_large:"This chat got too long. Start a new conversation from the Test guide."};
@@ -2633,6 +2704,18 @@ function catalogueExcerpt(text){
 function plainRules(text){
   return `\n\nPLAIN MODE (overrides the tool instructions above): this app can't run page tools, so you have NO tools and cannot show cards, save products, check orders, run fit checks or the Setup Builder. Ignore every instruction to call a tool or show cards. Recommend only products listed in the catalogue above or the excerpt below, never invent products, prices or specs, and write each recommendation in text: **name** – price – one key spec or reason. For anything that needs a tool (orders, returns, fit checks, complete setups), say in one sentence that it isn't available in this app, and point to the Find a live agent button or opening the link at claude.ai in a desktop browser.\n\n${catalogueExcerpt(text)}`;
 }
+/* The model sometimes writes its answer, calls tools, then writes it again. Keep the last version only:
+   split the text at the points where tools ran, drop an earlier part that a later part repeats, then drop repeated paragraphs. */
+const ansWords=s=>new Set(String(s).toLowerCase().match(/[\p{L}\p{N}]+(?:[.,]\p{N}+)?/gu)||[]);
+const ansSim=(a,b)=>{let n=0;for(const x of a)if(b.has(x))n++;return n/((a.size+b.size-n)||1)};
+const dropRepeats=(parts,th)=>{const w=parts.map(ansWords);return parts.filter((_,i)=>!(w[i].size>=6&&w.slice(i+1).some(v=>v.size>=6&&ansSim(w[i],v)>=th)))};
+function cleanAnswer(t,marks=[]){
+  t=String(t||"");
+  const cuts=[...new Set(marks.filter(m=>m.trim()&&t.startsWith(m)).map(m=>m.length))].sort((a,b)=>a-b);
+  const segs=[];let prev=0;for(const c of cuts){segs.push(t.slice(prev,c));prev=c}segs.push(t.slice(prev));
+  const kept=dropRepeats(segs.map(x=>x.trim()).filter(Boolean),0.4);
+  return dropRepeats(kept.join("\n\n").split(/\n{2,}/).map(x=>x.trim()).filter(Boolean),0.6).join("\n\n");
+}
 async function send(text){
   text=String(text||"").trim();if(!text||S.busy)return;
   if(!S.started)startConversation();else setChat("open");
@@ -2648,11 +2731,17 @@ async function send(text){
   S.busy=true;$("#sendb").hidden=true;$("#stopb").hidden=false;
   const ctl=new AbortController();S.ctl=ctl;
   const ask={role:"user",content:contextText()+(S.focus?"\n[Focus view: price alerts, projects and the Deals & B-Stock page are switched off. Don't offer, mention or link to them. Price checks, B-Stock and savings inside your advice are fine.]":"")+(S.variant==="A"?"\n[Test variant A: give standard product recommendations only. Do not use build_setup with a goal or product_id, deals, review_setup or readiness_summary, do not offer savings unless asked, and keep explanations brief.]":"")+"\n\nCustomer: "+text};
-  let fin="";
-  const run=()=>{const plain=S.toolsOK===false;
+  let fin="",marks=[];
+  const run=()=>{marks=[];
+    if(promptNew()){/* New prompt: the supplied text word for word plus the catalogue list; no tools, no page context */
+      const turn={role:"user",content:text};
+      const input=S.apiMode?[...S.turns.slice(-16),turn]:[{role:"user",content:ADVISOR_PROMPT_NEW+"\n\n"+catalogueNamesPrices()},...S.turns.slice(-16),turn];
+      return sample(input,{cache:false,signal:ctl.signal,modelTier:S.tier,promptMode:"new",onText:({text:t})=>{fin=t;tb.innerHTML=md(t);st.textContent="";scrollLog()}})}
+    const plain=S.toolsOK===false;
     const input=S.apiMode?[...S.turns.slice(-16),ask]:[{role:"user",content:rulesText()+(plain?plainRules(text):"")},...S.turns.slice(-16),ask];
-    const opts={cache:false,signal:ctl.signal,modelTier:S.tier,onText:({text:t})=>{fin=t;tb.innerHTML=md(t);st.textContent="";scrollLog()}};
-    if(!plain)opts.tools=(S.variant==="A"?toolList.filter(x=>!VARIANT_B_TOOLS.includes(x.name)):toolList).filter(x=>!(S.focus&&FOCUS_TOOLS_OFF.includes(x.name)));
+    const opts={cache:false,signal:ctl.signal,modelTier:S.tier,onText:({text:t})=>{fin=t;tb.innerHTML=md(cleanAnswer(t,marks));st.textContent="";scrollLog()}};
+    if(!plain)opts.tools=(S.variant==="A"?toolList.filter(x=>!VARIANT_B_TOOLS.includes(x.name)):toolList).filter(x=>!(S.focus&&FOCUS_TOOLS_OFF.includes(x.name)))
+      .map(t=>({...t,execute:(i,o)=>{marks.push(fin);return t.execute(i,o)}}));
     return sample(input,opts)};
   try{
     let r;
@@ -2663,9 +2752,9 @@ async function send(text){
       S.toolsOK=false;sysLine(PLAIN_NOTE);fin="";tb.innerHTML=`<span class="typing"><i></i><i></i><i></i></span>`;
       r=await run();
     }
-    fin=r.text;if(aiReason==="rate_limited"){aiReason=null;updateAcct()}if(r.text.trim())tb.innerHTML=md(r.text);else tb.remove();if(r.truncated)tb.insertAdjacentHTML("beforeend",`<p class="muted">Cut short. Ask for less at a time.</p>`);
+    fin=cleanAnswer(r.text,marks);if(aiReason==="rate_limited"){aiReason=null;updateAcct()}if(fin.trim()){tb.innerHTML=md(fin);linkSpecialist(tb)}else tb.remove();if(r.truncated)tb.insertAdjacentHTML("beforeend",`<p class="muted">Cut short. Ask for less at a time.</p>`);
   }catch(e){
-    fin=e?.text||"";
+    fin=cleanAnswer(e?.text||"",marks);
     if(e?.code==="refused"){tb.innerHTML=`<p>${ERR.refused}</p>`;fin=""}
     else if(e?.code==="cancelled"){if(fin)tb.innerHTML=md(fin)+`<p class="muted">Stopped.</p>`;else tb.remove()}
     else tb.innerHTML=(fin?md(fin):"")+`<p class="muted">${esc(ERR[e?.code]||"Something went wrong reaching the advisor. Try again.")}</p>`;
@@ -2895,7 +2984,7 @@ function apiSample(input,opts={}){
     let text="";
     for(let round=0;round<8;round++){
       let res;
-      try{res=await fetch("api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:msgs,tools,tier:opts.modelTier}),signal:opts.signal})}
+      try{res=await fetch("api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:msgs,tools,tier:opts.modelTier,prompt:opts.promptMode==="new"?"new":undefined}),signal:opts.signal})}
       catch(e){throw {code:opts.signal?.aborted?"cancelled":"upstream_error",text}}
       const data=await res.json().catch(()=>({}));
       if(!res.ok)throw {code:{rate_limited:"rate_limited",not_configured:"api_unavailable"}[data.error]||"upstream_error",message:data.message||"",text};
