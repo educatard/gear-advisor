@@ -1,5 +1,16 @@
 /* Demo data for the Gear Advisor prototype. Everything here is invented. */
-const TODAY = new Date("2026-11-03T12:00:00");
+/* The demo story was written for 3 Nov 2026 (DEMO_DAY). The page runs on the real date and moves every
+   demo date (orders, purchases, warranties) forward by the same number of days, so "bought 12 days ago"
+   and "strings changed 106 days ago" stay true on any day. Verified thomann.de dates are never shifted. */
+const DEMO_DAY = new Date("2026-11-03T12:00:00");
+const TODAY = (()=>{const t=new Date();t.setHours(12,0,0,0);return t<DEMO_DAY?new Date(DEMO_DAY):t})();
+const DEMO_SHIFT = Math.round((TODAY-DEMO_DAY)/864e5);
+function shiftDay(s){
+  const m=typeof s==="string"&&s.match(/^(\d{4})-(\d{2})(?:-(\d{2}))?$/);if(!m)return s;
+  const d=new Date(+m[1],+m[2]-1,+(m[3]||15),12);d.setDate(d.getDate()+DEMO_SHIFT);
+  const iso=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");return m[3]?iso:iso.slice(0,7);
+}
+const fmtDay=s=>{const d=new Date(s+"T12:00:00");return isNaN(d)?s:d.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"})};
 const CATS = {guitars:"Guitars",amps:"Amps",pedals:"Effects",power:"Power",interfaces:"Interfaces",mics:"Microphones",headphones:"Headphones",monitors:"Monitors",keys:"Keys",drums:"Drums",accessories:"Strings & cables"};
 const P = [
  {id:"g1",n:"Harley Benton ST-62 Vintage Sunburst",b:"Harley Benton",c:"guitars",p:129,bs:109,r:4.5,rv:2860,st:85,tags:["strat-style","glassy clean","bluesy","funk","beginner","budget"],specs:{Body:"Basswood",Pickups:"3× single-coil (SSS)",Frets:"22",Scale:"648 mm"},cp:{kind:"electric guitar"},kb:"guitar",ret:{rate:4.1,reasons:[["Fret buzz or high action",34],["Cosmetic flaw",22],["Changed mind",20],["Tuning stability",14]],tip:"Most buzz cases were fixed with a truss-rod and saddle adjustment."}},
@@ -21,10 +32,10 @@ const P = [
  {id:"p5",n:"TC Electronic Hall of Fame 2 Reverb",b:"TC Electronic",c:"pedals",p:129,bs:109,r:4.6,rv:1800,st:48,tags:["reverb","ambient","john mayer","shimmer"],specs:{Type:"Reverb",Power:"9 V DC, centre-negative, 100 mA",Battery:"9 V block"},cp:{kind:"pedal",v:9,pol:"cn",mA:100,battery:true},kb:"pedal",ret:{rate:2.0,reasons:[["Battery drains fast",33],["Changed mind",27]],tip:"Draws 100 mA: use a power supply, not batteries."}},
  {id:"p6",n:"Strymon BigSky MX",b:"Strymon",c:"pedals",p:799,r:4.9,rv:120,st:3,tags:["reverb","ambient","studio","pro"],specs:{Type:"Reverb workstation",Power:"9 V DC, centre-negative, 500 mA",Battery:"No"},cp:{kind:"pedal",v:9,pol:"cn",mA:500,battery:false},kb:"pedal",ret:{rate:2.7,reasons:[["Pedalboard power too weak",39],["Too complex",25],["Changed mind",20]],tip:"Top return reason: supplies under 500 mA per output."}},
  {id:"p7",n:"Boss GT-1 Multi-Effects",b:"Boss",c:"pedals",p:209,bs:185,r:4.5,rv:1300,st:60,tags:["multi-effects","beginner","headphone out","usb recording","versatile"],specs:{Type:"Multi-effects + amp models",Power:"9 V DC, centre-negative, 250 mA",Battery:"4× AA",USB:"Audio interface"},cp:{kind:"pedal",v:9,pol:"cn",mA:250,battery:true,headphoneOut:true},kb:"pedal",ret:{rate:3.3,reasons:[["Too many menus",34],["Sounds fizzy into amp",26],["Changed mind",20]],tip:""}},
- {id:"pw1",n:"Harley Benton PowerPlant Junior",b:"Harley Benton",c:"power",p:29,r:4.5,rv:3100,st:200,tags:["pedal power","budget"],specs:{Outputs:"5× 9 V, 100 mA each",Isolated:"No",Cables:"Included"},cp:{kind:"psu",outputs:[{v:9,mA:100},{v:9,mA:100},{v:9,mA:100},{v:9,mA:100},{v:9,mA:100}],isolated:false},kb:"pedal",ret:{rate:2.5,reasons:[["Noise with digital pedals",42],["Not enough current",30]],tip:"Not isolated: noise can appear with digital pedals."}},
+ {id:"pw1",n:"Harley Benton PowerPlant Junior",b:"Harley Benton",c:"power",p:39,r:4.7,rv:5377,st:200,tags:["pedal power","budget","isolated"],specs:{Outputs:"5× 9 V DC, 120 mA each",Isolated:"Yes (galvanically isolated)",Cables:"Included"},cp:{kind:"psu",outputs:[{v:9,mA:120},{v:9,mA:120},{v:9,mA:120},{v:9,mA:120},{v:9,mA:120}],isolated:true},kb:"pedal",ret:{rate:2.5,reasons:[["Not enough current for big digital pedals",38],["Changed mind",22]],tip:"120 mA per output: pedals that draw more (e.g. 300–500 mA) need a stronger output."}},
  {id:"pw2",n:"Truetone 1 Spot Pro CS7",b:"Truetone",c:"power",p:169,r:4.8,rv:420,st:25,tags:["pedal power","isolated","pro"],specs:{Outputs:"4× 9 V 100 mA, 3× 9-18 V 500 mA",Isolated:"Yes"},cp:{kind:"psu",outputs:[{v:9,mA:100},{v:9,mA:100},{v:9,mA:100},{v:9,mA:100},{v:9,mA:500},{v:9,mA:500},{v:9,mA:500}],isolated:true},kb:"pedal",ret:{rate:1.1,reasons:[["Changed mind",50]],tip:""}},
- {id:"i1",n:"Focusrite Scarlett Solo 4th Gen",b:"Focusrite",c:"interfaces",p:109,bs:99,r:4.6,rv:2900,st:150,tags:["home recording","beginner","singer-songwriter","podcast"],specs:{Inputs:"1× XLR mic, 1× instrument",Gain:"57 dB",Phantom:"48 V",Connection:"USB-C",Outputs:"2× RCA line, 1× headphones"},cp:{kind:"interface",xlr:1,hiz:1,gain:57,phantom:true,usb:"C",hpMax:300,out:"RCA"},kb:"interface",ret:{rate:3.6,reasons:[["Only one mic input",31],["Driver or setup trouble",27],["Too quiet with dynamic mics",18]],tip:"Setup trouble was usually Direct Monitor or the wrong output device."}},
- {id:"i2",n:"Focusrite Scarlett 2i2 4th Gen",b:"Focusrite",c:"interfaces",p:149,r:4.7,rv:3600,st:95,tags:["home recording","podcast","two people","duo"],specs:{Inputs:"2× combo XLR/jack",Gain:"69 dB",Phantom:"48 V",Connection:"USB-C",Outputs:"2× TRS, 1× headphones"},cp:{kind:"interface",xlr:2,hiz:2,gain:69,phantom:true,usb:"C",hpMax:300,out:"TRS"},kb:"interface",ret:{rate:2.5,reasons:[["Driver or setup trouble",33],["Changed mind",25]],tip:""}},
+ {id:"i1",n:"Focusrite Scarlett Solo 4th Gen",b:"Focusrite",c:"interfaces",p:109,bs:99,r:4.6,rv:2900,st:150,tags:["home recording","beginner","singer-songwriter","podcast"],specs:{Inputs:"1× XLR mic, 1× instrument",Gain:"57 dB",Phantom:"48 V",Connection:"USB-C",Outputs:"2× RCA line, 1× headphones"},cp:{kind:"interface",xlr:1,hiz:1,gain:57,phantom:true,usb:"C",hpMax:300,hpOuts:1,out:"RCA"},kb:"interface",ret:{rate:3.6,reasons:[["Only one mic input",31],["Driver or setup trouble",27],["Too quiet with dynamic mics",18]],tip:"Setup trouble was usually Direct Monitor or the wrong output device."}},
+ {id:"i2",n:"Focusrite Scarlett 2i2 4th Gen",b:"Focusrite",c:"interfaces",p:149,r:4.7,rv:3600,st:95,tags:["home recording","podcast","two people","duo"],specs:{Inputs:"2× combo XLR/jack",Gain:"69 dB",Phantom:"48 V",Connection:"USB-C",Outputs:"2× TRS, 1× headphones"},cp:{kind:"interface",xlr:2,hiz:2,gain:69,phantom:true,usb:"C",hpMax:300,hpOuts:1,out:"TRS"},kb:"interface",ret:{rate:2.5,reasons:[["Driver or setup trouble",33],["Changed mind",25]],tip:""}},
  {id:"i3",n:"Universal Audio Volt 2",b:"Universal Audio",c:"interfaces",p:179,r:4.5,rv:610,st:30,tags:["home recording","vintage","singer-songwriter"],specs:{Inputs:"2× combo XLR/jack",Gain:"55 dB",Phantom:"48 V",Connection:"USB-C",Outputs:"2× TRS, 1× headphones"},cp:{kind:"interface",xlr:2,hiz:2,gain:55,phantom:true,usb:"C",hpMax:250,out:"TRS"},kb:"interface",ret:{rate:3.0,reasons:[["Too quiet with dynamic mics",29],["Driver or setup trouble",26]],tip:""}},
  {id:"i4",n:"Behringer UMC204HD",b:"Behringer",c:"interfaces",p:79,bs:69,r:4.4,rv:5300,st:180,tags:["budget","home recording","two inputs"],specs:{Inputs:"2× combo XLR/jack",Gain:"approx. 50 dB",Phantom:"48 V",Connection:"USB-B",Outputs:"2× TRS, 1× headphones"},cp:{kind:"interface",xlr:2,hiz:2,gain:50,phantom:true,usb:"B",hpMax:250,out:"TRS"},kb:"interface",ret:{rate:4.0,reasons:[["Noise or hiss",30],["Too quiet with dynamic mics",26],["USB-B cable not suitable for laptop",14]],tip:""}},
  {id:"i5",n:"RME Babyface Pro FS",b:"RME",c:"interfaces",p:899,r:4.9,rv:340,st:12,tags:["pro","studio","low latency","mobile"],specs:{Inputs:"2× XLR, 2× instrument, ADAT",Gain:"60 dB",Phantom:"48 V",Connection:"USB-B",Outputs:"2× XLR, 2× headphones"},cp:{kind:"interface",xlr:2,hiz:2,gain:60,phantom:true,usb:"B",hpMax:600,out:"XLR"},kb:"interface",ret:{rate:1.2,reasons:[["Changed mind",48]],tip:""}},
@@ -63,8 +74,17 @@ const P = [
  {id:"kd3",n:"Millenium MPS-150 E-Drum Set",b:"Millenium",c:"drums",p:269,bs:239,r:4.3,rv:2100,st:35,tags:["e-drums","kids","beginner","quiet practice","budget"],specs:{Pads:"Rubber pads",Kits:"10",Outputs:"Headphones, line out"},cp:{kind:"edrums"},kb:"edrum",ret:{rate:4.4,reasons:[["Kick pedal noise",31],["Rack wobbles",24]],tip:""}},
  {id:"cy1",n:"Zildjian 20 inch K Custom Dark Ride",b:"Zildjian",c:"drums",p:459,r:4.8,rv:140,st:0,restock:63,tags:["cymbal","ride","jazz","dark","pro"],specs:{Size:"20 inch",Type:"Ride, hand-hammered B20 bronze",Availability:"Made to order"},cp:{kind:"cymbal"},kb:"edrum",ret:{rate:2.1,reasons:[["Sound differs from demo",41],["Changed mind",25]],tip:"Every hand-hammered cymbal sounds a little different."}},
  {id:"cy2",n:"Meinl 18 inch Byzance Jazz Thin Crash",b:"Meinl",c:"drums",p:319,r:4.7,rv:210,st:0,restock:70,tags:["cymbal","crash","jazz","thin"],specs:{Size:"18 inch",Type:"Crash, hand-hammered B20 bronze",Availability:"Made to order"},cp:{kind:"cymbal"},kb:"edrum",ret:{rate:1.9,reasons:[["Too trashy",38],["Changed mind",27]],tip:""}},
+
+ /* podcast gear: demo fit models linked to verified thomann.de records (catalogue.js demoLinks) */
+ {id:"i9",n:"Zoom PodTrak P4",b:"Zoom",c:"interfaces",p:119,r:4.5,rv:56,st:60,tags:["podcast","two people","four people","recorder","sd card","usb interface"],specs:{Inputs:"4× XLR mic (48 V switchable)",Gain:"up to 70 dB",Headphones:"4 outputs (3.5 mm), each with its own volume",Recording:"SD card, 16 bit / 44.1 kHz; also a 2-in/2-out USB-C interface",Power:"USB-C or 2× AA"},cp:{kind:"interface",xlr:4,hiz:0,gain:70,phantom:true,usb:"C",hpOuts:4,out:"none"},kb:"interface"},
+ {id:"i10",n:"Focusrite Vocaster Two",b:"Focusrite",c:"interfaces",p:59,r:4.6,rv:51,st:60,tags:["podcast","two people","duo","usb interface","auto gain"],specs:{Inputs:"2× XLR mic (48 V)",Gain:"over 70 dB, Auto Gain",Headphones:"2 outputs (6.3 mm)",Connection:"USB-C, bus powered",Extras:"Phone and camera connections, loopback"},cp:{kind:"interface",xlr:2,hiz:0,gain:70,phantom:true,usb:"C",hpOuts:2,out:"TRS"},kb:"interface"},
+ {id:"m9",n:"the t.bone MB 7 Beta",b:"the t.bone",c:"mics",p:79,r:4.7,rv:157,st:120,tags:["podcast","broadcast","dynamic","speech","budget"],specs:{Type:"Dynamic broadcast mic, cardioid",Phantom:"Not needed",Output:"Low (−58 dB): needs about 60 dB of gain",Extras:"Built-in pop filter and shock mount"},cp:{kind:"mic",needsPhantom:false,gainNeed:60},kb:"mic"},
+ {id:"m10",n:"Rode PodMic",b:"Rode",c:"mics",p:75,r:4.8,rv:517,st:120,tags:["podcast","broadcast","dynamic","speech"],specs:{Type:"Dynamic broadcast mic, cardioid",Phantom:"Not needed",Output:"Low: needs about 60 dB of gain",Extras:"Internal pop filter, swivel mount"},cp:{kind:"mic",needsPhantom:false,gainNeed:60},kb:"mic"},
 ];
 const BY = Object.fromEntries(P.map(p=>[p.id,p]));
+/* Thomann's own brands (stated on thomann.de brand pages): labelled on every card so own brands are never hidden */
+const OWN_BRANDS = ["Harley Benton","the t.bone","the sssnake","the box","Millenium","Stairville","Thomann","Startone","Swissonic","pronomic","Varytec","Botex","Classic Cantabile"];
+const isOwnBrand = p => !!p && OWN_BRANDS.some(b => (p.b || p.brand || "").toLowerCase() === b.toLowerCase() || String(p.n || p.name || "").toLowerCase().startsWith(b.toLowerCase() + " "));
 /* Which situations each product suits (results page "situation" buttons) */
 const SITUATIONS = {home:"For practising at home",band:"For playing in a band",recording:"For recording",child:"For my child"};
 const SIT_IDS = {
@@ -104,7 +124,7 @@ const KB = {
   {issue:"Noise or whine on the board",steps:["Digital pedals on a non-isolated supply often whine. Move them to isolated outputs.","Keep power cables away from instrument cables, crossing at right angles.","Check total current does not exceed each output's rating."]},
  ],
  interface:[
-  {issue:"No sound in headphones",steps:["Set the computer's output device to the interface.","Turn up the headphone knob and the monitor/output knob.","Turn on Direct Monitor to hear the input without the computer.","Match the sample rate in your DAW and system settings (48 kHz).","Scarlett 4th Gen: if it shows up as a disk, hold 48V while connecting to leave setup mode."]},
+  {issue:"No sound in headphones",steps:["Set the computer's output device to the interface.","Turn up the headphone knob and the monitor/output knob. High-impedance headphones (e.g. 250 Ω) need the headphone knob turned well up on a USB-powered interface.","Turn on Direct Monitor to hear the input without the computer.","Match the sample rate in your DAW and system settings (48 kHz).","Scarlett 4th Gen: if it shows up as a disk, hold 48V while connecting to leave setup mode."]},
   {issue:"Recording is too quiet",steps:["Turn the gain until loud parts light the ring green, never red.","Dynamic mics like SM7B need about 60 dB: add an inline booster if the gain runs out.","Condenser mics need 48 V phantom power switched on."]},
   {issue:"Crackles or dropouts",steps:["Raise the buffer size to 256 or 512 samples.","Use a direct USB port, not a hub.","Close browser tabs and sync apps while recording."]},
  ],
@@ -119,24 +139,52 @@ const KB = {
  ],
  edrum:[{issue:"Pads trigger badly",steps:["Run the module's pad calibration.","Raise the threshold on pads that trigger by themselves.","Check cables are fully inserted."]}],
 };
-const ORDERS = [
- {id:"O-41877",date:"2025-03-12",status:"Delivered",delivered:"2025-03-14",items:[["g2",1],["a1",1]]},
- {id:"O-46550",date:"2026-07-17",status:"Delivered",delivered:"2026-07-20",items:[["st1",2]]},
- {id:"O-48213",date:"2026-10-20",status:"Delivered",delivered:"2026-10-22",items:[["i1",1]]},
- {id:"O-49102",date:"2026-10-31",status:"Shipped",carrier:"DHL",tracking:"JJD0002249 7741 03",eta:"2026-11-04",items:[["p2",1],["st1",3]]},
- {id:"O-49377",date:"2026-11-02",status:"Being packed",eta:"2026-11-06",items:[["m2",1]]},
-];
+/* Customers for the demo and the test personas. "new" starts with nothing on file. */
+const CUSTOMERS = {
+ alex:{label:"Alex · returning guitarist, Germany",country:"DE"},
+ lena:{label:"Lena · piano (advanced) and guitar (beginner), Vienna",country:"AT"},
+ new:{label:"New customer · nothing on file (e.g. Noah)",country:"DE"},
+};
+const ORDER_SETS = {
+ alex:[
+  {id:"O-41877",date:"2025-03-12",status:"Delivered",delivered:"2025-03-14",items:[["g2",1],["a1",1]]},
+  {id:"O-44620",date:"2025-06-02",status:"Delivered",delivered:"2025-06-04",items:[["pw1",1],["p2",1]]},
+  {id:"O-46550",date:"2026-07-17",status:"Delivered",delivered:"2026-07-20",items:[["st1",2]]},
+  {id:"O-48213",date:"2026-10-20",status:"Delivered",delivered:"2026-10-22",items:[["i1",1]]},
+  {id:"O-49102",date:"2026-10-31",status:"Shipped",carrier:"DHL",tracking:"JJD0002249 7741 03",eta:"2026-11-04",items:[["st1",3]]}],
+ lena:[
+  {id:"O-37190",date:"2025-09-08",status:"Delivered",delivered:"2025-09-11",items:[["t577283",1]]},
+  {id:"O-46981",date:"2026-07-30",status:"Delivered",delivered:"2026-08-03",items:[["g6",1]]}],
+ new:[]};
 /* bought: "thomann" items carry their order and get the 3-year Thomann warranty; "elsewhere" items carry the customer's own dates */
-const DEFAULT_RIG = [
- {id:"g2",since:"2025-03-14",bought:"thomann",order:"O-41877"},
- {id:"a1",since:"2025-03-14",bought:"thomann",order:"O-41877"},
- {id:"p1",since:"2025-08",bought:"elsewhere"},
- {id:"i1",since:"2026-10-22",bought:"thomann",order:"O-48213"},
- {id:"h2",since:"2024-11",bought:"elsewhere",warrantyUntil:"2026-11-30",note:"2-year manufacturer warranty"},
- {id:"c2",since:"2025-03",bought:"elsewhere"},
- {id:"st1",since:"2026-07-20",bought:"thomann",order:"O-46550",note:"strings last changed 20 Jul 2026"},
- {custom:true,name:"MacBook Air M2",cat:"computer",cp:{kind:"computer",ports:["USB-C"]},since:"2024-02",bought:"elsewhere"},
-];
+const RIG_SETS = {
+ alex:[
+  {id:"g2",since:"2025-03-14",bought:"thomann",order:"O-41877"},
+  {id:"g4",since:"2023-09",bought:"elsewhere"},
+  {id:"a1",since:"2025-03-14",bought:"thomann",order:"O-41877"},
+  {id:"p1",since:"2025-08",bought:"elsewhere"},
+  {id:"p2",since:"2025-06-04",bought:"thomann",order:"O-44620"},
+  {id:"p4",since:"2025-11",bought:"elsewhere"},
+  {id:"pw1",since:"2025-06-04",bought:"thomann",order:"O-44620"},
+  {id:"m1",since:"2022-04",bought:"elsewhere"},
+  {id:"i1",since:"2026-10-22",bought:"thomann",order:"O-48213"},
+  {id:"h2",since:"2024-11",bought:"elsewhere",warrantyUntil:"2026-11-30",note:"2-year manufacturer warranty"},
+  {id:"c2",since:"2025-03",bought:"elsewhere"},
+  {id:"st1",since:"2026-07-20",bought:"thomann",order:"O-46550",note:"on both guitars, last changed {since}"},
+  {custom:true,name:"MacBook Air M2",cat:"computer",cp:{kind:"computer",ports:["USB-C"]},since:"2024-02",bought:"elsewhere"}],
+ lena:[
+  {id:"t577283",since:"2025-09-11",bought:"thomann",order:"O-37190",inst:["ins-piano"]},
+  {id:"g6",since:"2026-08-03",bought:"thomann",order:"O-46981",inst:["ins-guitar"]},
+  {id:"a3",since:"2026-08",bought:"elsewhere",inst:["ins-guitar"]},
+  {id:"h3",since:"2025-05",bought:"elsewhere",inst:["ins-guitar"]},
+  {custom:true,name:"iPad",cat:"computer",cp:{kind:"computer",ports:["USB-C"]},since:"2024-09",bought:"elsewhere",inst:[]}],
+ new:[]};
+for(const k in ORDER_SETS)for(const o of ORDER_SETS[k])for(const f of ["date","delivered","eta"])if(o[f])o[f]=shiftDay(o[f]);
+for(const k in RIG_SETS)for(const r of RIG_SETS[k]){for(const f of ["since","warrantyUntil"])if(r[f])r[f]=shiftDay(r[f]);if(r.note)r.note=r.note.replace("{since}",fmtDay(r.since))}
+const ORDERS = [];
+function setOrders(key){ORDERS.length=0;ORDERS.push(...JSON.parse(JSON.stringify(ORDER_SETS[key]||[])))}
+setOrders("alex");
+const DEFAULT_RIG = RIG_SETS.alex;
 /* About you: the shopper's situation, used by filters, labels, fit checks and the advisor */
 const PROFILE_FIELDS = {
  level:{label:"Your level",multi:false,opts:{beginner:"Beginner",intermediate:"Intermediate",advanced:"Advanced",professional:"Professional"}},
@@ -156,7 +204,15 @@ const MP_INTERESTS = {newgear:"New gear",upgrades:"Upgrades",deals:"Deals & B-St
 const MP_LEGACY = {guitar:"guitar",acoustic:"guitar",bass:"bass",piano:"keys",drums:"drums",vocals:"vocals",production:"production"};
 /* which owned gear (by kind) belongs to which instrument when gear is first linked automatically */
 const MP_GEAR_FOR = {guitar:["electric guitar","amp","pedal","psu","strings","picks","cable","booster","battery"],acoustic:["acoustic guitar","strings","picks"],bass:["bass"],piano:["keys","sustain"],drums:["edrums","cymbal"],vocals:["mic"]};
-const DEFAULT_MUSIC = {v:1,active:null,
- general:{genres:["blues","rock"],artists:["John Mayer"],place:"flat",listen:"both",computer:"usbc",forWhom:"me",childAge:"",interests:["upgrades","deals"],notes:""},
- instruments:[{id:"ins-guitar",kind:"guitar",label:"",level:"intermediate",uses:["home"],genres:[],artists:[],budget:"",goals:"A better clean tone for blues at flat volume",notes:""}]};
+const MUSIC_SETS = {
+ alex:{v:1,active:null,
+  general:{genres:["blues","rock"],artists:[],place:"flat",listen:"both",computer:"usbc",forWhom:"me",childAge:"",interests:["upgrades","deals","refills"],notes:"Plays in a blues-rock cover band: weekly rehearsal, 1–2 pub gigs a month"},
+  instruments:[{id:"ins-guitar",kind:"guitar",label:"",level:"advanced",uses:["home","rehearsal","live","studio"],genres:["blues","rock"],artists:[],budget:"1000",goals:"Record guitar and vocals at home for band demos",notes:"Rhythm guitar, 15 years; budget is for pedalboard changes"},
+   {id:"ins-vocals",kind:"vocals",label:"Backing vocals",level:"",uses:["live","studio"],genres:[],artists:[],budget:"400",goals:"Record vocals at home for band demos",notes:""}]},
+ lena:{v:1,active:null,
+  general:{genres:["jazz","classical"],artists:["John Mayer","Norah Jones"],place:"flat",listen:"headphones",computer:"ipad",forWhom:"me",childAge:"",interests:["learning"],notes:"Lives in Vienna, Austria; practises quietly in a flat"},
+  instruments:[{id:"ins-piano",kind:"piano",label:"",level:"advanced",uses:["home","live"],genres:["jazz","classical"],artists:[],budget:"",goals:"A stage piano for the duo's gigs later (around €1,500, not this year)",notes:"20 years; monthly gigs in a jazz duo"},
+   {id:"ins-guitar",kind:"guitar",label:"",level:"beginner",uses:["home"],genres:[],artists:["John Mayer"],budget:"300",goals:"",notes:"Self-taught; started electric guitar 3 months ago"}]},
+ new:{v:1,active:null,general:{genres:[],artists:[],place:"",listen:"",computer:"",forWhom:"me",childAge:"",interests:[],notes:""},instruments:[]}};
+const DEFAULT_MUSIC = MUSIC_SETS.alex;
 const DEFAULT_PROFILE = {level:"intermediate",instruments:["guitar"],styles:["blues","rock"],place:"flat",listen:"both",computer:"usbc",forWhom:"me",childAge:""};

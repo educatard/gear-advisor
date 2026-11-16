@@ -88,28 +88,32 @@ function purchaseReadiness() {
 /* ---------- Upgrade roadmap from the Music Profile ---------- */
 const UPGRADE_PATHS = {g1: "g2", t449491: "g2", g6: "g2", g2: "g3", g5: "g4", a3: "a1", a4: "a1", t590648: "a1", a1: "a2", i4: "i2", t468428: "i1", i1: "i2", i2: "t560993", h2: "h4", h1: "h4", t399657: "h1", m1: "m3", k3: "k1", kd2: "t589542", t589542: "t457271", t457271: "t568064", t461227: "t464015", t464015: "t511732", d2: "t511732"};
 const START_WITH = {guitar: ["t449491", "t590648"], acoustic: ["g8"], bass: [], piano: ["t457271"], drums: ["t461227"], vocals: ["m1"], production: ["i1", "t432718"], wind: ["t147061"], strings: ["t378019"], other: []};
+/* beginners first get more out of what they own: a setup, small essentials and learning, not a second instrument */
+const BEGINNER_ESSENTIALS = {guitar: ["t228417", "t129407", "x2"], acoustic: ["t228417"], bass: ["t228417"]};
+const BEGINNER_SERVICES = {
+  guitar: [{when: "Now", name: "Professional setup at a local guitar shop", why: "lower action and correct intonation make a new guitar much easier to play (a service, not sold by Thomann)"},
+           {when: "Next", name: "Lessons or a method book", why: "the biggest step for a beginner is technique, not more gear"}],
+  acoustic: [{when: "Now", name: "Professional setup at a local guitar shop", why: "a lower action makes chords easier (a service, not sold by Thomann)"}],
+  bass: [{when: "Now", name: "Professional setup at a local shop", why: "a lower action makes playing easier (a service, not sold by Thomann)"}]};
 function upgradeRoadmap() {
   const out = [], owned = new Set(S.rig.map(r => r.id));
   for (const ins of S.music.instruments) {
     const gear = rigItems().filter(x => x.inst && x.inst.includes(ins.id)), budget = +ins.budget || null, steps = [];
+    const beginner = ins.level === "beginner";
+    if (beginner && gear.length) {
+      for (const sv of BEGINNER_SERVICES[ins.kind] || []) steps.push({...sv, id: null, price: null, service: true});
+      for (const id of BEGINNER_ESSENTIALS[ins.kind] || []) if (BY[id] && !owned.has(id)) steps.push({when: "Now", id, name: BY[id].n, price: BY[id].p, why: "a small essential for daily practice"});
+    }
     if (!gear.length) {
       for (const id of (START_WITH[ins.kind] || [])) if (BY[id] && !owned.has(id)) steps.push({when: "Now", id, name: BY[id].n, price: BY[id].p, why: "a starting point for " + insName(ins).toLowerCase()});
     }
     for (const g of gear) if (g.id && !g.custom) for (const m of missingFor(BY[g.id] || g)) if (m.fix && BY[m.fix] && !owned.has(m.fix) && !steps.some(s => s.id === m.fix)) steps.push({when: "Now", id: m.fix, name: BY[m.fix].n, price: BY[m.fix].p, why: `your ${g.name} needs ${m.what}`});
-    for (const g of gear) { const up = g.id && UPGRADE_PATHS[g.id]; if (up && BY[up] && !owned.has(up)) steps.push({when: budget && BY[up].p > budget ? "Later" : "Next", id: up, name: BY[up].n, price: BY[up].p, why: `upgrade from your ${g.name}${ins.goals ? " for your goal: " + ins.goals : ""}`}); }
+    for (const g of gear) { const up = g.id && UPGRADE_PATHS[g.id]; if (up && BY[up] && !owned.has(up)) steps.push({when: beginner || (budget && BY[up].p > budget) ? "Later" : "Next", id: up, name: BY[up].n, price: BY[up].p, why: beginner ? `only once your ${g.name} really limits you` : `upgrade from your ${g.name}${ins.goals ? " for your goal: " + ins.goals : ""}`}); }
     out.push({ins: insName(ins), level: MP_LEVELS[ins.level] || "", budget, steps: steps.slice(0, 6)});
   }
   return out;
 }
 
-/* ---------- Saved projects (device-local) ---------- */
-const PROJ_KEY = "ga3_projects";
-const getProjects = () => ls.get(PROJ_KEY, []);
-const saveProjects = l => ls.set(PROJ_KEY, l);
-function createProject(name, items, notes) {
-  const l = getProjects(), p = {id: "pr" + Date.now().toString(36), name: String(name || "My project").slice(0, 60), items: items.filter(([id]) => BY[id]).map(([id, q]) => [id, q || 1]), notes: notes || "", created: new Date().toISOString().slice(0, 10), updated: new Date().toISOString().slice(0, 10)};
-  l.push(p); saveProjects(l); return p;
-}
 
 /* ---------- Consultation summary for a specialist (shared only with consent) ---------- */
 function consultSummary() {

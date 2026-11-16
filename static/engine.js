@@ -20,6 +20,7 @@ function fitCheck(prodIds,opt={}){
   const owned=new Set(opt.ownedAsRig?cands.filter(c=>rigIds.has(c.id)).map(c=>c.id):[]);
   const all=[...rig.map(r=>({id:r.id,name:r.name,cp:r.cp||{}})),...cands.filter(c=>!owned.has(c.id)).map(c=>({id:c.id,name:c.n,cp:c.cp,isNew:true}))];
   const find=k=>all.filter(x=>x.cp.kind===k);
+  const countKind=k=>all.filter(x=>x.cp.kind===k||x.cp.kind==="v-"+k).length; /* verified-only products count too */
   const comp=profileComputer()||find("computer")[0];
   const checks=[];
   const add=(s,t,fix,type="fit",alt=false)=>checks.push({status:s,note:t,fix,type,alt});
@@ -36,7 +37,7 @@ function fitCheck(prodIds,opt={}){
         if(d>=5) add("ok",`Gain: ${itf.name} gives ${itf.cp.gain} dB${boost&&cp.gainNeed>40?` + ${boost.cp.boost} dB from the ${boost.name}`:""}; the mic needs about ${cp.gainNeed} dB.`);
         else if(d>=0) add("warn",`Gain is just enough (${gain} dB available, ~${cp.gainNeed} dB needed). Expect some hiss at the top of the dial.`,boost?undefined:"m7");
         else add("warn",`Too quiet: ${itf.name} gives ${itf.cp.gain} dB, the ${c.n} needs about ${cp.gainNeed} dB. An inline booster fixes it.`,"m7");
-        const mics=find("mic").length; if(mics>itf.cp.xlr) add("warn",`You would have ${mics} mics but ${itf.name} has ${itf.cp.xlr} mic input${itf.cp.xlr>1?"s":""}: you can't record them at the same time.`,"i2");
+        const mics=find("mic").length; if(mics>itf.cp.xlr) add("ok",`${itf.name} has ${itf.cp.xlr} mic input${itf.cp.xlr>1?"s":""}: ${itf.cp.xlr>1?itf.cp.xlr+" mics":"one mic"} at a time. Fine for one voice; recording more mics together needs more inputs.`);
       } else add("ok",`${c.n} goes between a dynamic mic and the interface.`);
     }
     if(cp.kind==="interface"){
@@ -45,7 +46,8 @@ function fitCheck(prodIds,opt={}){
         if(m.cp.needsPhantom&&!cp.phantom) add("bad",`${m.name} needs phantom power, which this interface lacks.`);
         const d=cp.gain-m.cp.gainNeed; add(d>=0?"ok":"warn",`Your ${m.name}: ${d>=0?"enough gain":"needs ~"+m.cp.gainNeed+" dB, this gives "+cp.gain+" dB"}.`,d>=0?undefined:"m7");
       }
-      for(const h of find("headphones")) add(h.cp.ohm<=cp.hpMax?"ok":"warn",`Your ${h.name} (${h.cp.ohm} Ω) ${h.cp.ohm<=cp.hpMax?"are driven fine":"may be quiet on this headphone output"}.`);
+      for(const h of find("headphones")){const okH=!cp.hpMax||!h.cp.ohm||h.cp.ohm<=cp.hpMax;add(okH?"ok":"warn",`Your ${h.name} (${h.cp.ohm} Ω) ${okH?"are driven fine":"may be quiet on this headphone output"}.`)}
+      {const hpN=countKind("headphones"),outs=cp.hpOuts||1;if(hpN>outs)add("warn",hpOutNote(hpN,c.n,outs))}
       for(const mo of find("monitors")) add(mo.cp.inputs.includes(cp.out)?"ok":"warn",`Monitors ${mo.name}: ${mo.cp.inputs.includes(cp.out)?cp.out+" cables connect directly":"need "+cp.out+" to "+mo.cp.inputs[0]+" cables"}.`);
       const old=find("interface").filter(x=>!x.isNew&&x.id!==c.id); if(old.length&&!owned.has(c.id)) add("warn",`You already own the ${old[0].name}. Check this one adds what you need (inputs, gain).`);
     }
@@ -69,6 +71,7 @@ function fitCheck(prodIds,opt={}){
       const srcs=[...find("interface"),...find("amp").filter(a=>a.cp.headphoneOut)];
       if(!srcs.length) add("warn","No interface or amp with a headphone output in your rig.");
       for(const s of srcs) add(!s.cp.hpMax||cp.ohm<=s.cp.hpMax?"ok":"warn",`${s.name}: ${!s.cp.hpMax||cp.ohm<=s.cp.hpMax?"drives these fine":"may be quiet with "+cp.ohm+" Ω"}.`);
+      {const itf=find("interface").find(x=>x.isNew)||find("interface")[0];const hpN=countKind("headphones");if(itf&&hpN>(itf.cp.hpOuts||1))add("warn",hpOutNote(hpN,itf.name,itf.cp.hpOuts||1))}
       if(cp.ohm>=250) add("warn",`${cp.ohm} Ω headphones are quiet on phones and laptops.`,"h1","fit",true);
     }
     if(cp.kind==="amp"){
@@ -143,7 +146,8 @@ function moreChecks(c,o={}){
     {status:c.tv.inStock?"ok":"warn",note:`${c.tv.availEn} (as listed on thomann.de on ${c.tv.verified}).`,type:"delivery"}];
   const out=[],pr=PROFILE(),cp=c.cp;
   const miss=missingFor(c,o.with);
-  for(const m of miss)out.push({status:"warn",note:`To start playing you also need ${m.what}.`,fix:m.fix,type:"ready"});
+  const verb=["electric guitar","acoustic guitar","bass","keys","edrums","amp"].includes(c.cp.kind)?"To start playing":"To use it";
+  for(const m of miss)out.push({status:"warn",note:`${verb} you also need ${m.what}.`,fix:m.fix,type:"ready"});
   if(!miss.length&&!["strings","cable","battery","picks","usbcable","booster","psu"].includes(cp.kind))
     out.push({status:"ok",note:cp.bundle?"Complete set: everything you need to start is in the box.":"Ready to play: nothing else needed with your rig.",type:"ready"});
   if(pr.place==="flat"){
@@ -166,10 +170,16 @@ function priceCheck(id){
   const bundles=(typeof offersFor==="function"?offersFor(id):[]).filter(o=>o.type==="bundle");
   return {product:p,similar,bstock:p.bs||null,bundles};
 }
+const hpOutNote=(n,name,outs)=>`You would have ${n} pairs of headphones but the ${name} has ${outs} headphone output${outs>1?"s":""}: each person needs their own output, or a headphone amp.`;
+/* standard shipping as shown on thomann.de and thomann.at product pages, checked 16 Nov 2026 */
+const SHIPPING={DE:{free:29,cost:3.9,shop:"thomann.de"},AT:{free:69,cost:5.9,shop:"thomann.at"}};
 function delivery(p,country){
   const c=(country||"DE").toUpperCase();
   const map={DE:[1,2],AT:[2,3],NL:[2,3],BE:[2,4],FR:[2,4],IT:[3,5],ES:[3,5],PL:[2,4],CH:[3,5],UK:[3,6],GB:[3,6],US:[6,10]};
   const [a,b]=map[c]||[3,6];const wait=p.st?0:(p.restock||10);
   const d=n=>{const t=new Date(TODAY);t.setDate(t.getDate()+n);return t.toISOString().slice(0,10)};
-  return {id:p.id,name:p.n,inStock:p.st,warehouse:"Treppendorf, DE",country:c,arrives:`${d(wait+a)} – ${d(wait+b)}`,note:p.st?(p.st<15?"Low stock":""):`Restock expected in ~${wait} days`,customs:["CH","UK","GB","US"].includes(c)?"Customs duties may apply":""};
+  const sh=SHIPPING[c];
+  return {id:p.id,name:p.n,inStock:p.st,warehouse:"Treppendorf, DE",country:c,arrives:`${d(wait+a)} – ${d(wait+b)}`,note:p.st?(p.st<15?"Low stock":""):`Restock expected in ~${wait} days`,customs:["CH","UK","GB","US"].includes(c)?"Customs duties may apply":"",
+    shipping:sh?`Standard delivery free from €${sh.free} per order, otherwise €${sh.cost.toFixed(2)} (${sh.shop}, checked 16 Nov 2026)`:"Shipping cost is shown at checkout",
+    priceNote:c==="AT"?"Prices here are thomann.de prices; thomann.at shows Austrian prices (20 % VAT), which can differ slightly.":""};
 }

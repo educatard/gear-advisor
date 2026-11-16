@@ -350,6 +350,7 @@ table.cmp{border-collapse:collapse;font-size:12.5px;width:100%}
 table.cmp th,table.cmp td{border-bottom:1px solid var(--line);padding:5px 6px;text-align:left;vertical-align:top}
 table.cmp th{font-weight:600;color:var(--muted)}
 .check{display:flex;gap:8px;align-items:flex-start;padding:4px 0}
+details.fitok{margin-top:2px}details.fitok>summary{cursor:pointer;font-size:12.5px;color:var(--muted);padding:4px 0}details.fitok .check{font-size:12.5px;color:var(--muted);padding:2px 0 2px 14px}
 .badge{font-size:10.5px;font-weight:800;border-radius:4px;padding:1px 6px;flex:none;margin-top:2px}
 .badge.ok{background:var(--ok-soft);color:var(--ok)}.badge.warn{background:var(--warn-soft);color:var(--warn)}.badge.bad{background:var(--bad-soft);color:var(--bad)}
 .bar2,.bar{height:7px;border-radius:4px;background:var(--soft);overflow:hidden;margin-top:3px}
@@ -374,10 +375,9 @@ table.cmp th{font-weight:600;color:var(--muted)}
 .switch input{width:20px;height:20px;accent-color:var(--purple)}
 /* Home page */
 .home .hometitle{text-align:center;font-size:clamp(26px,3.4vw,38px);font-weight:800;margin:22px 0 18px}
-.banners{display:grid;grid-template-columns:1fr 2.4fr 1fr;gap:20px;padding:0 0 6px;overflow-x:auto;scroll-snap-type:x mandatory}
+.banners{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:0 0 6px;overflow-x:auto;scroll-snap-type:x mandatory}
 .banner{border-radius:14px;min-height:clamp(170px,22vw,300px);position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:18px;color:#fff;text-align:left;scroll-snap-align:center}
 .banner.b1{background:linear-gradient(160deg,#8a5a2b,#3b2414)}.banner.b3{background:linear-gradient(160deg,#4a4038,#1d1916)}
-.banner.b2{background:radial-gradient(circle at 20% 20%,#c026d3 0,transparent 40%),linear-gradient(135deg,#7c1fd6,#9d17e8);align-items:center;justify-content:center;gap:4px}
 .bsm{font-size:15px;font-weight:700}.bbig{font-size:clamp(26px,3.6vw,52px);font-weight:800;line-height:1}
 .bbig2{font-size:clamp(22px,3vw,40px);font-weight:800;line-height:1.05;text-transform:uppercase}
 .bbrand{font-size:clamp(36px,6vw,78px);font-weight:800;color:#ff5fc8;text-transform:uppercase;letter-spacing:-.02em;line-height:.95;text-shadow:0 4px 0 #b3157f}
@@ -388,24 +388,16 @@ table.cmp th{font-weight:600;color:var(--muted)}
 .uspi{display:flex;gap:10px;align-items:center;font-size:15px}
 .hex{width:48px;height:48px;flex:none;display:grid;place-items:center;font-weight:800;color:#fff;background:linear-gradient(135deg,#3b82f6,#a855f7);clip-path:polygon(25% 5%,75% 5%,100% 50%,75% 95%,25% 95%,0 50%)}
 .uspi:nth-child(2) .hex{background:linear-gradient(135deg,#22c55e,#84cc16)}.uspi:nth-child(3) .hex{background:linear-gradient(135deg,#f472b6,#a855f7)}.uspi:nth-child(4) .hex{background:linear-gradient(135deg,#f97316,#facc15)}.uspi:nth-child(5) .hex{background:linear-gradient(135deg,#2563eb,#38bdf8)}
-.dealband{background:#6209b5;color:#fff;padding:26px 0 30px}.dealband h2{font-size:clamp(28px,4vw,46px);font-weight:800;color:#ff5fc8;text-transform:uppercase;text-align:center;margin:0}
-.dealband p{text-align:center;opacity:.85;margin:4px 0 16px;font-size:14px}
-.dealrow{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,210px),1fr));gap:12px}
-.dealcard{background:var(--bg);color:var(--ink);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:5px;min-width:0}
-.dealcard.conflict{opacity:.75;border:1.5px dashed #e3a008}
-.dctop{display:flex;gap:6px;flex-wrap:wrap}.dcname{font-weight:700;text-align:left;line-height:1.25}.dcsub{font-size:12.5px}
 .homecats{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,150px),1fr));gap:10px}
 .homecat{border:1px solid var(--line);border-radius:10px;padding:10px;display:flex;flex-direction:column;align-items:center;gap:6px;font-weight:700;font-size:13.5px;text-align:center}
 .homecat .sil{width:90px;height:60px}
-.dealfilters select{border:1px solid var(--ink);border-radius:6px;padding:6px 8px;font:inherit;background:var(--bg);color:var(--ink)}
-.wrapgrid{margin-top:10px}.dealrow.wrapgrid .dealcard{border:1px solid var(--line)}
 .bell{font-size:16px;width:32px;height:32px;border-radius:50%;flex:none}.bell:hover{background:var(--soft)}
 .dropb{display:inline-block;background:var(--ok-soft);color:var(--ok);font-weight:700;font-size:12px;border-radius:6px;padding:1px 7px}
 .dropdot{box-shadow:0 0 0 3px #22c55e}
 .sumlines{white-space:pre-line}
 .srctext{word-break:break-all}
 .simbox{flex-wrap:wrap;gap:6px}
-@media (max-width:820px){.banners{grid-template-columns:85% 85% 85%}.usp{grid-template-columns:1fr 1fr;padding:18px 16px}}
+@media (max-width:820px){.banners{grid-template-columns:85% 85%}.usp{grid-template-columns:1fr 1fr;padding:18px 16px}}
 /* Decision, loyalty, dashboard */
 .rtpbox{border-color:var(--purple)}
 .rtpit{display:flex;gap:8px;align-items:center;border-top:1px solid var(--line);padding:6px 0;font-size:13.5px}
@@ -422,8 +414,7 @@ table.cmp th{font-weight:600;color:var(--muted)}
 .alertgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin:10px 0}
 .firednote{background:var(--purple-soft);color:var(--purple);border-radius:6px;padding:6px 10px;font-size:13.5px;margin-top:6px}
 .demosim{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:13px}.demosim input{width:80px;border:1px solid var(--line);border-radius:6px;padding:3px 6px;background:var(--bg);color:var(--ink)}
-.dealgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));gap:12px;margin-top:10px}
-.dealgrid .offer{display:flex;flex-direction:column;gap:6px}.bigp{font-size:22px;font-weight:800}
+.bigp{font-size:22px;font-weight:800}
 #goalSel,#goalBudget,#anchorSel{border:1px solid var(--ink);border-radius:6px;padding:6px 8px;font:inherit;background:var(--bg);color:var(--ink);max-width:100%;min-width:0}
 .setupcmp{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:12px;margin:12px 0}
 .tiercol{border:1px solid var(--line);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:6px;font-size:13.5px;min-width:0}
@@ -707,10 +698,6 @@ details.grow .gbody .acts{display:flex;gap:6px;flex-wrap:wrap}
 body[data-view="rig"] .needhelp .avatars{display:none}
 @media (max-width:600px){body[data-view="rig"] .needhelp{padding:8px 14px;font-size:13px}}
 .switch.stack{flex-direction:column;align-items:stretch;gap:4px}.switch.stack select{max-width:100%;width:100%}
-.banner.b2{display:grid;grid-template-columns:minmax(0,1fr) auto;align-content:center;justify-items:center;column-gap:4%;row-gap:4px}
-.banner.b2 .bbrand,.banner.b2 .bdate,.banner.b2 .bnote{grid-column:1;max-width:100%;text-align:center}
-.banner.b2 .bbrand{font-size:clamp(28px,4.4vw,70px);overflow-wrap:anywhere}
-.banner.b2 .bbadge{position:static;transform:none;grid-column:2;grid-row:1 / span 3;width:clamp(70px,9vw,140px)}
 .wb{--tb:#0a69c7;--tb-soft:#eaf3fc;display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap;background:var(--tb-soft);border:1px solid #c9def3;border-left:4px solid var(--tb);border-radius:8px;padding:10px 16px;margin:16px 0 14px;font-size:14px}
 .wb .wbq{margin:0;flex:1 1 360px;min-width:0;line-height:1.4}
 .wb .wbans{display:flex;gap:6px;flex-wrap:wrap}
@@ -721,7 +708,7 @@ body[data-view="rig"] .needhelp .avatars{display:none}
 .wb .wbfoot details[open]{flex-basis:100%}
 .wb .wbfoot details span{display:block;margin-top:2px}
 /* Focus mode: general shop features hidden (nothing deleted) */
-body.focus .banners,body.focus .dealband,body.focus [data-go="deals"],body.focus [data-go="projects"],body.focus [data-go="coverage"],body.focus .covlink,body.focus .bell,body.focus .dropb,body.focus [data-proj-setup],body.focus [data-rtp-proj],body.focus .simbox{display:none!important}
+body.focus .banners,body.focus [data-go="coverage"],body.focus .covlink,body.focus .bell,body.focus .dropb,body.focus .simbox{display:none!important}
 body.focus .dropdot{box-shadow:none!important}
 .advent{background:var(--purple-soft);border-radius:14px;padding:clamp(18px,3vw,32px) clamp(14px,3vw,32px);margin:16px 0 8px;text-align:center}
 .advent h1{font-size:clamp(26px,3.6vw,40px);font-weight:800;margin:0 0 14px;line-height:1.15}
@@ -768,7 +755,7 @@ body.focus .dropdot{box-shadow:none!important}
   <div class="searchbox"><form id="sform" role="search"><input id="sq" type="search" placeholder="What are you looking for?" autocomplete="off" aria-label="Search"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></form><div class="ac" id="ac" hidden></div></div>
   <div class="icons">
     <div style="position:relative"><button class="iconbtn" id="accBtn" aria-label="My account"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3.5"/><path d="M6 19c1.5-2.5 3.5-3.5 6-3.5s4.5 1 6 3.5"/></svg></button>
-      <div class="dd" id="accDD" hidden style="right:-10px"><div class="muted" style="padding:6px 16px 4px">Signed in as Demo customer</div><button data-open="profile">My Music Profile</button><button data-open="rig">My rig</button><button data-open="picks">Saved products<span id="accPickN"></span></button><button data-go="deals">Deals & setups</button><button data-go="projects">Projects</button><button data-open="orders">Orders</button><button data-open="basket">Basket</button></div></div>
+      <div class="dd" id="accDD" hidden style="right:-10px"><div class="muted" style="padding:6px 16px 4px">Signed in as Demo customer</div><button data-open="profile">My Music Profile</button><button data-open="rig">My rig</button><button data-open="picks">Saved products<span id="accPickN"></span></button><button data-open="orders">Orders</button><button data-open="basket">Basket</button></div></div>
     <button class="iconbtn" aria-label="Saved products" data-open="picks"><svg class="i" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><span class="badge-n" id="savedN" hidden>0</span></button>
     <button class="iconbtn" aria-label="Basket" data-open="basket"><svg class="i" viewBox="0 0 24 24"><path d="M3 4h2l2.4 11h11l2-8H6.2"/><circle cx="9" cy="19.5" r="1.3"/><circle cx="17" cy="19.5" r="1.3"/></svg><span class="badge-n" id="bcount">0</span></button>
   </div>
@@ -844,7 +831,21 @@ const eur=n=>"€"+(Math.round(n*100)/100).toLocaleString("en-IE",{minimumFracti
 const now=()=>new Date().toTimeString().slice(0,5);
 const rigItems=()=>S.rig.map(r=>r.custom?{...r,key:r.name}:{...r,...BY[r.id],key:r.id,name:BY[r.id]?.n,cat:BY[r.id]?.c}).filter(x=>x.name);
 function toast(t){const el=document.createElement("div");el.className="toast";el.textContent=t;document.body.append(el);setTimeout(()=>el.remove(),2600)}
-function addBasket(id,qty=1){if(BY[id]&&BY[id].p>HIGH_PRICE)setTimeout(()=>flagAgent("price"),0);const ex=S.basket.find(x=>x.id===id);if(ex)ex.qty+=qty;else S.basket.push({id,qty});store.set("basket",S.basket);bcount();toast("Added to basket: "+BY[id].n);if(["product","results","picks"].includes(S.view.name))render();if(S.ctab==="picks")renderPicksPanel()}
+function addBasket(id,qty=1){if(BY[id]&&BY[id].p>HIGH_PRICE)setTimeout(()=>flagAgent("price"),0);const ex=S.basket.find(x=>x.id===id);if(ex)ex.qty+=qty;else S.basket.push({id,qty});store.set("basket",S.basket);bcount();toast("Added to basket: "+BY[id].n);basketCheer(id);if(["product","results","picks"].includes(S.view.name))render();if(S.ctab==="picks")renderPicksPanel()}
+/* New mode: a product from this chat goes into the basket while the chat is open -> the advisor closes with the celebration card */
+let cheerQ=[],cheerT=null;const cheered=new Set();
+function basketCheer(id){
+  const p=BY[id];
+  if(!p||S.promptMode==="prev"||!S.started||S.chat!=="open"||S.mode!=="ai"||!sample||!S.turns.length||cheered.has(id))return;
+  const re=new RegExp("\\b"+id+"\\b");
+  if(!S.turns.some(t=>re.test(t.content)||t.content.includes(p.n)))return;
+  cheered.add(id);cheerQ.push(id);clearTimeout(cheerT);
+  cheerT=setTimeout(()=>{const ids=cheerQ.splice(0);if(!ids.length)return;
+    const names=ids.map(x=>BY[x].n+" ("+x+")").join(", ");
+    const go=()=>{if(S.busy)return setTimeout(go,700);
+      send("The customer just added to the basket: "+names+". If this completes what they were deciding on in this chat, close with the celebration card (section 3 of the emotional-connection rules). If it is only a small add-on, reply with one short line and no card.",{silent:true,note:"Added to basket: "+ids.map(x=>BY[x].n).join(", ")})};
+    go()},500);
+}
 function bcount(){$("#bcount").textContent=S.basket.reduce((a,b)=>a+b.qty,0)}
 function addRig(id,extra={}){if(!S.rig.some(r=>r.id===id)){S.rig.push({id,since:TODAY.toISOString().slice(0,7),bought:"elsewhere",...extra});store.set("rig",S.rig);toast("Added to My rig: "+BY[id].n);if(S.view.name==="rig"&&!extra.bought)S.editing=S.rig.length-1;if(["product","rig","results"].includes(S.view.name))render()}}
 function returnWindow(o){
@@ -893,10 +894,10 @@ function sil(c){
 
 /* ---------------- Views ---------------- */
 function go(v){if(v.name!=="results")sq.value="";S.view=Object.assign({name:"results",q:"",cats:[],top:"",sub:"",src:"",brand:"",inst:"",min:"",max:"",stock:false,sort:"rel",sit:"",limit:24},v);S.editing=null;if(v.name==="product")S.viewing=v.id;render();window.scrollTo(0,0);if(innerWidth<700&&S.chat==="open")setChat("min")}
-const FOCUS_HIDDEN_VIEWS=["deals","projects","coverage"],FOCUS_TOOLS_OFF=["price_alert"];
+const FOCUS_HIDDEN_VIEWS=["coverage"],FOCUS_TOOLS_OFF=["price_alert"];
 function render(){
   document.body.classList.toggle("focus",!!S.focus);
-  if(S.focus&&FOCUS_HIDDEN_VIEWS.includes(S.view.name))S.view={name:"home"};
+  if(S.focus&&FOCUS_HIDDEN_VIEWS.includes(S.view.name)||["deals","projects"].includes(S.view.name))S.view={name:"home"};
   const v=S.view,el=$("#view");document.body.dataset.view=v.name;
   updateNeedHelp();
   if(v.name==="home") el.innerHTML=homeView();
@@ -907,11 +908,9 @@ function render(){
   else if(v.name==="profile") el.innerHTML=profileView();
   else if(v.name==="categories") el.innerHTML=categoriesView();
   else if(v.name==="coverage") el.innerHTML=coverageView();
-  else if(v.name==="deals") el.innerHTML=dealsView();
   else if(v.name==="setup") el.innerHTML=setupView();
   else if(v.name==="review") el.innerHTML=reviewView();
   else if(v.name==="ready") el.innerHTML=readinessView();
-  else if(v.name==="projects") el.innerHTML=projectsView();
   else if(v.name==="dashboard") el.innerHTML=dashboardView();
   else el.innerHTML=resultsView();
   if(v.name==="results"){bindFilters();kickSummary()}
@@ -921,12 +920,12 @@ function render(){
   if(v.name==="product"){const bi=$("#rtpBudget");if(bi)bi.onchange=()=>{S.rtpBudget=+bi.value.replace(/\D/g,"")||null;S.rtpAllow=false;render()};const p=BY[v.id];const offs=offersFor(p.id);
     track("product_page_viewed",{id:p.id});if(offs.some(o=>o.type==="bundle")||p.tv?.bundle)track("bundle_viewed",{id:p.id});if(offs.some(o=>o.type!=="bundle"))track("deal_viewed",{id:p.id})}
   if(v.name==="review")track("cart_reviewed",{items:S.basket.length});
-  if(v.name==="deals"&&!S.view.tracked){S.view.tracked=1;track("deal_viewed",{page:"deals"})}
-  if(v.name==="deals"){["dfTop","dfType","dfRef"].forEach(k=>{const el=$("#"+k);if(el)el.onchange=()=>{S.view["d"+k.slice(2).toLowerCase()]=el.value;render()}});const r=$("#dealRel");if(r)r.onchange=()=>{S.view.rel=r.checked;render()}}
 }
+/* category words customers type, so "pedal" also finds reverbs and delays filed under Effects */
+const CAT_SYN={guitars:" guitar guitars",amps:" amp amps amplifier combo",pedals:" pedal pedals effect effects stompbox",power:" power supply psu",interfaces:" interface audio interface sound card",mics:" mic mics microphone",headphones:" headphone headphones",monitors:" monitor monitors speakers",keys:" keyboard keys piano",drums:" drum drums",accessories:""};
 function scoreQ(p,q){
   if(!q)return 1;const words=q.toLowerCase().split(/\s+/).filter(w=>w.length>1&&!["for","the","a","and","with","my","to"].includes(w));
-  const hay=(p.n+" "+p.b+" "+p.tags.join(" ")+" "+CATS[p.c]+" "+(p.sub||"")+" "+(TOPS[p.top]?.en||"")+" "+(TOPS[p.top]?.de||"")+(p.tv?" "+p.tv.sub:"")).toLowerCase();
+  const hay=(p.n+" "+p.b+" "+p.tags.join(" ")+" "+CATS[p.c]+" "+(p.sub||"")+" "+(TOPS[p.top]?.en||"")+" "+(TOPS[p.top]?.de||"")+(p.tv?" "+p.tv.sub:"")+(CAT_SYN[p.c]||"")).toLowerCase();
   return words.reduce((a,w)=>a+(hay.includes(w)?1:hay.includes(w.replace(/s$/,""))?1:0),0);
 }
 const subMatch=(p,s)=>{const x=s.toLowerCase();return (p.sub||"").toLowerCase()===x||(p.tv&&((p.tv.sub||"").toLowerCase()===x||(p.tv.crumb||[]).some(c=>c.toLowerCase()===x)))};
@@ -999,7 +998,7 @@ function dealsBoxHtml(p){
   const offs=offersFor(p.id);
   const rows=offs.map(o=>o.type==="bstock"?`<div class="offer"><b>${esc(o.name)}</b> <span class="tag warnt">B-Stock, not new</span><div class="muted">${esc(o.condition)} · ${esc(o.warranty)}</div><div>${eur(o.price)}${o.saving?` · ${esc(o.saving.text)}`:""} <button class="btn small" data-detail="${o.productId}">View</button></div></div>`
     :o.type==="bundle"?`<div class="offer"><b>${o.article===p.tv?.article?"This is an official set":"Also in: "+esc(o.name)}</b><div class="muted">${esc(o.contents)}</div><div>${o.article===p.tv?.article?"":eur(o.price)+" · "}${esc(o.verifiedSaving||o.note?bundleLabel(o):"Recommended Setup")} ${o.productId&&o.productId!==p.id?`<button class="btn small" data-detail="${o.productId}">View</button>`:""}</div></div>`
-    :`<div class="offer"><b>${offerTypeLabel[o.type]} on thomann.de</b><div>${o.saving?esc(o.saving.text):"No reference price shown, so no saving is stated."}</div><div class="muted">Checked ${esc(o.checked)}</div></div>`).join("");
+    :`<div class="offer"><b>${esc(o.label||offerTypeLabel[o.type])} on thomann.de${o.until?" until "+esc(fmtDay(o.until)):""}</b><div>${o.saving?esc(o.saving.text):"No reference price shown, so no saving is stated."}${o.note?" "+esc(o.note):""}</div><div class="muted">Checked ${esc(o.checked)}</div></div>`).join("");
   const demoB=!p.tv&&p.bs?`<div class="offer"><b>B-Stock from ${eur(p.bs)}</b> <span class="tag sim">demo price</span><div class="muted">Demo data, not a verified offer.</div></div>`:"";
   return `<div class="box savebox"><h4>Deals & savings ${mk("check")}</h4>${rows||demoB||`<div class="muted">No verified offer for this product right now.</div>`}${rows?demoB:""}
    <div class="prow" style="margin-top:8px"><button class="btn" data-ask="Is there a cheaper option, a deal or B-Stock for the ${esc(p.n)} that would still suit me?">Find a cheaper option</button></div></div>`;
@@ -1018,11 +1017,11 @@ const GOALS=Object.entries(SETUP_RECIPES).map(([k,r])=>[k,r.label]);
 function setupHtml(res){
   return `<div class="setupcmp">${res.tiers.map(tier=>`<div class="tiercol${tier.overBudget?" over":""}"><h4>${esc(tier.label)}</h4><div class="muted tierrule">${esc(tier.rule)}</div>
     ${tier.items.map(i=>`<div class="tierit"><div><span class="muted">${esc(i.role)}</span><br><button class="linkish" data-detail="${i.id}">${i.qty>1?i.qty+"× ":""}${esc(i.name)}</button>${i.optional?' <span class="tag">optional</span>':""}<div class="muted">${esc(i.why)}</div></div><div class="tp">${eur(i.line)}<div>${i.verified?`<span class="vtag">verified</span>`:'<span class="tag sim">demo</span>'}</div></div></div>`).join("")}
-    ${tier.skipped.map(s=>`<div class="muted tierskip">${esc(s.role)}: ${s.owned?`you own ${esc(s.owned)}, so it's left out`:s.ownedButShort?`you own ${esc(s.ownedButShort)}; ${esc(s.why)}`:"included above"}</div>`).join("")}
+    ${tier.skipped.map(s=>`<div class="muted tierskip">${esc(s.role)}: ${s.owned?`you own ${esc(s.owned)}, so it's left out`:s.ownedPart?`you own ${esc(s.ownedPart)}, so only ${s.stillNeeded} more`:s.ownedButShort?`you own ${esc(s.ownedButShort)}; ${esc(s.why)}`:"included above"}</div>`).join("")}
     ${tier.problems.length?`<div class="firednote">${tier.problems.map(esc).join("<br>")}</div>`:""}
     <div class="tiertot">Total ${eur(tier.total)}${res.budget?` · ${tier.overBudget?`<span style="color:var(--bad)">over your €${res.budget} budget</span>`:`within €${res.budget}`}`:""}</div>
     <div class="muted" style="font-size:12px">Recommended Setup: sum of the listed prices, not a discount.</div>
-    <div class="prow"><button class="btn small primary" data-addsetup='${JSON.stringify(tier.items.filter(i=>!i.optional).map(i=>[i.id,i.qty]))}'>Add this setup to basket</button>${typeof saveProjectBtn==="function"?saveProjectBtn(res,tier):""}</div></div>`).join("")}</div>
+    <div class="prow"><button class="btn small primary" data-addsetup='${JSON.stringify(tier.items.filter(i=>!i.optional).map(i=>[i.id,i.qty]))}'>Add this setup to basket</button></div></div>`).join("")}</div>
    ${res.bundles.map(bn=>`<div class="box offer bundlecmp"><b>Official Thomann bundle: ${esc(bn.name)} · ${eur(bn.price)}</b><div class="muted">${esc(bn.contents)}</div><div>${esc(bn.label)}</div><div class="prow"><button class="btn small" data-detail="${bn.id}">View bundle</button></div></div>`).join("")}
    <p class="muted" style="font-size:12px">${esc(res.note)}</p>`;
 }
@@ -1044,26 +1043,6 @@ function setupView(){
   ${r?`<div class="box rtpbox" style="margin-top:12px">${rtpHtml(r,true)}</div>`:""}
   <p class="muted" style="margin:24px 0 90px">Or ask the advisor: “Build me a podcast setup for two people under €600”.</p></div>`;
 }
-function dealsView(){
-  const v=S.view,rel=v.rel;
-  const insts=S.music.instruments.flatMap(i=>INST_TOPS[i.kind]||[]);
-  const items=OFFERS.map(o=>({o,p:BY[offerProductId(o)]})).filter(x=>x.p).filter(x=>!rel||insts.includes(x.p.top)||x.p.top==="accessories"||x.p.top==="cables");
-  const res=v.goal?buildSetupOptions(v.goal,+v.budget||null):null;
-  return `<div class="wrap catpage"><div class="crumbs"><span>⌂</span><span class="last">Smart Savings & Deals</span></div>
-  <h1 class="page">Smart Savings & Deals</h1>
-  <p class="muted" style="margin-top:0">Offers read from Thomann's Hot Deals and Bargains pages on ${esc(OFFERS_CHECKED)}. Savings are only shown against the reference Thomann lists, and that reference is named.</p>
-  <label class="switch"><input type="checkbox" id="dealRel"${rel?" checked":""}> Only deals that fit my Music Profile</label>
-  <div class="dealgrid">${items.map(({o,p})=>`<div class="box offer"><div class="alerthead"><span class="tag ${o.type==="bstock"?"warnt":"edge"}">${offerTypeLabel[o.type]}</span><span class="muted">checked ${esc(o.checked)}</span></div>
-    <b><button class="linkish" data-detail="${p.id}">${esc(p.n)}</button></b><div class="bigp">${eur(o.price)}</div>
-    <div class="muted">${o.type==="bstock"?esc(o.condition+" · "+o.warranty):o.type==="bundle"?esc(bundleLabel(o)):savingVs(o.price,o.ref)?esc(savingVs(o.price,o.ref).text):"No reference price shown, so no saving stated."}</div>
-    <div class="prow"><button class="btn small" data-add="${p.id}">Add</button></div></div>`).join("")||`<p class="muted">No verified deals fit your profile right now.</p>`}</div>
-  <h2 class="mph">Deals snapshot <span class="muted">seen on thomann.de on ${esc(PACK_DATE)} · ${PACK.items.length} offers · not live prices</span></h2>
-  <div class="prow dealfilters"><select id="dfTop" aria-label="Category"><option value="">All categories</option>${TAX.map(x=>`<option value="${x.id}"${v.dtop===x.id?" selected":""}>${esc(x.en)}</option>`).join("")}</select>
-   <select id="dfType" aria-label="Offer type"><option value="">All offer types</option>${Object.entries(PACK_TYPE_LABEL).map(([k,n])=>`<option value="${k}"${v.dtype===k?" selected":""}>${n}</option>`).join("")}</select>
-   <select id="dfRef" aria-label="Reference price"><option value="">Any reference price</option><option value="best30"${v.dref==="best30"?" selected":""}>vs 30-day best price</option><option value="uvp"${v.dref==="uvp"?" selected":""}>vs manufacturer's price (UVP)</option><option value="none"${v.dref==="none"?" selected":""}>no reference price</option></select></div>
-  <div class="dealrow wrapgrid">${OFFERS.filter(o=>o.snapshot).map(o=>({o,p:BY[offerProductId(o)]})).filter(x=>x.p&&(!v.dtop||x.p.top===v.dtop)&&(!v.dtype||x.o.type===v.dtype)&&(!v.dref||(v.dref==="none"?!x.o.ref:x.o.ref?.basis===v.dref))).map(x=>dealCardHtml(x.o,x.p)).join("")||'<p class="muted">No deals match these filters.</p>'}</div>
-  <div class="askstrip" style="margin:24px 0"><span class="aiav sm">${AISVG}</span><p><b>Need a complete setup?</b> The Setup Builder compares Lowest Cost, Best Value and Upgrade-Friendly and skips what you own.</p><button class="cta purple" style="padding:9px 18px;width:auto" data-go="setup">Open the Setup Builder</button></div></div>`;
-}
 function reviewView(){
   const r=S.review||(S.review=reviewCart()),dec=S.reviewDec||(S.reviewDec={});
   const accepted=r.proposals.filter(p=>dec[p.n]==="yes"),revised=+(r.total+accepted.reduce((a,p)=>a+p.delta,0)).toFixed(2);
@@ -1078,30 +1057,14 @@ function reviewView(){
 }
 /* ---------------- Home page (start view) ---------------- */
 const HOME_USP=[["30","Days money-back"],["3","Years warranty"],["🚚","Free shipping from €29"],["★","Europe's best service"],["▦","Europe's largest warehouse"]];
-function homeDeals(n){
-  return OFFERS.filter(o=>o.snapshot&&!o.conflict&&o.ref&&o.ref.value>o.price).map(o=>({o,p:BY[offerProductId(o)],s:savingVs(o.price,o.ref)})).filter(x=>x.p&&x.s).sort((a,b)=>b.s.pct-a.s.pct).slice(0,n);
-}
-function dealCardHtml(o,p){
-  const sv=o.conflict?null:o.type==="bstock"&&!o.ref?null:savingVs(o.price,o.ref);
-  return `<div class="dealcard${o.conflict?" conflict":""}"><div class="dctop"><span class="tag ${o.type==="bstock"||o.type==="clearance"?"warnt":"edge"}">${esc(PACK_TYPE_LABEL[o.type]||offerTypeLabel[o.type]||o.type)}</span>${o.conflict?'<span class="tag warnt">price being rechecked</span>':""}</div>
-   <button class="linkish dcname" data-detail="${p.id}">${esc(p.n)}</button>
-   <div class="bigp">${o.conflict?"–":eur(o.price)}</div>
-   <div class="muted dcsub">${o.conflict?`Listing ${eur(o.price)} vs product page ${eur(o.pagePrice)} on ${esc(o.checked)}: not offered until rechecked.`:`${o.snapshot?"Seen on thomann.de on "+esc(o.checked):"Checked "+esc(o.checked)}${sv?" · "+esc(sv.text):o.condition?" · "+esc(o.condition):" · no reference price, so no saving shown"}`}</div>
-   ${o.condition&&!o.conflict&&sv?`<div class="muted dcsub">${esc(o.condition)}</div>`:""}</div>`;
-}
 function homeView(){
-  const deals=homeDeals(8);
   return `<div class="home">
   ${welcomeHtml()||(S.focus?"":`<h1 class="hometitle">Welcome 👋</h1>`)}
   ${S.focus?advEntryHtml():`<div class="banners">
    <button class="banner b1" data-topsub="studio|Audio interfaces"><span class="bsm">Home recording</span><span class="bbig">from ${eur(Math.min(...P.filter(p=>p.sub==="Audio interfaces"||p.c==="interfaces").map(p=>p.p)))}</span></button>
-   <button class="banner b2" data-go="deals"><span class="bbrand">Cyber Deals</span><span class="bdate">05.11 – 30.11</span><span class="bbadge">up to<b>70%</b>off</span><span class="bnote">as advertised by Thomann</span></button>
    <button class="banner b3" data-topsub="keys|Stage pianos"><span class="bbig2">Stage piano<br>top sellers</span></button>
   </div>`}
   <div class="usp">${HOME_USP.map(([i,tx])=>`<div class="uspi"><span class="hex">${i}</span><span>${esc(tx)}</span></div>`).join("")}</div>
-  ${S.focus?"":`<section class="dealband"><div class="wrap"><h2>Cyber Deals</h2><p>Biggest differences to Thomann's own reference prices in our ${esc(PACK_DATE)} snapshot. Prices may have changed since.</p>
-   <div class="dealrow">${deals.map(x=>dealCardHtml(x.o,x.p)).join("")}</div>
-   <div class="prow" style="justify-content:center"><button class="cta" data-go="deals" style="width:auto;padding:10px 26px;background:#fff;color:#5b0fb3">All deals</button></div></div></section>`}
   <div class="wrap"><h2 class="mph">Shop by category</h2>
    <div class="homecats">${TAX.map(x=>`<button class="homecat" data-top="${x.id}">${sil(x.id)}<span>${esc(x.en)}</span></button>`).join("")}</div>
    <div class="askstrip" style="margin:24px 0 90px"><span class="aiav sm">${AISVG}</span><p><b>Not sure where to start?</b> Tell the AI advisor what you play and what you need.</p><button class="cta purple" style="padding:9px 18px" data-say="I want to buy an instrument.">Ask the advisor</button></div></div>
@@ -1135,6 +1098,28 @@ document.addEventListener("click",e=>{
   const h=pop.offsetHeight;pop.style.top=(r.bottom+6+h>innerHeight?Math.max(8,r.top-h-6):r.bottom+6)+"px";
 },true);
 addEventListener("scroll",()=>{const p=document.getElementById("mkpop");if(p&&!p.hidden){p.hidden=true;document.querySelectorAll('[data-mk-help][aria-expanded="true"]').forEach(b=>b.setAttribute("aria-expanded","false"))}},true);
+/* ---------------- Test notes: the chat as plain text (messages, card titles and product lines, no buttons) ---------------- */
+function transcriptText(){
+  const NOISE=/^(View|Add|☆ Save|★ Saved|Save|Helpful\?|✦ AI-written|\?|Add to basket|Remove|Open|Close|Not now|Show more|Show less|👍|👎)$/;
+  return [`Customer: ${CUSTOMERS[S.customer]?.label||S.customer} · prompt: ${typeof promptNew==="function"&&!promptNew()?"Previous":"New"} · variant ${S.variant} · ${new Date().toISOString().slice(0,16).replace("T"," ")}`,
+    ...String(clog.innerText||"").split("\n").map(l=>l.trim()).filter(l=>l&&!NOISE.test(l))].join("\n");
+}
+function openTranscript(){
+  const t=transcriptText();
+  drawer("Chat transcript",`<p class="muted" style="margin:0">Plain text of this chat for your test notes.</p><div class="prow"><button class="btn primary" id="txCopy">Copy</button></div><pre style="white-space:pre-wrap;font-size:11.5px;line-height:1.35;margin:6px 0 0">${esc(t)}</pre>`,()=>{
+    $("#txCopy").onclick=()=>{try{navigator.clipboard.writeText(t).then(()=>toast("Copied"),()=>toast("Copy blocked: select the text instead"))}catch(e){toast("Copy blocked: select the text instead")}};
+  },null,true);
+}
+/* ---------------- Customers: each one brings their own orders, My rig, Music Profile and delivery country ---------------- */
+function applyCustomer(key,quiet){
+  if(!CUSTOMERS[key])key="alex";
+  S.customer=key;store.set("customer",key);S.country=CUSTOMERS[key].country;setOrders(key);
+  S.rig=clone(RIG_SETS[key]||[]);S.music=clone(MUSIC_SETS[key]||MUSIC_SETS.new);autoLinkGear();saveMusic();store.set("rig",S.rig);
+  S.basket=[];store.set("basket",[]);bcount();S.picks=[];S.offered={};S.pickSel=[];S.pickCmp=null;savePicks();
+  store.set("checkinDone",[]);try{sessionStorage.removeItem("ga3_wbhide")}catch(e){}S.wbHide=false;S.wbThanks=null;S.editing=null;S.rigOpen=null;
+  resetChat();
+  if(!quiet){render();toast("Customer: "+CUSTOMERS[key].label)}
+}
 /* ---------------- Welcome back (returning customers): check-in, one suggestion, rig health ---------------- */
 const isReturning=()=>S.customer!=="new"&&(ORDERS.length>0||S.rig.length>0);
 const wbHidden=()=>{try{return sessionStorage.getItem("ga3_wbhide")==="1"}catch(e){return !!S.wbHide}};
@@ -1194,7 +1179,7 @@ document.addEventListener("click",e=>{
   const ck=e.target.closest("[data-checkin]");if(ck){const [a,id]=ck.dataset.checkin.split("|");checkinAnswer(a,id);return}
   if(e.target.closest("[data-wb-rig]")){go({name:"rig"});window.scrollTo(0,0);return}
   if(e.target.closest("[data-wb-hide]")){try{sessionStorage.setItem("ga3_wbhide","1")}catch(err){S.wbHide=true}render();return}
-  if(e.target.closest("[data-welcome-demo]")){S.customer="returning";store.set("customer","returning");try{sessionStorage.removeItem("ga3_wbhide")}catch(err){}S.wbHide=false;S.wbThanks=null;go({name:"home"});window.scrollTo(0,0)}
+  if(e.target.closest("[data-welcome-demo]")){if(S.customer==="new")applyCustomer("alex",true);try{sessionStorage.removeItem("ga3_wbhide")}catch(err){}S.wbHide=false;S.wbThanks=null;go({name:"home"});window.scrollTo(0,0)}
 },true);
 /* ---------------- Decision confidence, Ready-to-Play, loyalty (UI) ---------------- */
 function rtpHtml(r,interactive){
@@ -1206,7 +1191,7 @@ function rtpHtml(r,interactive){
    ${tier.skipped.map(s=>`<div class="muted" style="font-size:12.5px">${esc(s.role)}: ${esc(s.why)}</div>`).join("")}
    ${tier.dropped.length?`<div class="firednote">Left out to stay within your €${r.budget} budget: ${tier.dropped.map(d=>esc(d.name)).join(", ")}. <button class="linkish" data-rtp-allow style="text-decoration:underline">Show them anyway</button></div>`:""}
    <div class="tiertot">Total with ${esc(r.anchor.name)}: ${eur(tier.total)}${r.budget?` · ${tier.overBudget?`<span style="color:var(--bad)">over €${r.budget}</span>`:`within €${r.budget}`}`:""}</div>
-   ${interactive?`<div class="prow"><button class="btn primary" data-rtp-add="${r.anchor.id}">Add ${esc(r.anchor.name)} + ticked items</button><button class="btn" data-rtp-proj="${r.anchor.id}">Save as project</button></div>`:""}</div>`;
+   ${interactive?`<div class="prow"><button class="btn primary" data-rtp-add="${r.anchor.id}">Add ${esc(r.anchor.name)} + ticked items</button></div>`:""}</div>`;
 }
 function rtpBoxHtml(p){
   if(S.variant==="A")return "";
@@ -1225,23 +1210,11 @@ function readinessView(){
   <div class="prow" style="margin-top:14px"><button class="cta" disabled style="opacity:.4;cursor:not-allowed;width:auto;padding:10px 22px">Checkout is off in this prototype</button><button class="btn" data-review>Review my setup</button>${askBtn("Look at my basket summary. Is anything missing or not compatible?")}<button class="btn${r.offerSpecialist?" primary":""}" data-live-agent="">Find a live agent</button></div>
   ${r.offerSpecialist?`<p class="muted">A live agent is recommended because ${r.highPrice?"an item costs over €1,000":r.problems.length?"there are open compatibility points":"some items have unverified compatibility"}. You don't need one to go ahead.</p>`:""}`:`<p>Your basket is empty.</p>`}</div>`;
 }
-function projectsView(){
-  const l=getProjects();
-  return `<div class="wrap catpage"><div class="crumbs"><span>⌂</span><span>My account</span><span class="last">Projects</span></div>
-  <h1 class="page">My projects <span class="cnt">${l.length}</span></h1>
-  <p class="muted" style="margin-top:0">Setups you're planning, like “Home Studio” or “Live Guitar Rig”. Stored on this device; pick up where you left off any time.</p>
-  <div class="prow"><input id="projName" placeholder="New project name, e.g. Podcast Equipment" style="border:1px solid var(--ink);border-radius:6px;padding:6px 8px;min-width:220px"><button class="btn primary" data-proj-new>Create from my basket</button></div>
-  ${l.map(p=>{const tot=p.items.reduce((a,[id,q])=>a+(BY[id]?.p||0)*q,0);return `<section class="box" style="margin-top:12px"><div class="alerthead"><h4>${esc(p.name)}</h4><span class="muted">updated ${esc(p.updated)}</span></div>
-   ${p.items.map(([id,q],k)=>`<div class="mini"><div class="info"><div>${q}× <button class="linkish" data-detail="${id}">${esc(BY[id]?.n||id)}</button></div><div class="sub">${BY[id]?.tv?"verified "+esc(BY[id].tv.verified):"demo price"}</div></div><span class="price">${eur((BY[id]?.p||0)*q)}</span><button class="btn small" data-proj-rmitem="${p.id}|${k}">Remove</button></div>`).join("")||`<div class="muted">No items yet.</div>`}
-   <div class="total"><span>Total</span><span>${eur(tot)}</span></div>
-   <div class="prow"><button class="btn primary" data-proj-cart="${p.id}">Add all to basket</button><button class="btn" data-ask="${esc(`Look at my project “${p.name}”: ${p.items.map(([id,q])=>q+"× "+(BY[id]?.n||id)).join(", ")}. Is it complete and compatible?`)}">Ask the advisor</button><button class="btn" data-proj-del="${p.id}">Delete project</button></div></section>`}).join("")}</div>`;
-}
 function roadmapHtml(){
   const rm=upgradeRoadmap();if(S.variant==="A"||!rm.length)return "";
   return `<h2 class="mph">Your upgrade roadmap <span class="muted">from your Music Profile and gear</span></h2><div class="mpgrid">${rm.map(r=>`<div class="inscard"><h3>${esc(r.ins)}</h3><div class="muted">${esc(r.level||"level not set")}${r.budget?` · budget €${r.budget}`:""}</div>
-   ${r.steps.map(s=>`<div class="tierit"><div><span class="tag ${s.when==="Now"?"warnt":s.when==="Next"?"edge":""}">${s.when}</span> <button class="linkish" data-detail="${s.id}">${esc(s.name)}</button><div class="muted">${esc(s.why)}</div></div><div class="tp">${eur(s.price)}</div></div>`).join("")||`<div class="muted">Nothing needed right now. Add a goal or budget to plan upgrades.</div>`}</div>`).join("")}</div>`;
+   ${r.steps.map(s=>`<div class="tierit"><div><span class="tag ${s.when==="Now"?"warnt":s.when==="Next"?"edge":""}">${s.when}</span> ${s.id?`<button class="linkish" data-detail="${s.id}">${esc(s.name)}</button>`:`<b>${esc(s.name)}</b>`}<div class="muted">${esc(s.why)}</div></div><div class="tp">${s.price!=null?eur(s.price):"service"}</div></div>`).join("")||`<div class="muted">Nothing needed right now. Add a goal or budget to plan upgrades.</div>`}</div>`).join("")}</div>`;
 }
-function saveProjectBtn(res,tier){return `<button class="btn small" data-proj-setup='${esc(JSON.stringify({name:res.label+" ("+tier.label+")",items:tier.items.filter(i=>!i.optional).map(i=>[i.id,i.qty])}))}'>Save as project</button>`}
 function dashboardView(){
   const demo=!!S.view.demo,m=computeMetrics(demo?demoEvents():undefined),ab=summariseAB(demo?demoAB():getAB());
   const f=v=>v===null||v===undefined?"–":v;
@@ -1304,13 +1277,14 @@ function sumTarget(v){
     const words=core.split(" ").filter(w=>w.length>1);
     const hits=words.length?P.filter(p=>{const n=(p.n+" "+p.b).toLowerCase();return words.every(w=>n.includes(w))}):[];
     if(hits.length===1)return {kind:"product",id:hits[0].id,label:hits[0].n};
+    if(S.promptMode!=="prev"&&baseList(v).length>=2)return {kind:"query",id:v.q.trim(),label:"“"+v.q.trim()+"”"};/* New mode: musical searches ("dreamy indie rock pedal") get a summary too */
     return null;
   }
   if(v.cats.length===1&&!v.sit)return {kind:"category",id:v.cats[0],label:CATS[v.cats[0]]};
   if(v.top&&!v.sit&&!v.sub)return {kind:"top",id:v.top,label:TOPS[v.top].en};
   return null;
 }
-const sumSig=()=>{const s=JSON.stringify([S.music,S.rig.map(r=>r.id||r.name)]);let x=0;for(const c of s)x=(x*31+c.charCodeAt(0))|0;return (x>>>0).toString(36)};
+const sumSig=()=>{const s=JSON.stringify([S.music,S.rig.map(r=>r.id||r.name),S.promptMode==="prev"?"prev":"new"]);let x=0;for(const c of s)x=(x*31+c.charCodeAt(0))|0;return (x>>>0).toString(36)};
 const sumKey=t=>t.kind+":"+t.id+":"+sumSig();
 const sumCache=store.get("sums",{}),sumInflight=new Set();
 function cacheSum(k,txt){sumCache[k]=txt;const ks=Object.keys(sumCache);if(ks.length>40)delete sumCache[ks[0]];store.set("sums",sumCache)}
@@ -1332,10 +1306,35 @@ function localProductSummary(p){
   const fc=rigItems().length?fitCheck([p.id]):[],bad=fc.find(x=>x.status==="bad")||fc.find(x=>x.status==="warn");
   return `- **Who it's for:** ${who[0].toUpperCase()+who.slice(1)}.\n- **Strength:** ${p.r?`★ ${p.r} from ${p.rv.toLocaleString("en")} reviews`:"no ratings in this prototype"}${spec?`; ${spec[0].toLowerCase()}: ${spec[1]}`:""}.\n- **Good to know:** ${p.bs?`B-Stock from €${p.bs}; `:""}${stockText(p).toLowerCase()}.\n- **With your gear:** ${bad?bad.note:fc.length?"fits what you own.":"add your gear in My rig to check."}`;
 }
+/* New mode: music-first summaries that offer 2-3 directions instead of a winner */
+function sumFit(p){
+  if(!rigItems().length)return "no gear listed";
+  const own=ownedNote(p);if(own)return own;
+  const fc=fitCheck([p.id]),bad=fc.find(x=>x.status==="bad")||fc.find(x=>x.status==="warn");if(bad)return bad.note;
+  const miss=missingFor(p);if(miss.length)return "needs "+miss.map(m=>m.what).join(", ");
+  return "works with your rig ✓";
+}
+function queryCands(q,n){
+  const ws=q.toLowerCase().split(/\s+/).filter(w=>w.length>2),qc=Object.keys(CAT_SYN).filter(c=>ws.some(w=>CAT_SYN[c].includes(" "+w)));
+  return [...resultsList()].sort((a,b)=>(qc.includes(b.c)?1:0)-(qc.includes(a.c)?1:0)).slice(0,n);
+}
+function sumFactsNew(t,prof,rig,line){
+  const withFit=p=>line(p)+" | fit: "+sumFit(p);
+  if(t.kind==="product"){const p=BY[t.id];
+    return `PRODUCT SUMMARY for "${p.n}". Shape: exactly four '- ' bullets with these bold labels: **Sound:** (its character in musician's words, e.g. warm, bright, glassy, crunchy, from its tags and specs), **Who it's for:**, **With your gear:** (use the fit note below; say plainly if something extra is needed or if they already own something similar), **Good to know:** (stock, B-Stock or one caveat). No hype, no "best".\nCustomer — ${prof}. Owns: ${rig}.\nProduct: ${withFit(p)}`}
+  const l=t.kind==="query"?queryCands(t.id,25):t.kind==="top"?P.filter(p=>p.top===t.id).slice(0,40):P.filter(p=>p.c===t.id);
+  const what=t.kind==="query"?`the search “${t.id}”`:t.kind==="top"?`"${TOPS[t.id].en}" (Thomann top-level category)`:`"${CATS[t.id]}"`;
+  return `SEARCH SUMMARY for ${what}. Shape: first line **Looking for:** what this customer is most likely after, in a few musical words (from the search and their Music Profile). Then 2-3 '- ' bullets, one per product: **product name** – its sound or character in musician's words (warm, bright, crunchy, glassy, shimmer, punchy; at most one spec, only if it explains the sound) – its fit note as given below. Choose products that reach the goal in different ways and never name a winner or say "best". Last line: invite them to listen to the sound samples on Thomann's product pages before choosing. Talk about music, not specs.\nCustomer — ${prof}. Owns: ${rig}.\nProducts (fit = compatibility with their gear, from Thomann's product data):\n${l.map(withFit).join("\n")}`;
+}
+function localQuerySummary(q){
+  const l=queryCands(q,3);
+  return `**Looking for:** ${q}\n${l.map(p=>`- **${p.n}** – ${p.tags.slice(0,3).join(", ")} – ${sumFit(p)}`).join("\n")}\nListen to the sound samples on the product pages before you choose.`;
+}
 function sumFacts(t){
   const prof=musicText().replace(/\n/g," ");
   const rig=rigItems().map(r=>r.name).join(", ")||"nothing listed";
   const line=p=>`${p.n} | €${p.p}${p.bs?` (B-Stock €${p.bs})`:""} | ${p.r?`★${p.r} (${p.rv} reviews, demo)`:"no ratings"} | ${stockText(p)} | ${p.tv?"verified on thomann.de "+p.tv.verified:"demo data"} | ${p.tags.join(", ")} | specs: ${Object.entries(p.specs).map(([k,v])=>k+" "+v).join(", ")}`;
+  if(S.promptMode!=="prev")return sumFactsNew(t,prof,rig,line);
   if(t.kind==="top"){const l=P.filter(p=>p.top===t.id).slice(0,40);
     return `CATEGORY SUMMARY for "${TOPS[t.id].en}" (Thomann top-level category). Shape: one sentence on what this category covers and the price range; then two '- ' bullets of buying advice for this customer; then one line starting **For you:** naming 1-2 products from the list that suit them, with a reason. Mention when facts are demo data.\nCustomer — ${prof}.\nProducts:\n${l.map(line).join("\n")}`}
   if(t.kind==="category"){const l=P.filter(p=>p.c===t.id);
@@ -1357,7 +1356,7 @@ function sumBoxHtml(t,txt,state){
 function sumSection(t){
   if(S.sumHidden)return `<button class="sumshow" data-sumshow><span class="aiav sm" style="width:20px;height:20px">${AISVG}</span>Show AI summary</button>`;
   const k=sumKey(t),c=sumCache[k];
-  const local=t.kind==="category"?localCatSummary(t.id):t.kind==="top"?localTopSummary(t.id):localProductSummary(BY[t.id]);
+  const local=t.kind==="query"?localQuerySummary(t.id):t.kind==="category"?localCatSummary(t.id):t.kind==="top"?localTopSummary(t.id):localProductSummary(BY[t.id]);
   S.sumNow={t,k,txt:c||local};
   return `<section class="aisum" id="aisum" aria-live="polite">${sumBoxHtml(t,c||local,c?"ai":(sample&&sampleState==="ready"?"loading":"local"))}</section>`;
 }
@@ -1635,7 +1634,7 @@ function rigSuggestions(){
   if(has("pedal")&&!has("psu"))want.push(["power","Powers your pedals"]);
   if(has("interface")&&!has("mic"))want.push(["mics","Uses your interface's mic input"]);
   if(has("interface")&&!has("monitors"))want.push(["monitors","Speakers for your interface"]);
-  if(has("electric guitar"))want.push(["pedals","Adds a new sound to your board"]);
+  if(has("electric guitar")&&has("pedal")&&levelFor("guitar")!=="beginner")want.push(["pedals","Adds a new sound to your board"]);
   want.push(["accessories","Spares for your rig"]);
   for(const [cat,why] of want){
     const best=P.filter(p=>p.c===cat&&!owned.has(p.id)).map(p=>({p,f:fitCheck([p.id]).filter(x=>x.type==="fit"||x.type==="computer")})).filter(o=>!o.f.some(x=>x.status==="bad")).sort((a,b)=>(a.f.some(x=>x.status==="warn")-b.f.some(x=>x.status==="warn"))||b.p.r-a.p.r||b.p.rv-a.p.rv)[0];
@@ -1867,7 +1866,7 @@ function gearRowHtml(r,i){
 function rigFromOrders(){const owned=new Set(S.rig.map(r=>r.id));return ORDERS.flatMap(o=>o.items.map(([id])=>({id,o}))).filter(x=>!owned.has(x.id)&&BY[x.id].c!=="accessories")}
 function rigOverview(){
   const health=rigHealth(),chains=rigChains(),sug=rigSuggestions();
-  const rm=S.variant==="A"?[]:upgradeRoadmap(),steps=rm.flatMap(r=>r.steps);
+  const rm=S.variant==="A"?[]:upgradeRoadmap(),steps=rm.flatMap(r=>r.steps).filter(s=>s.id);
   const topicOf=id=>{const p=BY[id];if(!p)return null;const k=p.cp?.kind;return k==="psu"||k==="battery"?"power":k==="amp"?"amp":k==="mic"?"mic":k==="interface"?"interface":null};
   const iss=new Map();
   const add=(key,o)=>{const c=iss.get(key);if(!c){iss.set(key,Object.assign({key,s:"warn"},o));return}
@@ -2036,7 +2035,7 @@ function openAddGear(){
     setTimeout(()=>$("#rigSearch")?.focus(),30);
   });
 }
-function resetDemoRig(){S.rig=JSON.parse(JSON.stringify(DEFAULT_RIG));S.music=clone(DEFAULT_MUSIC);autoLinkGear();saveMusic();S.editing=null;S.rigOpen=null;store.set("rig",S.rig);render();toast("Demo rig and Music Profile restored")}
+function resetDemoRig(){S.rig=clone(RIG_SETS[S.customer]||DEFAULT_RIG);S.music=clone(MUSIC_SETS[S.customer]||DEFAULT_MUSIC);autoLinkGear();saveMusic();S.editing=null;S.rigOpen=null;store.set("rig",S.rig);render();toast("Demo rig and Music Profile restored")}
 function bindRig(){
   kickTake();
   const after=()=>{store.set("rig",S.rig);render()};
@@ -2101,7 +2100,7 @@ function pickGroups(){
 const starBtn=pk=>`<button class="pstar${pk.star?" on":""}" data-pick-star="${pk.id}" aria-pressed="${pk.star}" aria-label="${pk.star?"Unstar":"Star"} ${esc(BY[pk.id].n)}">${pk.star?"★":"☆"}</button>`;
 function pickFitHtml(id){
   const c=fitCheck([id]),worst=c.some(x=>x.status==="bad")?"bad":c.some(x=>x.status==="warn")?"warn":"ok";
-  return `<div class="pfit"><b>Fit with My rig:</b> <span class="badge ${worst}">${{ok:"FITS",warn:"FITS WITH NOTES",bad:"PROBLEM"}[worst]}</span>${c.map(x=>`<div class="check"><span class="badge ${x.status}">${x.status.toUpperCase()}</span><span>${esc(x.note)}</span></div>`).join("")}</div>`;
+  return `<div class="pfit"><b>Fit with My rig:</b> <span class="badge ${worst}">${{ok:"FITS",warn:"FITS WITH NOTES",bad:"PROBLEM"}[worst]}</span>${fitBlockHtml(c)}</div>`;
 }
 function pickRowPanel(pk){const p=BY[pk.id];
   return `<div class="pickrow">${starBtn(pk)}<div class="info"><div class="pn">${esc(p.n)}</div><div class="sub">${esc(pk.why||PICK_SRC[pk.src]||"")}</div></div><span class="price">${eur(p.p)}</span>
@@ -2242,14 +2241,14 @@ function openRig(){
    <div class="prow"><button class="btn" data-ask="What should I upgrade first in my rig?">What should I upgrade first?</button><button class="btn" data-ask="My strings feel dead. What should I do?">My strings feel dead</button><button class="btn" id="rigReset">Reset demo rig</button></div>`,(b)=>{
     b.querySelectorAll("[data-rm]").forEach(x=>x.onclick=()=>{S.rig.splice(+x.dataset.rm,1);store.set("rig",S.rig);openRig();if(S.view.name==="product")render()});
     $("#rigAdd").onchange=e=>{if(e.target.value){addRig(e.target.value);openRig()}};
-    $("#rigReset").onclick=()=>{S.rig=JSON.parse(JSON.stringify(DEFAULT_RIG));store.set("rig",S.rig);openRig();if(S.view.name==="product")render()};
+    $("#rigReset").onclick=()=>{S.rig=clone(RIG_SETS[S.customer]||DEFAULT_RIG);store.set("rig",S.rig);openRig();if(S.view.name==="product")render()};
   },null,true);
 }
 function openOrders(){drawer("Orders",`<p class="muted" style="margin:0">Demo order history. <span class="tag sim">simulated</span></p>${ORDERS.map(orderHtml).join("")}<div class="prow"><button class="btn" data-ask="Where is my latest order?">Where is my latest order?</button><button class="btn" data-ask="I want to return my Scarlett Solo.">Return my Scarlett Solo</button></div>`,null,null,true)}
 function openBasket(){
   const tot=S.basket.reduce((a,x)=>a+BY[x.id].p*x.qty,0);
   drawer("Basket",S.basket.length?`<div class="card">${S.basket.map((x,i)=>`<div class="mini"><div class="info"><div>${x.qty}× ${esc(BY[x.id].n)}</div><div class="sub">${eur(BY[x.id].p)} each${BY[x.id].bstockOf||BY[x.id].bstockLabel?" · B-Stock":""} ${dropBadge(x.id)}</div></div>${bellBtn(x.id)}<button class="btn" data-bi="${i}">Remove</button></div>`).join("")}<div class="total"><span>Total</span><span>${eur(tot)}</span></div></div>
-   <button class="cta purple" data-go="ready" data-close style="margin-bottom:8px">Ready to buy? See summary</button><button class="cta" data-review data-close style="margin-bottom:8px;background:var(--bg);color:var(--ink);border:1.5px solid var(--ink)">Review my setup</button><button class="btn" data-go="projects" data-close style="margin-bottom:8px">Save as a project</button><button class="btn" data-go="setup" data-close style="margin-bottom:8px">Build a setup</button><button class="cta" disabled style="opacity:.4;cursor:not-allowed">Checkout is off in this prototype</button><p class="muted">The advisor never adds items or buys for you. You decide what goes in the basket.</p>`:`<p class="muted">Your basket is empty.</p>`,(b)=>{
+   <button class="cta purple" data-go="ready" data-close style="margin-bottom:8px">Ready to buy? See summary</button><button class="cta" data-review data-close style="margin-bottom:8px;background:var(--bg);color:var(--ink);border:1.5px solid var(--ink)">Review my setup</button><button class="btn" data-go="setup" data-close style="margin-bottom:8px">Build a setup</button><button class="cta" disabled style="opacity:.4;cursor:not-allowed">Checkout is off in this prototype</button><p class="muted">The advisor never adds items or buys for you. You decide what goes in the basket.</p>`:`<p class="muted">Your basket is empty.</p>`,(b)=>{
     b.querySelectorAll("[data-bi]").forEach(x=>x.onclick=()=>{S.basket.splice(+x.dataset.bi,1);store.set("basket",S.basket);bcount();openBasket()});
   },null,true);
 }
@@ -2277,12 +2276,12 @@ const FEATURES=[
  {stage:"Discover",kind:"edge",n:"AI summary in search",d:"Search a category (“guitar”, “audio interface”) or one product (“SM58”), or click a category: a short AI summary appears above the results, personalised with About you and My rig. An instant summary from the catalogue shows first; the AI version (Haiku) replaces it and is remembered.",action:"summary"},
  {stage:"Discover",kind:"basic",n:"Full catalogue: 17 categories",d:"Shop → All categories: Thomann's 17 departments with subcategories, 102 products verified on thomann.de (6+ per category) next to the demo products. Filters: category, subcategory, instrument, brand, data source, price, stock; sorting; paging. Verified products link to their Thomann page.",action:"categories"},
  {stage:"Decide",kind:"basic",n:"Catalogue-grounded advice",d:"The advisor only recommends products from the catalogue, filters hard constraints (budget, connectors, inputs), and gives price plus verification date for verified items.",try:"I need an audio interface with 2 mic inputs and USB-C under €250. Only verified products."},
- {stage:"Buy",kind:"edge",n:"Smart Savings & Deals",d:"Shop → Deals & B-Stock: verified Hot Deals, bargains, B-Stock (labelled, with condition) and an official bundle compared with its verified parts. Savings always name their basis (30-day best price, UVP or parts sum).",try:"Should I buy the Scarlett Solo 3rd Gen and the NT1-A set separately or as a bundle?"},
+ {stage:"Buy",kind:"edge",n:"Smart Savings & Deals",d:"On product pages (Deals & savings) and in the advisor: verified Hot Deals, bargains, B-Stock (labelled, with condition) and an official bundle compared with its verified parts. Savings always name their basis (30-day best price, UVP or parts sum).",try:"Should I buy the Scarlett Solo 3rd Gen and the NT1-A set separately or as a bundle?"},
  {stage:"Buy",kind:"edge",n:"Price tracking (bell)",d:"🔕/🔔 on basket and Saved items. If a later verified price is lower, the item shows “↓ now €X (was €Y)”. Simulate a change below (demo mode). No emails or automatic monitoring.",try:"Can you tell me if the Roland FP-10 gets cheaper?"},
- {stage:"Buy",kind:"edge",n:"Deals snapshot (6 Nov)",d:"52 deals seen on thomann.de on 6 Nov across all 17 categories, on the home page and Deals page with filters. Shown as dated prices with the named reference; 2 conflicting records are flagged and never recommended.",try:"Are there any deals on drums or keys?"},
+ {stage:"Buy",kind:"edge",n:"Deals snapshot (6 Nov)",d:"52 deals seen on thomann.de on 6 Nov across all 17 categories, used on product pages and by the advisor. Shown as dated prices with the named reference; 2 conflicting records are flagged and never recommended.",try:"Are there any deals on drums or keys?"},
  {stage:"Buy",kind:"edge",n:"Review my setup",d:"Basket → Review my setup: duplicates, missing essentials, verified bundle swaps and B-Stock, original vs revised total; you accept or reject each change.",try:"Can you review my basket?"},
  {stage:"Decide",kind:"edge",n:"Decision confidence",d:"The advisor names what's holding you back (compatibility, choice, price, sound) and answers that; use-case comparisons mark the specs that matter; Basket → Ready to buy? summarises items, compatibility, open points and total, offering a specialist only when it helps.",try:"I can't decide between the Scarlett 2i2 and the Audient iD24 for recording vocals and guitar at home."},
- {stage:"Own",kind:"moat",n:"Roadmap, projects, consultation",d:"My rig shows an upgrade roadmap per instrument; Projects store planned setups; a consent-based summary prepares a (simulated) specialist consultation.",try:"What should I upgrade next for each instrument I play?"},
+ {stage:"Own",kind:"moat",n:"Roadmap, consultation",d:"My rig shows an upgrade roadmap per instrument; a consent-based summary prepares a (simulated) specialist consultation.",try:"What should I upgrade next for each instrument I play?"},
  {stage:"Measure",kind:"open",n:"Dashboard and A/B test",d:"Test guide: switch variant A/B, record a test session, and open the performance dashboard (anonymous events, correct denominators, no invented results; demo data clearly labelled).",action:"dashboard"},
  {stage:"Own",kind:"moat",n:"Music Profile",d:"Account menu → My Music Profile: several instruments, each with its own level, uses, genres, budget, goal and gear, plus general preferences. Optional and stored on this device. The advisor uses it, asks which instrument when unclear, avoids gear you own, and only saves changes after you confirm.",try:"I play piano at an advanced level and I just started guitar. What should I get next?"},
  {stage:"Decide",kind:"edge",n:"Review summary",d:"Ask what reviewers say (or tap “What reviewers say” on a product page): a card with stars, ratings and the praised and criticised themes, and a short summary for you from the AI. Real thomann.de review facts for 13 products (checked 9 Nov, themes in our words, no review text copied); simulated demo reviews for demo products. Up to 3 products side by side.",try:"What do people say about the Scarlett 2i2 4th Gen vs the Audient iD24?"},
@@ -2290,7 +2289,7 @@ const FEATURES=[
  {stage:"Own",kind:"moat",n:"Warranty in My rig",d:"Warranty and return days left for Thomann purchases; your own dates for gear bought elsewhere.",try:"Which of my gear is still under warranty?"},
 ];
 const CORE_FEATS=["Needs interview","Music Q&A","Sound match","Comparison","Price check","Review summary","Gear fit check","Setup Builder","Review my setup","Decision confidence","Find a live agent","Expert handoff","Setup & fix-it","My rig","Welcome back check-in","AI-ready data"];
-const FOCUS_OFF_FEATS=new Set(["Smart Savings & Deals","Price tracking (bell)","Deals snapshot (6 Nov)","Roadmap, projects, consultation"]);
+const FOCUS_OFF_FEATS=new Set(["Smart Savings & Deals","Price tracking (bell)","Deals snapshot (6 Nov)","Roadmap, consultation"]);
 function guideFeats(fn){
   if(!S.focus)return FEATURES.map(fn).join("");
   const core=CORE_FEATS.map(n=>FEATURES.find(f=>f.n===n)).filter(Boolean),rest=FEATURES.filter(f=>!CORE_FEATS.includes(f.n));
@@ -2302,9 +2301,9 @@ function openGuide(){
    <p class="muted mklegend">✦ ${esc(MK_LEGEND)}</p><p class="aistatus" style="margin:0 0 8px;font-weight:600">AI status: ${sampleState==="ready"?"ready":sampleState==="loading"?"connecting":"unavailable"} · page tools: ${S.toolsOK===false?"no":S.toolsOK?"yes":"unknown"}${S.apiMode?" · via Render server":""} · reason: ${esc(AI_REASON_TEXT[aiReason]||aiReason||"none")}</p><p class="muted" style="margin:0">For the person running the test. Entry points to try: the search box, “Need help?”, Contact us → Live chat, and the product page boxes.</p>
    <label class="switch"><input type="checkbox" id="onl"${S.online?" checked":""}> Specialists online (uncheck to test out-of-hours)</label>
    <label class="switch"><input type="checkbox" id="pres"${S.present?" checked":""}> Presentation mode: show how AI tools read each product (AI-ready data) on product pages, and the demo tags on My rig</label>
-   <label class="switch stack">Customer<select id="custType" class="search"><option value="returning"${S.customer!=="new"?" selected":""}>Returning (orders and My rig)</option><option value="new"${S.customer==="new"?" selected":""}>New</option></select></label>
-   <label class="switch stack">Advisor prompt <select id="promptSel" class="search"><option value="new"${promptNew()?" selected":""}>New: the supplied prompt only (no tools, fixed customer Alex)</option><option value="prev"${promptNew()?"":" selected"}>Previous: full advisor with tools and the live profile</option></select></label>
-   <label class="switch stack">A/B test variant${promptNew()?" (applies to the Previous prompt)":""} <select id="abVariant" class="search"><option value="B"${S.variant!=="A"?" selected":""}>B: explainable comparisons, Ready-to-Play, savings, selective handoff</option><option value="A"${S.variant==="A"?" selected":""}>A: standard recommendations</option></select></label>
+   <label class="switch stack">Customer (switching loads that customer's orders, My rig and Music Profile, and clears basket, saved items and chat)<select id="custType" class="search">${Object.entries(CUSTOMERS).map(([k,c])=>`<option value="${k}"${S.customer===k?" selected":""}>${esc(c.label)}</option>`).join("")}</select></label>
+   <label class="switch stack">Advisor prompt <select id="promptSel" class="search"><option value="new"${promptNew()?" selected":""}>New: full advisor + emotional-connection rules</option><option value="prev"${promptNew()?"":" selected"}>Previous: full advisor without them</option></select></label>
+   <label class="switch stack">A/B test variant <select id="abVariant" class="search"><option value="B"${S.variant!=="A"?" selected":""}>B: explainable comparisons, Ready-to-Play, savings, selective handoff</option><option value="A"${S.variant==="A"?" selected":""}>A: standard recommendations</option></select></label>
    <details class="abform"><summary>Record this test session (variant ${S.variant})</summary>
     <div class="abq">Task completed? ${["yes","no"].map(v=>`<label><input type="radio" name="abTask" value="${v}"> ${v}</label>`).join("")}</div>
     <div class="abq">Compatibility advice was ${["correct","partly","wrong","n/a"].map(v=>`<label><input type="radio" name="abCompat" value="${v}"> ${v}</label>`).join("")}</div>
@@ -2317,16 +2316,18 @@ function openGuide(){
    <div class="switch">Advisor speed <select id="tier" class="search"><option value="quick"${S.tier==="quick"?" selected":""}>Fast</option><option value="default"${S.tier!=="quick"?" selected":""}>Thorough (slower)</option></select></div>
    ${guideFeats(f=>`<div class="feat"><div class="h"><span class="n">${f.stage}</span>${esc(f.n)} ${lab[f.kind]}${S.focus&&FOCUS_OFF_FEATS.has(f.n)?' <span class="tag sim">hidden in Focus mode</span>':""}</div><p>${esc(f.d)}</p>
     ${f.try?`<div><button class="btn" data-ask="${esc(f.try)}">Try: “${esc(f.try)}”</button></div>`:f.action==="data"?`<div><button class="btn" data-detail="m2" data-close>Open a product page</button></div>`:f.action==="dashboard"?`<div class="prow"><button class="btn" data-go="dashboard" data-close>Open the dashboard</button></div>`:f.action==="categories"?`<div class="prow"><button class="btn" data-go="categories" data-close>Open all categories</button><button class="btn" data-go="coverage" data-close>Coverage report and import</button></div>`:f.action==="welcome"?`<div class="prow"><button class="btn" data-welcome-demo data-close>Returning customer: open the home page</button></div>`:f.action==="summary"?`<div class="prow"><button class="btn" data-cat="guitars" data-close>Try: Guitars</button><button class="btn" data-sumq="SM58" data-close>Try: “SM58”</button></div>`:`<div><button class="btn" data-platform>Open the advisor full screen</button></div>`}</div>`)}
+   <div class="prow"><button class="btn" id="showTx">Chat transcript (for test notes)</button></div>
    <div class="prow"><button class="btn" id="resetRigOnly">Reset demo rig</button><button class="btn" id="resetAll">Reset demo (profile, rig, basket, saved, chat)</button></div>`,(b)=>{
     $("#promptSel").onchange=e=>{S.promptMode=e.target.value;store.set("promptMode",S.promptMode);toast((promptNew()?"New":"Previous")+" prompt active for new messages");openGuide()};
     $("#focusSw").onchange=e=>{S.focus=e.target.checked;store.set("focus",S.focus);render();openGuide()};
     $("#onl").onchange=e=>{S.online=e.target.checked;store.set("online",S.online);updateOnline();if(S.view.name==="contact")render()};
     $("#tier").onchange=e=>{S.tier=e.target.value;store.set("tier",S.tier)};
-    $("#custType").onchange=e=>{S.customer=e.target.value;store.set("customer",S.customer);if(S.view.name==="home")render()};
+    $("#custType").onchange=e=>{applyCustomer(e.target.value);openGuide()};
     $("#abVariant").onchange=e=>{S.variant=e.target.value;store.set("variant",S.variant);toast("Variant "+S.variant+" active for new messages");render();openGuide()};
     $("#pres").onchange=e=>{S.present=e.target.checked;store.set("present",S.present);if(["product","rig"].includes(S.view.name))render()};
     $("#resetRigOnly").onclick=()=>{resetDemoRig();closeDrawer()};
-    $("#resetAll").onclick=()=>{S.customer="returning";store.set("customer","returning");store.set("checkinDone",[]);try{sessionStorage.removeItem("ga3_wbhide")}catch(e){}S.rig=JSON.parse(JSON.stringify(DEFAULT_RIG));S.music=clone(DEFAULT_MUSIC);autoLinkGear();saveMusic();S.basket=[];S.picks=[];S.offered={};S.pickSel=[];S.pickCmp=null;savePicks();store.set("rig",S.rig);store.set("basket",[]);bcount();resetChat();closeDrawer();render();toast("Demo reset")};
+    $("#showTx").onclick=()=>openTranscript();
+    $("#resetAll").onclick=()=>{applyCustomer(S.customer,true);closeDrawer();render();toast("Demo reset: "+CUSTOMERS[S.customer].label)};
   },null,true);
 }
 
@@ -2416,7 +2417,7 @@ TOOLS.push(
    else{const q=String(i.query||"").toLowerCase().split(/\s+/).filter(w=>w.length>2),insts=S.music.instruments.flatMap(x=>INST_TOPS[x.kind]||[]);
      list=OFFERS.filter(o=>!o.conflict).map(o=>({...o,productId:offerProductId(o),saving:o.type==="bstock"&&!o.ref?null:savingVs(o.price,o.ref)})).filter(o=>BY[o.productId]).filter(o=>{const p=BY[o.productId],hay=(p.n+" "+p.tags.join(" ")+" "+(p.sub||"")).toLowerCase();
        return (!q.length||q.some(w=>hay.includes(w)))&&(!i.relevant_to_profile||insts.includes(p.top))&&(!i.max_price||o.price<=+i.max_price)})}
-   const out=list.map(o=>({type:offerTypeLabel[o.type]||PACK_TYPE_LABEL[o.type],seen:o.snapshot?"price seen on "+o.checked+", may have changed":undefined,product:BY[o.productId]?.n,id:o.productId,price:o.price,saving:o.type==="bundle"?bundleLabel(o):o.saving?o.saving.text:"no verified saving",condition:o.condition||null,warranty:o.warranty||null,checked:o.checked}));
+   const out=list.map(o=>({type:o.label||offerTypeLabel[o.type]||PACK_TYPE_LABEL[o.type],until:o.until,note:o.note,seen:o.snapshot?"price seen on "+o.checked+", may have changed":undefined,product:BY[o.productId]?.n,id:o.productId,price:o.price,saving:o.type==="bundle"?bundleLabel(o):o.saving?o.saving.text:"no verified saving",condition:o.condition||null,warranty:o.warranty||null,checked:o.checked}));
    if(out.length)push(card("Verified deals",'<span class="tag edge">smart savings</span>',out.map(o=>`<div class="mini"><div class="info"><div>${esc(o.product)} <span class="tag ${o.type==="B-Stock"?"warnt":"edge"}">${esc(o.type)}${o.type==="B-Stock"?", not new":""}</span></div><div class="sub">${esc(o.saving)}${o.condition?" · "+esc(o.condition):""} · checked ${esc(o.checked)}</div></div><span class="price" style="font-size:14px">${eur(o.price)}</span><button class="btn small" data-detail="${o.id}">View</button></div>`).join("")));
    return out.length?out:{offers:[],note:"No verified offer matches. Say so; don't suggest unrelated discounted products."}}},
  {name:"price_alert",description:"Offer to track a product's price (a later verified price lower than now). Shows a confirmation card; if confirmed, the product is tracked with the bell in Saved or the basket. No email or push, no automatic monitoring.",
@@ -2433,7 +2434,7 @@ TOOLS.push(
   execute(){const r=reviewCart();push(card("Basket review",'<span class="tag edge">review my setup</span>',`<div>${r.proposals.length} suggested change${r.proposals.length===1?"":"s"}, ${r.info.length} note${r.info.length===1?"":"s"} · basket ${eur(r.total)}</div>${r.proposals.slice(0,3).map(p=>`<div class="muted">• ${esc(p.title)} (${p.delta>0?"+":""}${eur(p.delta).replace("€-","-€")})</div>`).join("")}<div class="prow"><button class="btn small primary" data-review>Open the review</button></div>`));
    return {basketTotal:r.total,proposals:r.proposals.map(p=>({title:p.title,reason:p.reason,delta:p.delta})),notes:r.info.map(x=>x.text)}}});
 /* review summary: facts in the card (Advisor check), the summary in the AI's answer */
-const fmtDay=d=>new Date(d+"T12:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
+/* fmtDay comes from data.js */
 function reviewColHtml({p,r}){
   if(!r)return `<div class="rvcol"><b>${esc(p.n)}</b><div class="muted">No reviews in this prototype.</div></div>`;
   const tot=r.dist?r.dist.reduce((a,b)=>a+b,0):0,li=l=>`<ul>${l.map(([t,f])=>`<li>${esc(t)} <span class="muted">· ${esc(f)}</span></li>`).join("")}</ul>`;
@@ -2463,7 +2464,7 @@ TOOLS.push(
    return {items:r.items.map(x=>x.qty+"× "+x.name+" €"+x.line),total:r.total,compatibilityOk:r.verified,openPoints:[...r.problems,...r.unresolved],specialistWorthOffering:r.offerSpecialist}}},
  {name:"upgrade_roadmap",description:"Personal upgrade roadmap per instrument from the Music Profile and My rig: Now (missing essentials), Next (sensible upgrade within budget), Later (above budget). Use for 'what should I get next' or long-term planning.",
   inputSchema:{type:"object",properties:{}},
-  execute(){const rm=upgradeRoadmap();return rm.length?rm.map(r=>({instrument:r.ins,level:r.level,budget:r.budget,steps:r.steps.map(s=>s.when+": "+s.name+" €"+s.price+" – "+s.why)})):{note:"No instruments in the Music Profile. Ask what they play, or suggest filling in the profile."}}});
+  execute(){const rm=upgradeRoadmap();return rm.length?rm.map(r=>({instrument:r.ins,level:r.level,budget:r.budget,steps:r.steps.map(s=>s.when+": "+s.name+(s.price!=null?" €"+s.price+(s.id?" ("+s.id+")":""):" (service, not a product)")+" – "+s.why)})):{note:"No instruments in the Music Profile. Ask what they play, or suggest filling in the profile."}}});
 /* ---------------- Setup Builder: one tool replaces build_rig, setup_options and ready_to_play ---------------- */
 (function(){
   const take=n=>{const i=TOOLS.findIndex(t=>t.name===n);if(i<0)throw new Error("missing tool "+n);return TOOLS.splice(i,1)[0]};
@@ -2599,11 +2600,11 @@ function pickExpert(){
 function localSummary(){
   const ask=S.turns.filter(t=>t.role==="user").map(t=>t.content).at(0)||"not said yet",a=activeIns()||S.music.instruments[0];
   const cons=[...new Set([...S.basket.map(b=>b.id),...S.picks.map(x=>x.id)])].map(id=>BY[id]?.n).filter(Boolean).slice(0,3);
-  return `Wants: ${ask.slice(0,90)}${S.agent?"\nWhy: "+AGENT_WHY[S.agent]:""}\nBudget: ${a?.budget?"€"+a.budget:"not given"}\nLevel: ${a&&a.level?MP_LEVELS[a.level]+" ("+insName(a).toLowerCase()+")":"not given"}\nConsidering: ${cons.join(", ")||"nothing yet"}`;
+  return `Wants: ${ask.slice(0,90)}${S.agent?"\nWhy: "+AGENT_WHY[S.agent]:""}\nBudget: ${a?.budget?"€"+a.budget:"not given"}\nLevel: ${a&&a.level?MP_LEVELS[a.level]+" ("+insName(a).toLowerCase()+")":"not given"}\nConsidering: ${cons.join(", ")||"nothing yet"}\nTried: see chat\nUrgency: ${/\b(tonight|gig|show|rehearsal|urgent|asap|today)\b/i.test(S.turns.filter(t=>t.role==="user").map(t=>t.content).join(" "))?"mentioned in chat":"none mentioned"}`;
 }
 async function summarise(){
   if(!sample||!S.turns.length)return localSummary();
-  try{const r=await sample(`Summarise this shop chat for a product specialist as exactly 4 short lines, no sentences:\nWants: …\nBudget: …\nLevel: …\nConsidering: … (product names)\nNo preamble, nothing else.\n\n`+S.turns.map(t=>t.role+": "+t.content.replace(/\n\[cards shown.*$/s,"")).join("\n").slice(-6000),{modelTier:"quick",cache:false});return r.text.trim()}catch(e){return localSummary()}
+  try{const r=await sample(`Summarise this shop chat for a product specialist as exactly 6 short lines, no sentences:\nWants: …\nBudget: …\nLevel: …\nConsidering: … (product names)\nTried: … (fixes or steps already tried, or "nothing yet")\nUrgency: … (e.g. "gig tonight", "frustrated", or "none")\nNo preamble, nothing else.\n\n`+S.turns.map(t=>t.role+": "+t.content.replace(/\n\[cards shown.*$/s,"")).join("\n").slice(-6000),{modelTier:"quick",cache:false});return r.text.trim()}catch(e){return localSummary()}
 }
 async function handover(dept,summary){
   if(S.busy&&S.ctl)S.ctl.abort();
@@ -2647,12 +2648,20 @@ HOW TO WORK
 - SAVINGS AND DEALS: when the customer is price-sensitive (cheaper, discount, deal, budget, bundle or separately, tell me when it's cheaper), use verified savings only: call deals for offers on the products or needs in question, and never recommend an unrelated product just because it's discounted. Always name the comparison basis exactly (30-day best price, manufacturer's list price UVP, or the verified sum of a bundle's parts); say "Save €X" only when a tool gives a verified saving, otherwise call it a Recommended Setup with the sum of prices. B-Stock is never new: say B-Stock and quote its condition. For a complete setup call build_setup with the goal and budget. For "tell me when it's cheaper" call price_alert: the customer confirms, alerts show only in this page, and there are no emails, push notifications or automatic price checks in the prototype. Offer cheaper alternatives at most once per topic. For a full basket, offer review_setup.
 - DECISION CONFIDENCE: notice what stops the customer deciding (compatibility doubt, confusion between options, missing knowledge, price or hidden costs, sound or feel, wanting reassurance) and address that barrier: check_fit for compatibility, compare_products with use_case for confusion, a plain explanation for knowledge, build_setup with product_id for hidden costs, deals for price. Sound and feel can't be verified here: say so in a few words. When they seem ready, offer readiness_summary. Mention the live agent only when a LIVE AGENT condition applies or when asked; never push one on someone ready to buy.
 - SETUP BUILDER: one tool, build_setup, for every complete-setup request, with the same three levels everywhere: Lowest Cost (only what's needed, cheapest), Best Value (needed plus recommended), Upgrade-Friendly (room to grow). Start from a goal (goal + budget), a main product (product_id: what else it needs) or items you chose via search_products (items with roles; leave room for cables). It skips what they own or have in the basket and stays within budget unless they allow more. Explain additions in a few words, never push expensive items, never add to the basket yourself.
-- LONG TERM AND TRUST: use upgrade_roadmap for "what next" questions. Projects and price alerts are the customer's to create; suggest them at most once. No invented urgency or discounts, no upselling beyond what the goal needs, no hidden basket changes, no marketing messages.
+- LONG TERM AND TRUST: use upgrade_roadmap for "what next" questions. Price alerts are the customer's to create; suggest them at most once. No invented urgency or discounts, no upselling beyond what the goal needs, no hidden basket changes, no marketing messages.
 - Product facts (prices, specs, stock, compatibility) come ONLY from the catalogue below and your tools. Never invent products, prices or specs. If something isn't in the catalogue, say so and offer the closest item.
 - REPLY STYLE (most important): this is a small chat window. Write at most about 60 words plus cards. Recommend at most 3 products, one line each: **name** – price – the single most important reason. Add a caveat only if it would change the decision, in a few words (e.g. "B-Stock: used, full warranty"). Never write verification dates, sources or "I can't verify" disclaimers: the cards show them. Don't offer a live agent in words unless a LIVE AGENT condition applies; the button is always visible. Show products with show_products (or compare_products, build_setup, price_check) and don't repeat what the cards say. Ask at most one question per turn.
 - NEEDS INTERVIEW: the customer came through Live chat to get advice. If a buying request lacks key facts (instrument, level, style or genre, budget, what they already own), ask before recommending: call offer_choices with ONE question, then end your turn with at most one short sentence. Max 2 rounds. Skip what My rig, the entry context or the message already answers.
-- SOUND MATCH: translate a described sound, artist or song into gear traits (pickups, amp, effects), search by tags, explain the link briefly.
+- SOUND MATCH: translate a described sound, artist or song into gear traits (pickups, amp, effects). First show how close they can get with gear they own: settings for their guitar's pickups and their amp as starting points ("adjust by ear"). Recommend a purchase only if a key trait is missing from what they own (e.g. no single-coil pickup at all), and say what it adds. Check the guitar's pickup layout in the catalogue (HSS = single coils at neck and middle, humbucker at the bridge). Name pickup positions by pickup (neck, neck + middle, middle, middle + bridge, bridge), never by switch numbers.
 - GEAR FIT: before recommending anything that connects to their gear, call check_fit. Report problems plainly and name the fix.
+- USE WHAT THEY OWN FIRST: before suggesting a purchase, check whether something they own already does the job, and say so: an interface with a mic input and an instrument input records voice and guitar at the same time; an amp with USB audio (e.g. Boss Katana-50 Gen 3) records guitar straight to the computer; a dynamic mic they own works for vocals. If nothing needs buying, say that plainly.
+- BEGINNERS AND "WHAT NEXT": for an instrument they started less than about a year ago, or play at beginner level, "what should I get next" starts with playing better on what they own: a professional setup of the instrument at a local shop (a service, not sold here), small essentials (clip-on tuner, stand, picks) and learning (lessons or a method book). Suggest a second instrument or an amp upgrade only if they ask for one or their gear really limits them, and say why.
+- ROOMS AND PEOPLE: in untreated rooms (living room, hard floor, no acoustic treatment) recommend dynamic mics; condensers pick up the room. Recording several people needs one mic, one mic input and one headphone output per person (or a headphone amp). For a podcast call build_setup with goal podcast_two. To mic a guitar amp while singing they need a second mic, cable and stand; mention bleed between the mics.
+- STAY ON THE CURRENT QUESTION: a follow-up such as "what do I need to buy?" or "what else?" is about the latest topic, not earlier topics in the chat or items in the basket. Never answer it with a setup from an earlier topic.
+- OTHER SHOPS: you only see Thomann's prices. If asked which shop is cheapest or to compare shops, say so in one sentence and give what you can verify for Thomann: the price, the 30-day best or reference price (price_check, deals), B-Stock and a price alert. Never answer with deals on unrelated products.
+- OWN BRANDS: products marked OWN BRAND (Harley Benton, the t.bone, the sssnake, Millenium, Thomann and others) are Thomann's own brands. Say so when you recommend one or are asked about one.
+- CUSTOMER AND COUNTRY: the page context says whether this is a new customer with nothing on file; then don't assume any gear, and ask for missing key facts before recommending. Use the delivery country from the page context for stock_and_delivery and mention shipping costs only as the tool states them.
+- PAGE NOTES: text in square brackets in the conversation (the page context, [cards shown: ...]) is data for you. Never repeat it to the customer.
 - REVIEWS: when the customer asks what people, reviewers or customers say about a product, whether it's reliable or any good, or its common problems, call review_summary (up to 3 ids; use it for comparisons too). Then write 2-3 sentences for THIS customer (their Music Profile and rig) using ONLY the themes and numbers the tool returns. Never quote or invent reviews or reviewer opinions; never say what reviewers think about a product without review data from the tool. If ratings are under 20, say the picture is thin. For simulated data say "in our simulated demo reviews". The card shows the numbers, so don't repeat them all.
 - TRANSPARENCY: Point out cheaper options and B-Stock (price_check), including house brands like Harley Benton and the sssnake. Never pressure.
 - ADVISE, NEVER BUY: you cannot order or add to the basket; the customer uses the buttons on the cards.
@@ -2674,7 +2683,7 @@ HOW TO WORK
 - Reply in the customer's language. Prices in EUR. Light Markdown only (bold, short lists); no tables.
 
 CATALOGUE (id | name | category | price | source | tags)
-${P.filter(p=>!p.conflict).map(p=>`${p.id} | ${p.n} | ${TOPS[p.top]?.en||p.c} > ${p.sub||p.c} | €${p.p}${p.bs?" (B-Stock €"+p.bs+")":""} | ${p.priceOnly?"SNAPSHOT "+p.tv.verified+" (price only)":p.tv?"VERIFIED "+p.tv.verified:"DEMO"} | ${p.tags.slice(0,8).join(", ")}`).join("\n")}`;
+${P.filter(p=>!p.conflict).map(p=>`${p.id} | ${p.n} | ${TOPS[p.top]?.en||p.c} > ${p.sub||p.c} | €${p.p}${p.bs?" (B-Stock €"+p.bs+")":""} | ${p.priceOnly?"SNAPSHOT "+p.tv.verified+" (price only)":p.tv?"VERIFIED "+p.tv.verified:"DEMO"}${isOwnBrand(p)?" | OWN BRAND":""} | ${p.tags.slice(0,8).join(", ")}`).join("\n")}`;
 }
 function contextText(){
   const v=S.viewing&&BY[S.viewing],c=S.chatCtx;
@@ -2683,7 +2692,8 @@ ${musicText()}
 My rig: ${rigItems().map(r=>{const w=warrantyOf(r);return `${r.name}${r.id?" ("+r.id+")":""} – ${r.bought==="thomann"?`bought at Thomann ${String(r.since).slice(0,10)}${r.order?" ("+r.order+")":""}`:`bought elsewhere, owned since ${r.since||"?"}`}${w?`, warranty until ${isoDay(w.end)}${warrantyLeft(w)<=0?" (ended)":""}`:", no warranty date"}${w?.returnDays>0?`, 30-day return open for ${w.returnDays} more days`:""}${r.note?" – "+r.note:""}`}).join("; ")||"empty"}
 Basket: ${S.basket.map(x=>`${x.qty}× ${BY[x.id].n}`).join("; ")||"empty"}
 Saved products (saved by the customer, newest first): ${S.picks.slice(0,20).map(x=>`${x.star?"★ ":""}${BY[x.id].n} (${x.id})${x.why?" – "+x.why:""}`).join("; ")||"none yet"}
-Orders: ${ORDERS.map(o=>`${o.id} ${o.status} (${o.items.map(([id,q])=>`${q||1}× ${BY[id].n}`).join(", ")})`).join("; ")}${S.sumCtx?`
+Customer: ${S.customer==="new"?"new customer, nothing on file yet":"returning customer"}; delivery country: ${S.country||"DE"}${S.country==="AT"?" (Austria: prices here are thomann.de prices, thomann.at may differ slightly)":""}
+Orders: ${ORDERS.map(o=>`${o.id} ${o.status}${o.date?" ordered "+o.date:""}${o.delivered?", delivered "+o.delivered:o.eta?", arriving "+o.eta:""} (${o.items.map(([id,q])=>`${q||1}× ${BY[id]?BY[id].n:id}`).join(", ")})`).join("; ")||"none"}${S.sumCtx?`
 The customer just read this AI summary of ${S.sumCtx.label} on the results page: ${S.sumCtx.txt.replace(/\n/g," ")}`:""}]`;
 }
 const ERR={api_unavailable:AI_MSG.api_unavailable,not_granted:AI_MSG.not_granted,sampling_disabled:AI_MSG.sampling_disabled,rate_limited:AI_MSG.rate_limited,session_expired:AI_MSG.session_expired,not_declared:AI_MSG.unavailable,capability_disabled:AI_MSG.unavailable,capability_removed:AI_MSG.unavailable,refused:"I can't help with that one. Try rephrasing, or tap Find a live agent.",empty_completion:"No answer came back. Try asking differently.",prompt_too_large:"This chat got too long. Start a new conversation from the Test guide."};
@@ -2710,19 +2720,20 @@ const ansWords=s=>new Set(String(s).toLowerCase().match(/[\p{L}\p{N}]+(?:[.,]\p{
 const ansSim=(a,b)=>{let n=0;for(const x of a)if(b.has(x))n++;return n/((a.size+b.size-n)||1)};
 const dropRepeats=(parts,th)=>{const w=parts.map(ansWords);return parts.filter((_,i)=>!(w[i].size>=6&&w.slice(i+1).some(v=>v.size>=6&&ansSim(w[i],v)>=th)))};
 function cleanAnswer(t,marks=[]){
-  t=String(t||"");
+  t=String(t||"").replace(/\[(?:cards shown|page context)[^\]]*\]/gi,"");
   const cuts=[...new Set(marks.filter(m=>m.trim()&&t.startsWith(m)).map(m=>m.length))].sort((a,b)=>a-b);
   const segs=[];let prev=0;for(const c of cuts){segs.push(t.slice(prev,c));prev=c}segs.push(t.slice(prev));
   const kept=dropRepeats(segs.map(x=>x.trim()).filter(Boolean),0.4);
   return dropRepeats(kept.join("\n\n").split(/\n{2,}/).map(x=>x.trim()).filter(Boolean),0.6).join("\n\n");
 }
-async function send(text){
+async function send(text,o={}){
   text=String(text||"").trim();if(!text||S.busy)return;
   if(!S.started)startConversation();else setChat("open");
   if(S.mode==="human")backToAi();
   document.querySelectorAll(".fbrow:not(.rated)").forEach(x=>x.remove());/* only the latest answer asks for feedback */
-  userMsg(text);textTriggers(text);
-  if(text.length>=18||!S.topic)S.topic=text.length>90?text.slice(0,88)+"…":text;
+  if(o.silent){if(o.note)sysLine(o.note)}/* page events (e.g. basket adds) reach the advisor without a customer bubble */
+  else{userMsg(text);textTriggers(text);
+  if(text.length>=18||!S.topic)S.topic=text.length>90?text.slice(0,88)+"…":text;}
   if(!sample){botMsg(`<p>${sampleState==="loading"?"I'm still connecting. Try again in a moment.":esc(noAI())+permsBtn()}</p>`);return}
   const m=botMsg(""),body=m.querySelector(".body"),cards=m.querySelector(".cards");
   const tb=document.createElement("div");tb.className="b";tb.innerHTML=`<span class="typing"><i></i><i></i><i></i></span>`;body.insertBefore(tb,cards);
@@ -2730,15 +2741,12 @@ async function send(text){
   currentCards=cards;setStatus=t=>{st.textContent=t};shownLog.length=0;
   S.busy=true;$("#sendb").hidden=true;$("#stopb").hidden=false;
   const ctl=new AbortController();S.ctl=ctl;
-  const ask={role:"user",content:contextText()+(S.focus?"\n[Focus view: price alerts, projects and the Deals & B-Stock page are switched off. Don't offer, mention or link to them. Price checks, B-Stock and savings inside your advice are fine.]":"")+(S.variant==="A"?"\n[Test variant A: give standard product recommendations only. Do not use build_setup with a goal or product_id, deals, review_setup or readiness_summary, do not offer savings unless asked, and keep explanations brief.]":"")+"\n\nCustomer: "+text};
+  const ask={role:"user",content:contextText()+(S.focus?"\n[Focus view: price alerts are switched off. Don't offer, mention or link to them. Price checks, B-Stock and savings inside your advice are fine.]":"")+(S.variant==="A"?"\n[Test variant A: give standard product recommendations only. Do not use build_setup with a goal or product_id, deals, review_setup or readiness_summary, do not offer savings unless asked, and keep explanations brief.]":"")+(o.silent?"\n\nPage event (not typed by the customer): ":"\n\nCustomer: ")+text};
   let fin="",marks=[];
   const run=()=>{marks=[];
-    if(promptNew()){/* New prompt: the supplied text word for word plus the catalogue list; no tools, no page context */
-      const turn={role:"user",content:text};
-      const input=S.apiMode?[...S.turns.slice(-16),turn]:[{role:"user",content:ADVISOR_PROMPT_NEW+"\n\n"+catalogueNamesPrices()},...S.turns.slice(-16),turn];
-      return sample(input,{cache:false,signal:ctl.signal,modelTier:S.tier,promptMode:"new",onText:({text:t})=>{fin=t;tb.innerHTML=md(t);st.textContent="";scrollLog()}})}
-    const plain=S.toolsOK===false;
-    const input=S.apiMode?[...S.turns.slice(-16),ask]:[{role:"user",content:rulesText()+(plain?plainRules(text):"")},...S.turns.slice(-16),ask];
+    /* New mode = the full advisor (tools, live My rig and Music Profile) plus the emotional-connection rules in advisor-prompt.js */
+    const plain=S.toolsOK===false,nw=promptNew();
+    const input=S.apiMode?[...S.turns.slice(-16),nw?{role:"user",content:ADVISOR_PROMPT_NEW+"\n\n"+ask.content}:ask]:[{role:"user",content:rulesText()+(nw?"\n\n"+ADVISOR_PROMPT_NEW:"")+(plain?plainRules(text):"")},...S.turns.slice(-16),ask];
     const opts={cache:false,signal:ctl.signal,modelTier:S.tier,onText:({text:t})=>{fin=t;tb.innerHTML=md(cleanAnswer(t,marks));st.textContent="";scrollLog()}};
     if(!plain)opts.tools=(S.variant==="A"?toolList.filter(x=>!VARIANT_B_TOOLS.includes(x.name)):toolList).filter(x=>!(S.focus&&FOCUS_TOOLS_OFF.includes(x.name)))
       .map(t=>({...t,execute:(i,o)=>{marks.push(fin);return t.execute(i,o)}}));
@@ -2768,7 +2776,7 @@ async function send(text){
   const words=fin.trim()?fin.trim().split(/\s+/).length:0,advice=!cards.querySelector(".choices")&&(words>25||!!cards.querySelector(".card"));
   if(fin.trim()||advice){const n=++S.aiN;body.insertAdjacentHTML("beforeend",`<div class="ansfoot">${fin.trim()?`<span class="aiwritten">${mk("ai")}</span>`:""}${advice?fbRowHtml(n):""}</div>`)}
   if(["rig","product","picks","profile"].includes(S.view.name))render();
-  S.turns.push({role:"user",content:text});
+  S.turns.push({role:"user",content:o.silent?"[Page event, not typed by the customer] "+text:text});
   S.turns.push({role:"assistant",content:(fin||"(no text)")+(shownLog.length?`\n[cards shown: ${shownLog.join("; ")}]`:"")});
   scrollLog();
 }
@@ -2901,12 +2909,6 @@ document.addEventListener("click",e=>{
   else if(d.rtpAllow!==undefined){S.rtpAllow=true;render()}
   else if(d.rtpAdd){setupTrigger();const ticked=[...new Set([...a.closest(".rtp").querySelectorAll("[data-rtp-item]:checked")].map(x=>x.dataset.rtpItem))];addBasket(d.rtpAdd);ticked.forEach(id=>addBasket(id));
     const r=readyToPlay(d.rtpAdd,S.rtpBudget||null,S.rtpAllow),ess=(r.tiers[S.rtpTier]||r.tiers.bal).items.filter(i=>i.lvl==="Essential").map(i=>i.id);if(ess.every(id=>ticked.includes(id)))track("setup_completed",{anchor:d.rtpAdd,tier:S.rtpTier,items:ticked.length+1});toast("Added to your basket")}
-  else if(d.rtpProj){const ticked=[...new Set([...a.closest(".rtp").querySelectorAll("[data-rtp-item]:checked")].map(x=>x.dataset.rtpItem))];const p=createProject(BY[d.rtpProj].n+" setup",[[d.rtpProj,1],...ticked.map(id=>[id,1])]);track("setup_completed",{anchor:d.rtpProj,saved:true});toast("Saved as project “"+p.name+"”")}
-  else if(d.projSetup){const o=JSON.parse(d.projSetup);const p=createProject(o.name,o.items);track("setup_completed",{saved:true});toast("Saved as project “"+p.name+"”")}
-  else if(d.projNew!==undefined){if(!S.basket.length){toast("Your basket is empty: add items first, or save a setup from the Deals page");return}createProject($("#projName").value.trim()||"My project",S.basket.map(b=>[b.id,b.qty]));render();toast("Project saved")}
-  else if(d.projCart){const p=getProjects().find(x=>x.id===d.projCart);p.items.forEach(([id,q])=>addBasket(id,q));toast("Project added to your basket")}
-  else if(d.projDel){if(!confirm("Delete this project?"))return;saveProjects(getProjects().filter(x=>x.id!==d.projDel));render()}
-  else if(d.projRmitem){const [pid,k]=d.projRmitem.split("|"),l=getProjects(),p=l.find(x=>x.id===pid);p.items.splice(+k,1);p.updated=new Date().toISOString().slice(0,10);saveProjects(l);render()}
   else if(d.dashReset!==undefined){if(!confirm("Delete all recorded events and A/B sessions on this device?"))return;ls.set(EV_KEY,[]);ls.set(AB_KEY,[]);render()}
   else if(d.specConsult!==undefined){openConsult()}
   else if(d.perms!==undefined){openPerms()}
@@ -2932,7 +2934,7 @@ function refreshSteps(where){
   else{const h=$("#hsteps");if(h)h.innerHTML=stepCardHtml(S.helpCtx,where)}
 }
 const ctxOf=where=>where==="page"?S.contact:S.helpCtx;
-$("#shopBtn").onclick=()=>{const dd=$("#shopDD");dd.innerHTML=`<button data-go="categories"><b>All categories</b></button><button data-go="deals"><b>Deals & B-Stock</b></button><button data-go="setup"><b>Setup Builder</b></button>`+TAX.map(x=>`<button data-top="${x.id}">${esc(x.en)}</button>`).join("");dd.hidden=!dd.hidden};
+$("#shopBtn").onclick=()=>{const dd=$("#shopDD");dd.innerHTML=`<button data-go="categories"><b>All categories</b></button><button data-go="setup"><b>Setup Builder</b></button>`+TAX.map(x=>`<button data-top="${x.id}">${esc(x.en)}</button>`).join("");dd.hidden=!dd.hidden};
 $("#svcBtn").onclick=()=>{$("#svcDD").hidden=!$("#svcDD").hidden};
 $("#accBtn").onclick=()=>{$("#accDD").hidden=!$("#accDD").hidden};
 $("#needhelp").onclick=openHelpDrawer;
@@ -2972,6 +2974,11 @@ new MutationObserver(()=>{if(S.mode==="human"&&!S.__handDone){S.__handDone=true;
 
 /* ---------------- Boot ---------------- */
 const hadMusic=!!store.get("music",null);S.music=migrateMusic();autoLinkGear();syncLegacy();store.set("music",S.music);updateFocusBar();
+if(!CUSTOMERS[S.customer])S.customer=S.customer==="new"?"new":"alex";
+S.country=CUSTOMERS[S.customer].country;setOrders(S.customer);
+/* demo data changed (personas, real clock): start every device from the current data once */
+const DEMO_DATA_VERSION="2026-11-16";
+if(store.get("demoData","")!==DEMO_DATA_VERSION){applyCustomer(S.customer,true);store.set("demoData",DEMO_DATA_VERSION)}
 if(VISITOR.returning&&hadMusic&&S.music.instruments.length)track("returning_profile_loaded",{instruments:S.music.instruments.length});
 bcount();updateOnline();updateAcct();updatePickCount();updateAlertCount();render();
 /* API mode: when the page is served by the Gear Advisor server (not claude.ai), the server calls Claude

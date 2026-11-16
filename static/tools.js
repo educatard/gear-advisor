@@ -1,8 +1,24 @@
 /* Page functions the AI advisor can call, and the cards they render into the chat. */
+/* Compact fit result: problems first (one row per fix), everything that passed folded into one line */
+function fitCompact(c){
+  const rank={bad:0,warn:1,ok:2},seen=new Set(),probs=[],passed=[];
+  for(const x of [...c].sort((a,b)=>rank[a.status]-rank[b.status])){
+    if(x.status==="ok"&&!/^Note:/.test(x.note)){passed.push(x);continue}
+    if(x.fix&&seen.has(x.fix))continue;if(x.fix)seen.add(x.fix);
+    probs.push(x);
+  }
+  return {probs,passed};
+}
+function fitBlockHtml(c,foot){
+  const {probs,passed}=fitCompact(c);
+  const row=x=>`<div class="check"><span class="badge ${x.status==="bad"?"bad":"warn"}">${x.status==="bad"?"FIX":"NOTE"}</span><span>${esc(x.note.replace(/^Note:\s*/,""))}</span></div>`;
+  return (probs.length?probs.map(row).join(""):`<div class="check"><span class="badge ok">OK</span><span>Works with your rig.</span></div>`)
+    +(passed.length?`<details class="fitok"><summary>✓ ${passed.length} check${passed.length===1?"":"s"} passed${foot?" · "+foot:""}</summary>${passed.map(x=>`<div class="check">${esc(x.note)}</div>`).join("")}</details>`:foot?`<div class="muted">Checked ${foot}.</div>`:"");
+}
 /* ---------------- Card renderers ---------------- */
 function miniProduct(p,extra=""){
   const own=typeof ownedNote==="function"?ownedNote(p):"";if(own)extra=(extra?extra+" · ":"")+`<b class="ownnote">${esc(own)}</b>`;
-  return `<div class="mini"><div class="info"><div>${esc(p.n)}</div><div class="sub">${p.r?"★ "+p.r+" · ":""}${stockText(p)}${p.tv?` · <span class="vtag">verified ${esc(p.tv.verified)}</span>`:" · demo"}${extra?" · "+extra:""}</div></div><span class="price" style="font-size:14px">${eur(p.p)}</span><button class="btn small" data-detail="${p.id}">View</button><button class="btn small primary" data-add="${p.id}">Add</button>${typeof saveBtn==="function"?saveBtn(p.id):""}</div>`;
+  return `<div class="mini"><div class="info"><div>${esc(p.n)}</div><div class="sub">${p.r?"★ "+p.r+" · ":""}${stockText(p)}${p.tv?` · <span class="vtag">verified ${esc(p.tv.verified)}</span>`:" · demo"}${typeof isOwnBrand==="function"&&isOwnBrand(p)?' · <span class="tag">Thomann own brand</span>':""}${extra?" · "+extra:""}</div></div><span class="price" style="font-size:14px">${eur(p.p)}</span><button class="btn small" data-detail="${p.id}">View</button><button class="btn small primary" data-add="${p.id}">Add</button>${typeof saveBtn==="function"?saveBtn(p.id):""}</div>`;
 }
 function stockText(p){if(p.tv)return p.tv.availEn;return p.st?(p.st<15?p.st+" left":"in stock"):"back in ~"+(p.restock||10)+" days"}
 const card=(title,tags,body)=>`<div class="card"><h5>${esc(title)} ${tags||""}${typeof cardMark==="function"?cardMark(title):""}</h5>${body}</div>`;
@@ -34,7 +50,7 @@ const TOOLS = [
  {name:"get_product_details",description:"Full specs, B-Stock price, stock and compatibility data for one product id.",
   inputSchema:{type:"object",properties:{id:{type:"string"}},required:["id"]},
   execute(i){const p=need(i.id);setStatus("Reading "+p.n+"…");
-   const base={id:p.id,name:p.n,brand:p.b,price:p.p,top:TOPS[p.top]?.en,sub:p.sub,stock:stockText(p),specs:p.specs,tags:p.tags};
+   const base={id:p.id,name:p.n,brand:p.b,thomannOwnBrand:isOwnBrand(p),price:p.p,top:TOPS[p.top]?.en,sub:p.sub,stock:stockText(p),specs:p.specs,tags:p.tags};
    if(p.tv)Object.assign(base,{source:"thomann.de product page",url:p.tv.url,article:p.tv.article,verifiedOn:p.tv.verified,priceReference:p.tv.ref?{basis:p.tv.ref.label,value:p.tv.ref.value}:null,availability:p.tv.availEn,bundleContents:p.tv.bundle?.contents||null,compatibilityFacts:p.tv.compat});
    if(p.vonly)Object.assign(base,{notVerified:["ratings and reviews","compatibility beyond the listed specs","stock quantity","images"]});
    else Object.assign(base,{demoData:{rating:p.r,reviews:p.rv,bstock:p.bs||null,compat:p.cp},demoNote:"rating, reviews and compatibility model are simulated demo data"+(p.tv?"; price, article and availability are verified":"")});
@@ -54,7 +70,7 @@ const TOOLS = [
   inputSchema:{type:"object",properties:{id:{type:"string"}},required:["id"]},
   execute(i){const p=need(i.id);setStatus("Checking prices…");const r=priceCheck(p.id);
    const offs=offersFor(p.id),bst=offs.find(o=>o.type==="bstock"),deal=offs.find(o=>o.type==="hotdeal"||o.type==="bargain");
-   push(card("Price check: "+p.n,'<span class="tag">basic</span>',`${deal?`<div class="dealnote">${deal.type==="hotdeal"?"Hot Deal":"Bargain"} on thomann.de${deal.saving?`: ${esc(deal.saving.text)}`:""} · checked ${esc(deal.checked)}</div>`:""}${bst?`<div class="mini"><div class="info"><div>${esc(bst.name)} <span class="tag warnt">B-Stock, not new</span></div><div class="sub">${esc(bst.condition)} · ${esc(bst.warranty)} · ${esc(bst.saving?bst.saving.text:"")}</div></div><span class="price" style="font-size:14px">${eur(bst.price)}</span><button class="btn small" data-detail="${bst.productId}">View</button></div>`:r.bstock?`<div class="mini"><div class="info"><div>B-Stock ${esc(p.n)} <span class="tag sim">demo price</span></div><div class="sub">Demo data: not a verified offer</div></div><span class="price" style="font-size:14px">${eur(r.bstock)}</span></div>`:'<div class="muted">No verified B-Stock offer.</div>'}
+   push(card("Price check: "+p.n,'<span class="tag">basic</span>',`${deal?`<div class="dealnote">${esc(deal.label||(deal.type==="hotdeal"?"Hot Deal":"Bargain"))} on thomann.de${deal.until?" until "+esc(fmtDay(deal.until)):""}${deal.saving?`: ${esc(deal.saving.text)}`:deal.note?`: ${esc(deal.note)}`:""} · checked ${esc(deal.checked)}</div>`:""}${bst?`<div class="mini"><div class="info"><div>${esc(bst.name)} <span class="tag warnt">B-Stock, not new</span></div><div class="sub">${esc(bst.condition)} · ${esc(bst.warranty)} · ${esc(bst.saving?bst.saving.text:"")}</div></div><span class="price" style="font-size:14px">${eur(bst.price)}</span><button class="btn small" data-detail="${bst.productId}">View</button></div>`:r.bstock?`<div class="mini"><div class="info"><div>B-Stock ${esc(p.n)} <span class="tag sim">demo price</span></div><div class="sub">Demo data: not a verified offer</div></div><span class="price" style="font-size:14px">${eur(r.bstock)}</span></div>`:'<div class="muted">No verified B-Stock offer.</div>'}
     ${r.similar.length?`<div class="muted" style="margin-top:6px">Cheaper alternatives</div>${r.similar.map(x=>miniProduct(x)).join("")}`:'<div class="muted">This is already the cheapest of its type.</div>'}
     ${r.bundles.map(b=>`<div class="mini"><div class="info"><div>Official bundle: ${esc(b.name)}</div><div class="sub">${esc(b.contents)} · ${esc(bundleLabel(b))}</div></div><span class="price" style="font-size:14px">${eur(b.price)}</span>${b.productId?`<button class="btn small" data-detail="${b.productId}">View</button>`:""}</div>`).join("")}`));
    shownLog.push("price_check("+p.id+")");pick(r.similar.map(x=>({id:x.id,why:"Cheaper option than the "+p.n})),"cheaper");
@@ -64,8 +80,9 @@ const TOOLS = [
   execute(i){const l=ids(i.ids);if(!l.length)throw new Error("No valid ids");setStatus("Checking against your rig…");const c=fitCheck(l,{ownedAsRig:true});if(typeof track==="function")track("compatibility_checked",{ids:l});const ownIds=new Set(rigItems().map(r=>r.id));
    const worst=c.some(x=>x.status==="bad")?"bad":c.some(x=>x.status==="warn")?"warn":"ok";
    const label={ok:"Fits",warn:"Fits with notes",bad:"Problem"};
-   push(card("Fit check: "+l.map(id=>BY[id].n+(ownIds.has(id)?" (yours)":"")).join(" + "),'<span class="tag moat">moat</span> <span class="badge '+worst+'">'+label[worst]+'</span>',c.map(x=>`<div class="check"><span class="badge ${x.status}">${x.status.toUpperCase()}</span><span>${esc(x.note)}</span></div>`).join("")+`<div class="muted">Checked against ${rigItems().length} items in My rig.</div>`));
-   shownLog.push("fit("+l.join(",")+")");return c}},
+   push(card("Fit check: "+l.map(id=>BY[id].n+(ownIds.has(id)?" (yours)":"")).join(" + "),'<span class="tag moat">moat</span> <span class="badge '+worst+'">'+label[worst]+'</span>',fitBlockHtml(c,`against ${rigItems().length} items in My rig`)));
+   shownLog.push("fit("+l.join(",")+")");const fc=fitCompact(c);
+   return {verdict:label[worst],problems:fc.probs.map(x=>({status:x.status,note:x.note,fix:x.fix})),passed:fc.passed.map(x=>x.note),note:"The card already shows this. Mention only the problems and their fix in a few words; if there are none, just say it fits."}}},
  {name:"build_rig",description:"Show a complete setup as one card with roles, reasons and the total against the budget. Use for 'build me a setup' requests after you have chosen items via search.",
   inputSchema:{type:"object",properties:{title:{type:"string"},budget:{type:"number"},items:{type:"array",items:{type:"object",properties:{id:{type:"string"},qty:{type:"number"},role:{type:"string"}},required:["id"]}}},required:["items"]},
   execute(i){const it=(i.items||[]).filter(x=>BY[String(x.id)]).map(x=>({p:BY[String(x.id)],q:Math.max(1,+x.qty||1),role:String(x.role||"")}));if(!it.length)throw new Error("No valid items");
@@ -74,10 +91,10 @@ const TOOLS = [
     `<div class="total"><span>Total${b?` (budget ${eur(b)})`:""}</span><span style="color:${b&&tot>b?"var(--bad)":"inherit"}">${eur(tot)}</span></div><div class="prow" style="justify-content:flex-start;margin-top:6px"><button class="btn small primary" data-addall='${JSON.stringify(it.map(x=>[x.p.id,x.q]))}'>Add all to basket</button><button class="btn small" data-save-all='${JSON.stringify(it.map(x=>x.p.id))}'>☆ Save whole setup</button><button class="btn small" data-say="Check that this setup works with my rig: ${esc(it.map(x=>x.p.n).join(", "))}">Check fit</button></div>`;
    push(card(i.title||"Your setup",'<span class="tag edge">setup builder</span>',html));shownLog.push("rig("+it.map(x=>x.p.id).join(",")+")");pick(it.map(x=>({id:x.p.id,why:(x.role?x.role+" in ":"Part of ")+(i.title||"your setup")})),"setup");
    return {total:+tot.toFixed(2),budget:b||null,overBudget:b?tot>b:false}}},
- {name:"stock_and_delivery",description:"Live stock and delivery dates for products to a country (ISO code, default DE). Shows a card.",
+ {name:"stock_and_delivery",description:"Stock, delivery dates and standard shipping cost for products to a country (ISO code; use the customer's delivery country from the page context, default DE). Shows a card.",
   inputSchema:{type:"object",properties:{ids:{type:"array",items:{type:"string"}},country:{type:"string"}},required:["ids"]},
   execute(i){const l=ids(i.ids);if(!l.length)throw new Error("No valid ids");setStatus("Checking stock…");const r=l.map(id=>delivery(BY[id],i.country));
-   push(card("Stock & delivery to "+r[0].country,'<span class="tag">basic</span> '+sim,r.map(x=>`<div class="mini"><div class="info"><div>${esc(x.name)}</div><div class="sub">${x.inStock?x.inStock+" in stock":"Out of stock"} · ships from ${x.warehouse}${x.note?" · "+esc(x.note):""}${x.customs?" · "+x.customs:""}</div></div><div style="text-align:right;font-size:13px"><b>Arrives</b><br>${x.arrives}</div></div>`).join("")));
+   push(card("Stock & delivery to "+r[0].country,'<span class="tag">basic</span> '+sim,r.map(x=>`<div class="mini"><div class="info"><div>${esc(x.name)}</div><div class="sub">${x.inStock?x.inStock+" in stock":"Out of stock"} · ships from ${x.warehouse}${x.note?" · "+esc(x.note):""}${x.customs?" · "+x.customs:""}</div></div><div style="text-align:right;font-size:13px"><b>Arrives</b><br>${x.arrives}</div></div>`).join("")+`<div class="muted">${esc(r[0].shipping)}${r[0].priceNote?" "+esc(r[0].priceNote):""}</div>`));
    return r}},
  {name:"orders",description:"The customer's orders. action 'list' returns all orders; 'track' shows one order's tracking card; 'start_return' shows a return card the customer must confirm (only for delivered orders inside 30 days).",
   inputSchema:{type:"object",properties:{action:{type:"string",enum:["list","track","start_return"]},order_id:{type:"string"},product_id:{type:"string"}},required:["action"]},

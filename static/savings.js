@@ -161,7 +161,7 @@ const TIER_INFO = {
 const SETUP_RECIPES = {
   vocal_recording: {label: "Vocal recording at home", officialBundles: ["652654"], roles: [
     {role: "Audio interface", owns: ["interface"], need: "at least 1 mic input with phantom power", low: ["t468428", "i1"], value: ["i1"], valueWhy: "current generation (4th Gen)", upgrade: ["i2", "t560993"], upgradeWhy: "2 mic inputs for a second voice or instrument"},
-    {role: "Microphone", owns: ["mic"], ownsIf: x => !!(x.cp && x.cp.needsPhantom), ownsShort: "a dynamic stage mic works, but a condenser captures studio vocals in more detail", need: "studio condenser for vocals", low: ["m4"], value: ["t235937"], valueWhy: "set includes shock mount, pop filter and 6 m XLR cable", upgrade: ["m3"], upgradeWhy: "very low self-noise (4 dBA)", covers: {"t235937": ["XLR cable"]}},
+    {role: "Microphone", owns: ["mic"], ownsIf: x => !!(x.cp && x.cp.needsPhantom), optionalIfOwned: true, ownsShort: "the dynamic mic you own already works and picks up less of an untreated room; a condenser adds detail in a quiet, treated room", need: "studio condenser for vocals (best in a treated room)", low: ["m4"], value: ["t235937"], valueWhy: "set includes shock mount, pop filter and 6 m XLR cable", upgrade: ["m3"], upgradeWhy: "very low self-noise (4 dBA)", covers: {"t235937": ["XLR cable"]}},
     {role: "XLR cable", owns: [], ownsIds: ["c1"], need: "XLR, 6 m", low: ["t128512"], value: ["t128512"], upgrade: ["t128513"], upgradeWhy: "10 m reaches further"},
     {role: "Mic stand", owns: [], need: "boom stand", low: ["t133136"], value: ["t133136"], upgrade: ["t104942"], upgradeWhy: "sturdier K&M stand"},
     {role: "Headphones", owns: ["headphones"], need: "closed-back, so the mic doesn't pick up the playback", low: ["t399657"], value: ["h1"], valueWhy: "closed-back studio standard", upgrade: ["h1"]}]},
@@ -171,11 +171,11 @@ const SETUP_RECIPES = {
     {role: "Instrument cable", owns: [], ownsIds: ["c2"], need: "jack cable, 3 m", low: ["t128549"], value: ["t128549"], upgrade: ["t128549"]},
     {role: "Strings", owns: ["strings"], need: "spare set", optional: true, low: ["st1"], value: ["st2"], upgrade: ["st3"], upgradeWhy: "coated strings last longer"}]},
   podcast_two: {label: "Podcast for two people", officialBundles: [], roles: [
-    {role: "Audio interface", owns: ["interface"], need: "2 mic inputs with enough gain", low: ["i2"], value: ["i2"], upgrade: ["t560993"], upgradeWhy: "more outputs for monitoring"},
-    {role: "Microphones (×2)", qty: 2, owns: [], need: "dynamic mics that reject room noise", low: ["m1"], value: ["m1"], upgrade: ["m2"], upgradeWhy: "broadcast-grade voice (needs more gain)"},
+    {role: "Interface or recorder", owns: ["interface"], ownsIf: x => (x.cp.xlr || 0) >= 2 && (x.cp.hpOuts || 1) >= 2, ownsShort: "two people need 2 mic inputs and a headphone output each", need: "2 mic inputs and one headphone output per person", low: ["i10"], value: ["i10"], valueWhy: "2 mic inputs and 2 headphone outputs, Auto Gain", upgrade: ["i9"], upgradeWhy: "4 inputs and 4 headphone outputs; records to SD card without a computer"},
+    {role: "Microphones (×2)", qty: 2, owns: ["mic"], ownsQty: true, ownsIf: x => !(x.cp && x.cp.needsPhantom), need: "dynamic mics: they pick up less of an untreated room than condensers", low: ["m9"], value: ["m9"], valueWhy: "dynamic broadcast mic (Thomann own brand)" + (TODAY <= new Date("2026-11-30T23:59:59") ? "; thomann.de adds a free podcast stand until 30 Nov (checked 16 Nov)" : ""), upgrade: ["m2"], upgradeWhy: "broadcast standard; needs about 60 dB of gain"},
     {role: "XLR cables (×2)", qty: 2, owns: [], need: "XLR, 6 m", low: ["t128512"], value: ["t128512"], upgrade: ["t128512"]},
     {role: "Mic stands (×2)", qty: 2, owns: [], need: "stand or boom", low: ["t133136"], value: ["t133136"], upgrade: ["t104942"]},
-    {role: "Headphones (×2)", qty: 2, owns: [], need: "closed-back", low: ["t399657"], value: ["h1"], upgrade: ["h1"]}]},
+    {role: "Headphones (×2)", qty: 2, owns: ["headphones"], ownsQty: true, need: "closed-back, one pair per person", low: ["t399657"], value: ["t399657"], upgrade: ["h1"], upgradeWhy: "closed-back studio standard"}]},
 };
 function buildSetupOptions(goal, budget) {
   const rec = SETUP_RECIPES[goal]; if (!rec) throw new Error("Unknown goal. Use one of: " + Object.keys(SETUP_RECIPES).join(", "));
@@ -183,15 +183,24 @@ function buildSetupOptions(goal, budget) {
   for (const k of ["low", "value", "upgrade"]) {
     const items = [], skipped = [], covered = new Set();
     for (const r of rec.roles) {
-      const own = rig.find(x => (r.owns || []).includes(x.cp && x.cp.kind) || (r.ownsIds || []).includes(x.id));
-      if (own && (!r.ownsIf || r.ownsIf(own))) { skipped.push({role: r.role, owned: own.name}); continue; }
-      if (own) skipped.push({role: r.role, ownedButShort: own.name, why: r.ownsShort});
+      const match = x => (r.owns || []).includes(x.cp && x.cp.kind) || (r.ownsIds || []).includes(x.id);
+      const own = rig.find(match);
+      let qty = r.qty || 1;
+      if (r.ownsQty) {
+        /* roles for several people: what they own counts towards the quantity */
+        const got = rig.filter(x => match(x) && (!r.ownsIf || r.ownsIf(x)));
+        if (got.length >= qty) { skipped.push({role: r.role, owned: got.map(x => x.name).join(", ")}); continue; }
+        if (got.length) { qty -= got.length; skipped.push({role: r.role, ownedPart: got.map(x => x.name).join(", "), stillNeeded: qty}); }
+      } else {
+        if (own && (!r.ownsIf || r.ownsIf(own))) { skipped.push({role: r.role, owned: own.name}); continue; }
+        if (own) skipped.push({role: r.role, ownedButShort: own.name, why: r.ownsShort});
+      }
       if (covered.has(r.role)) { skipped.push({role: r.role, covered: true}); continue; }
       const cands = (r[k] || r.low).map(id => BY[id]).filter(Boolean).sort((a, b) => a.p - b.p);
       const p = cands[0]; if (!p) continue;
-      const qty = r.qty || 1;
-      (r.covers && r.covers[p.id] || []).forEach(c => covered.add(c));
-      items.push({role: r.role, id: p.id, name: p.n, qty, price: p.p, line: +(p.p * qty).toFixed(2), why: k === "value" && r.valueWhy ? r.valueWhy : k === "upgrade" && r.upgradeWhy ? r.upgradeWhy : r.need, optional: !!r.optional, verified: !!p.tv, verifiedOn: p.tv && p.tv.verified});
+      const optional = !!r.optional || (!!own && !r.ownsQty && !!r.optionalIfOwned);
+      if (!optional) (r.covers && r.covers[p.id] || []).forEach(c => covered.add(c)); /* an optional item can't stand in for a needed one */
+      items.push({role: r.role, id: p.id, name: p.n, qty, price: p.p, line: +(p.p * qty).toFixed(2), why: (k === "value" && r.valueWhy ? r.valueWhy : k === "upgrade" && r.upgradeWhy ? r.upgradeWhy : r.need) + (optional && own && !r.optional ? " (optional: " + r.ownsShort + ")" : ""), optional, verified: !!p.tv, verifiedOn: p.tv && p.tv.verified, ownBrand: typeof isOwnBrand === "function" && isOwnBrand(p)});
     }
     const total = +items.filter(i => !i.optional).reduce((a, i) => a + i.line, 0).toFixed(2);
     const ids = items.map(i => i.id), fc = fitCheck(ids.filter(id => !BY[id].vonly)).filter(c => c.status === "bad" && c.type !== "delivery");
@@ -232,7 +241,7 @@ function reviewCart() {
   // relevant verified discounts on items already in the basket
   for (const b of basket) for (const o of offersFor(b.id)) {
     if (o.type === "bstock" && o.productId && o.productId !== b.id) props.push({kind: "swap", ids: [b.id], id: o.productId, title: `Switch to B-Stock: ${o.name}`, reason: `B-Stock, not new: “${o.condition}”. ${o.warranty}. Verified ${o.checked}.`, delta: +(o.price - b.p.p).toFixed(2), verified: true, bstock: true});
-    if ((o.type === "hotdeal" || o.type === "bargain") && o.saving) info.push({kind: "deal", text: `${b.p.n} is listed as a ${o.type === "hotdeal" ? "Hot Deal" : "bargain"}: ${o.saving.text} (thomann.de, ${o.checked}).`});
+    if ((o.type === "hotdeal" || o.type === "bargain") && o.saving) info.push({kind: "deal", text: `${b.p.n} is listed as a ${o.label || (o.type === "hotdeal" ? "Hot Deal" : "bargain")}${o.until ? " until " + fmtDay(o.until) : ""}: ${o.saving.text} (thomann.de, ${o.checked}).`});
   }
   return {total, proposals: props.map((p, i) => ({...p, n: i})), info};
 }
