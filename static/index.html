@@ -861,15 +861,15 @@ function orderHtml(o){
 }
 const stars=r=>`<span class="st5" style="--r:${r/5*100}%" aria-label="${r} out of 5 stars">★★★★★</span>`;
 function stockLine(p){if(p.tv)return `<span class="instock${p.tv.inStock?"":" out"}">${esc(p.tv.availEn)}</span>`;return p.st?(p.st<15?`<span class="instock low">Only ${p.st} left</span>`:`<span class="instock">In stock</span>`):`<span class="instock out">Back in approx. ${p.restock||10} days</span>`}
-const DEPT=c=>({guitars_basses:"Guitars & Basses",pa:"PA Equipment",lighting:"Lighting",dj:"PA Equipment",software:"Software",guitars:"Guitars & Basses",amps:"Guitars & Basses",pedals:"Guitars & Basses",power:"Guitars & Basses",accessories:"Guitars & Basses",interfaces:"Studio Equipment",mics:"Studio Equipment",headphones:"Studio Equipment",monitors:"Studio Equipment",keys:"Keys",drums:"Drums & Percussion"})[c]||"Studio Equipment";
-const DEPT2EXP={"Guitars & Basses":"guitars","Studio Equipment":"recording","Keys":"keys","Drums & Percussion":"drums","PA Equipment":"live","Software":"recording","Lighting":"live"};
-const AVC={guitars:"#c2410c",recording:"#0f766e",live:"#1d4ed8",keys:"#a21caf",drums:"#4d7c0f",service:"#7c2d12"};
+const DEPT=c=>({guitars_basses:"Guitars & Basses",pa:"PA Equipment",lighting:"Lighting",dj:"PA Equipment",software:"Software",guitars:"Guitars & Basses",amps:"Guitars & Basses",pedals:"Guitars & Basses",power:"Guitars & Basses",accessories:"Guitars & Basses",interfaces:"Studio Equipment",mics:"Studio Equipment",headphones:"Studio Equipment",monitors:"Studio Equipment",keys:"Keys",drums:"Drums & Percussion",wind:"Wind & Brass"})[c]||"Studio Equipment";
+const DEPT2EXP={"Guitars & Basses":"guitars","Studio Equipment":"recording","Keys":"keys","Drums & Percussion":"drums","PA Equipment":"live","Software":"recording","Lighting":"live","Wind & Brass":"brass"};
+const AVC={guitars:"#c2410c",recording:"#0f766e",live:"#1d4ed8",keys:"#a21caf",drums:"#4d7c0f",service:"#7c2d12",brass:"#b45309"};
 const initials=n=>n.split(/\s+/).map(w=>w[0]).join("").slice(0,2);
 const avatar=(k,cls="av")=>`<span class="${cls}" style="background:${AVC[k]||"#555"}">${esc(initials(EXPERTS[k].name))}</span>`;
 const AISVG=`<svg viewBox="0 0 24 24"><path d="M12 2l1.8 5.6L19.5 9.5l-5.7 1.9L12 17l-1.8-5.6L4.5 9.5l5.7-1.9z"/><path d="M19 15l.8 2.2 2.2.8-2.2.8L19 21l-.8-2.2-2.2-.8 2.2-.8z"/></svg>`;
 
 /* category silhouettes, drawn because product photos can't load in the page */
-const SIL_ALIAS={guitars_basses:"guitars",studio:"interfaces",software:"interfaces",pa:"monitors",lighting:"power",dj:"keys",broadcast:"interfaces",fx:"interfaces",wind:"mics",traditional:"guitars",sheet:"accessories",cases:"amps",cables:"accessories"};
+const SIL_ALIAS={guitars_basses:"guitars",studio:"interfaces",software:"interfaces",pa:"monitors",lighting:"power",dj:"keys",broadcast:"interfaces",fx:"interfaces",wind:"brass",traditional:"guitars",sheet:"accessories",cases:"amps",cables:"accessories"};
 /* stars: real thomann.de rating where we have one, otherwise the demo rating */
 const rateHtml=(p,big)=>{const rv=typeof reviewOf==="function"?reviewOf(p):null,r=rv?rv.stars:p.r,n=rv?rv.ratings:p.rv;
   return r?`<div class="stars"${big?' style="font-size:18px"':""}>${stars(r)}<em>${big?"(":""}${n.toLocaleString("en")}${big?")":""}</em></div>`:`<div class="muted" style="font-size:13px">No ratings in this prototype</div>`};
@@ -887,6 +887,7 @@ function sil(c){
    monitors:`<rect x="38" y="6" width="44" height="68" rx="5" ${F}/><circle cx="60" cy="50" r="14" ${G}/><circle cx="60" cy="22" r="6" ${G}/>`,
    keys:`<rect x="8" y="28" width="104" height="30" rx="3" ${F}/>${Array.from({length:12},(_,i)=>`<rect x="${14+i*8}" y="38" width="7" height="18" fill="#fff"/>`).join("")}${[0,1,3,4,5,7,8,10].map(i=>`<rect x="${19+i*8}" y="38" width="4" height="11" ${G}/>`).join("")}`,
    drums:`<ellipse cx="60" cy="58" rx="24" ry="14" ${F}/><ellipse cx="32" cy="38" rx="14" ry="8" ${G}/><ellipse cx="88" cy="38" rx="14" ry="8" ${G}/><rect x="58" y="18" width="4" height="26" ${G}/>`,
+   brass:`<rect x="6" y="35" width="12" height="8" rx="3" ${G}/><rect x="16" y="36" width="70" height="6" rx="3" ${F}/><rect x="34" y="46" width="40" height="5" rx="2.5" ${G}/><rect x="44" y="22" width="6" height="30" rx="2" ${F}/><rect x="54" y="22" width="6" height="30" rx="2" ${F}/><rect x="64" y="22" width="6" height="30" rx="2" ${F}/><rect x="43" y="18" width="8" height="5" rx="2" ${G}/><rect x="53" y="18" width="8" height="5" rx="2" ${G}/><rect x="63" y="18" width="8" height="5" rx="2" ${G}/><path d="M84 37L110 20Q116 39 110 58L84 41Z" ${F}/>`,
    accessories:`<circle cx="60" cy="40" r="26" fill="none" stroke="var(--sil)" stroke-width="7"/><circle cx="60" cy="40" r="14" fill="none" stroke="var(--sil2)" stroke-width="5"/>`,
   }[SIL_ALIAS[c]||c]||"";
   return `<div class="sil" aria-hidden="true"><svg viewBox="0 0 120 80">${s}</svg></div>`;
@@ -922,13 +923,13 @@ function render(){
   if(v.name==="review")track("cart_reviewed",{items:S.basket.length});
 }
 /* category words customers type, so "pedal" also finds reverbs and delays filed under Effects */
-const CAT_SYN={guitars:" guitar guitars",amps:" amp amps amplifier combo",pedals:" pedal pedals effect effects stompbox",power:" power supply psu",interfaces:" interface audio interface sound card",mics:" mic mics microphone",headphones:" headphone headphones",monitors:" monitor monitors speakers",keys:" keyboard keys piano",drums:" drum drums",accessories:""};
+const CAT_SYN={guitars:" guitar guitars",amps:" amp amps amplifier combo",pedals:" pedal pedals effect effects stompbox",power:" power supply psu",interfaces:" interface audio interface sound card",mics:" mic mics microphone",headphones:" headphone headphones",monitors:" monitor monitors speakers",keys:" keyboard keys piano",drums:" drum drums",accessories:"",wind:" wind instrument instruments blasinstrumente"};
 function scoreQ(p,q){
   if(!q)return 1;const words=q.toLowerCase().split(/\s+/).filter(w=>w.length>1&&!["for","the","a","and","with","my","to"].includes(w));
   const hay=(p.n+" "+p.b+" "+p.tags.join(" ")+" "+CATS[p.c]+" "+(p.sub||"")+" "+(TOPS[p.top]?.en||"")+" "+(TOPS[p.top]?.de||"")+(p.tv?" "+p.tv.sub:"")+(CAT_SYN[p.c]||"")).toLowerCase();
   return words.reduce((a,w)=>a+(hay.includes(w)?1:hay.includes(w.replace(/s$/,""))?1:0),0);
 }
-const subMatch=(p,s)=>{const x=s.toLowerCase();return (p.sub||"").toLowerCase()===x||(p.tv&&((p.tv.sub||"").toLowerCase()===x||(p.tv.crumb||[]).some(c=>c.toLowerCase()===x)))};
+const subMatch=(p,s)=>{const x=s.toLowerCase();return (p.sub||"").toLowerCase()===x||(p.subDe||"").toLowerCase()===x||(p.tv&&((p.tv.sub||"").toLowerCase()===x||(p.tv.crumb||[]).some(c=>c.toLowerCase()===x)))};
 function baseList(v,skip){
   let l=P.map(p=>({p,s:scoreQ(p,v.q)})).filter(o=>o.s>0).map(o=>o.p);
   if(v.sit&&skip!=="sit")l=l.filter(p=>p.sit?.includes(v.sit));
@@ -1482,6 +1483,20 @@ function plainWords(p){
   } else if(cp.kind==="monitors"){
     L.push(/5"/.test(sp.Woofer||"")?"5 inch speakers: good bass for a small to medium room.":"Small 3.5 inch speakers: for a desk, with little deep bass.");
     L.push("Studio speakers sound honest rather than flattering, so your mixes translate to other speakers.");
+  } else if(cp.kind==="trumpet"){
+    L.push(/^L\b|\bL bore/i.test(String(sp.Bore||""))?"Large bore: a big, open sound that takes more air.":"Medium-large (ML) bore: the most common size, balanced between easy response and a full sound.");
+    if(/gold brass/i.test(sp.Bell||""))L.push("Gold brass bell: a slightly warmer, darker colour than yellow brass.");
+    L.push(p.tags.includes("professional")?"Professional horn: how it feels and sounds is personal, so play-test it or ask a brass specialist before you buy.":p.tags.includes("beginner")?"Student model: light and forgiving, with an easy response for the first years.":"Step-up horn: more colour and projection than a student model.");
+  } else if(cp.kind==="mouthpiece"){
+    L.push(cp.cup==="shallow"?"Shallow cup: easier high notes and a brighter, more cutting sound, popular for lead and big band.":"Medium cup: the all-round choice for most styles.");
+    L.push(cp.rim==="large"?"Large rim: a fuller sound and more flexibility, but it asks more of your endurance.":cp.rim==="small"?"Smaller rim: easier to start on and kind to endurance, with a lighter sound.":"Medium-wide rim: a middle ground between comfort and a full sound.");
+    L.push("A new mouthpiece changes how your whole horn feels: give it a few weeks, and don't switch right before a gig.");
+  } else if(cp.kind==="mute"){
+    L.push({straight:"Straight mute: the standard mute most parts ask for. Bright and nasal, and it still cuts through.",cup:"Cup mute: a softer, rounder, muffled sound for ballads and big-band sections.",harmon:"Harmon mute: the thin, intimate 'Miles Davis' sound; with the stem in you can play wah-wah.",practice:"Practice mute: makes the trumpet much quieter for warm-ups, but adds some resistance.",silent:"Silent Brass: you play into a pickup mute and hear a natural trumpet sound through earphones."}[cp.type]||"Changes the trumpet's colour and volume.");
+  } else if(cp.kind==="valve oil"){
+    L.push("A few drops on each piston keep the valves fast and reduce wear.");
+  } else if(cp.kind==="slide grease"){
+    L.push("For tuning slides only, not valves: keeps the slides moving and stops them seizing.");
   }
   if(flat&&["amp","edrums","monitors"].includes(cp.kind))L.push("For your flat: "+(cp.headphoneOut||cp.kind==="edrums"?"use headphones in the evening.":"keep the volume low or switch to headphones late at night."));
   if(pr.forWhom==="child"&&cp.kind==="electric guitar"&&!p.tags.includes("kids"))L.push("For a child: full size suits roughly age 12 and up.");
@@ -2154,7 +2169,7 @@ function jsonLd(p){
 
 /* ---------------- Contact flow (the shop's stepped form, plus Live chat and an editable summary) ---------------- */
 const ENQ=[["Order/Return","M3 7l9-4 9 4v10l-9 4-9-4zM3 7l9 4 9-4M12 11v10"],["Product advice","M3 12V4h8l10 10-8 8zM7.5 8h.01"],["Other","M4 12h.01M12 12h.01M20 12h.01"]];
-const DEPTS=["Guitars & Basses","Drums & Percussion","Keys","Studio Equipment","Software","PA Equipment","Lighting"];
+const DEPTS=["Guitars & Basses","Drums & Percussion","Keys","Wind & Brass","Studio Equipment","Software","PA Equipment","Lighting"];
 const NEEDS={"Product advice":["Choosing the right gear","Will it work with my gear?","Setting it up, or a problem","Something else"],"Order/Return":["Where is my order?","Return or exchange","Broken item (warranty)","Something else"]};
 const METHODS=[["chat","Live chat","M4 5h16v11H9l-5 4zM8 10.5h.01M12 10.5h.01M16 10.5h.01"],["call","Call us","M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"],["callback","Request a callback","M12 7v5l3 2M12 3a9 9 0 1 0 .01 0"],["whatsapp","WhatsApp","M4 20l1.5-4A8 8 0 1 1 8 18.5z"],["message","Send us a message","M3 6h18v12H3zM3 6l9 7 9-7"]];
 const METHOD_NAME=Object.fromEntries(METHODS.map(([k,t])=>[k,t]));

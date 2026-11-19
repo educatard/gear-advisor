@@ -61,6 +61,14 @@ const DEMO_THEMES = {
   keys: [["Realistic key feel", "Good piano sound"], ["Built-in speakers are basic", "Pedal feels cheap"]],
   drums: [["Quiet pads for practice at home", "Good sounds for the price"], ["Hi-hat feels less natural", "Rack wobbles when played hard"]],
   accessories: [["Does the job reliably", "Good value"], ["Feels basic"]],
+  trumpet: [["Even intonation across the range", "Valves run smoothly", "Good response for the price"], ["Case is basic", "The supplied mouthpiece doesn't suit everyone"]],
+  mouthpiece: [["Consistent, well-finished rim", "Easy to switch to from a standard Bach"], ["Takes a few weeks to get used to", "Won't fix endurance on its own"]],
+  mute: [["Plays in tune with the mute in", "Sounds as expected for this mute type"], ["Corks need time to settle", "Heavier than some players like"]],
+  "valve oil": [["Valves feel fast and smooth", "Lasts a long time"], ["Some find the smell strong"]],
+  "slide grease": [["Slides move smoothly", "A little goes a long way"], ["Messy if you use too much"]],
+  "brass case": [["Light on the back", "Protects well on the way to gigs"], ["Little room for extra mutes"]],
+  "brass stand": [["Fits in the bell, easy to carry", "Stable on stage"], ["Feels light"]],
+  wind: [["Well made", "Good value"], ["Feels basic"]],
 };
 function reviewOf(p) {
   if (!p) return null;
@@ -68,7 +76,7 @@ function reviewOf(p) {
   if (real) return {kind: "real", stars: real.stars, ratings: real.ratings, dist: real.dist, written: real.written, aspects: real.aspects.map(a => ASPECT_EN[a] || a),
     praised: real.praised, criticised: real.criticised, note: real.note || "", source: "thomann.de, checked " + REVIEWS_CHECKED};
   if (p.r && p.rv && !p.vonly) {
-    const t = DEMO_THEMES[p.c] || DEMO_THEMES.accessories, h = [...p.id].reduce((a, c) => a + c.charCodeAt(0), 0);
+    const t = DEMO_THEMES[p.cp && p.cp.kind] || DEMO_THEMES[p.c] || DEMO_THEMES.accessories, h = [...p.id].reduce((a, c) => a + c.charCodeAt(0), 0);
     const freq = i => i === 0 ? "often" : i === 1 && p.r >= 4.6 ? "often" : "sometimes";
     const tags = p.tags || [];
     const praised = t[0].map((x, i) => [x, freq(i)]);

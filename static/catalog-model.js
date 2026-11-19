@@ -7,9 +7,11 @@ const VERIFIED_ON = THOMANN_DATA.verifiedOn;
 
 /* demo product types -> Thomann top-level category + subcategory */
 const DEMO_TOP = {guitars:["guitars_basses","Electric guitars"],amps:["guitars_basses","Guitar amps"],pedals:["guitars_basses","Guitar & bass effects"],power:["guitars_basses","Guitar & bass effects"],
-  interfaces:["studio","Audio interfaces"],mics:["mics","Microphones"],headphones:["accessories","Headphones"],monitors:["studio","Studio monitors"],keys:["keys","Keyboards"],drums:["drums","E-drums"]};
+  interfaces:["studio","Audio interfaces"],mics:["mics","Microphones"],headphones:["accessories","Headphones"],monitors:["studio","Studio monitors"],keys:["keys","Keyboards"],drums:["drums","E-drums"],wind:["wind","Trumpets","Trompeten"]};
 const DEMO_KIND_TOP = {strings:["guitars_basses","Strings"],cable:["cables","Cables"],usbcable:["cables","Computer cables"],battery:["accessories","Batteries"],picks:["guitars_basses","Guitar accessories"],
-  "acoustic guitar":["guitars_basses","Acoustic guitars"],cymbal:["drums","Cymbals"],sustain:["keys","Piano accessories"],booster:["mics","Microphone accessories"]};
+  "acoustic guitar":["guitars_basses","Acoustic guitars"],cymbal:["drums","Cymbals"],sustain:["keys","Piano accessories"],booster:["mics","Microphone accessories"],
+  trumpet:["wind","Trumpets","Trompeten"],mouthpiece:["wind","Brass mouthpieces","Mundstücke für Blechblasinstrumente"],mute:["wind","Mutes"],
+  "valve oil":["wind","Brass care"],"slide grease":["wind","Brass care"],"brass case":["wind","Cases & bags"],"brass stand":["wind","Stands","Ständer"]};
 const USE_TO_SIT = {home:"home",live:"band",rehearsal:"band",studio:"recording",producing:"recording"};
 /* which top-level categories serve which instrument in the Music Profile */
 const INST_TOPS = {guitar:["guitars_basses"],acoustic:["guitars_basses"],bass:["guitars_basses"],piano:["keys"],drums:["drums"],vocals:["mics","fx"],production:["studio","software","dj"],wind:["wind"],strings:["traditional"],other:[]};
@@ -36,7 +38,7 @@ function saveImported(l) { try { localStorage.setItem("ga3_imported", JSON.strin
 (function mergeCatalogue() {
   for (const p of P) {
     const m = DEMO_TOP[p.c] && !DEMO_KIND_TOP[p.cp.kind] ? DEMO_TOP[p.c] : DEMO_KIND_TOP[p.cp.kind] || DEMO_TOP[p.c] || ["accessories", "Accessories"];
-    p.top = m[0]; p.sub = m[1]; p.src = "demo"; p.ret = null; /* return reasons are not shown anywhere */
+    p.top = m[0]; p.sub = m[1]; if (m[2]) p.subDe = m[2]; p.src = "demo"; p.ret = null; /* return reasons are not shown anywhere */
   }
   const byArticle = Object.fromEntries(THOMANN_DATA.records.map(r => [r.article, r]));
   const linked = new Set();

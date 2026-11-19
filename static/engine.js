@@ -103,6 +103,19 @@ function fitCheck(prodIds,opt={}){
     if(cp.kind==="monitors"){
       const itf=find("interface")[0]; add(itf?(cp.inputs.includes(itf.cp.out)?"ok":"warn"):"warn",itf?(cp.inputs.includes(itf.cp.out)?`${itf.name} connects with ${itf.cp.out} cables.`:`${itf.name} has ${itf.cp.out} outputs: you need ${itf.cp.out} to ${cp.inputs[0]} cables.`):"No interface to connect them to.",itf?undefined:"i1");
     }
+    if(BRASS_FIT[cp.kind]){
+      const tr=all.filter(x=>(x.cp.kind==="trumpet"||x.cp.kind==="v-trumpets")&&x.id!==c.id);
+      if(!tr.length) add("warn","No trumpet in your rig yet. Add yours to My rig and the advisor can check this fits.");
+      for(const t of tr.slice(0,2)){
+        if(cp.kind==="valve oil"&&t.cp.valves==="rotary") add("warn",`${t.name} has rotary valves: use rotor oil, not piston valve oil.`);
+        else add("ok",`${t.name}: ${BRASS_FIT[cp.kind]}`);
+      }
+    }
+    if(cp.kind==="trumpet"){
+      const mps=find("mouthpiece").filter(x=>!x.isNew); if(mps.length) add("ok",`Your ${mps[0].name} fits its standard trumpet shank.`);
+      const mutes=find("mute").filter(x=>!x.isNew); if(mutes.length) add("ok",`Your ${mutes.map(x=>x.name).join(", ")} fit${mutes.length>1?"":"s"} its bell.`);
+      const other=all.filter(x=>(x.cp.kind==="trumpet"||x.cp.kind==="v-trumpets")&&!x.isNew&&x.id!==c.id); if(other.length&&!owned.has(c.id)) add("ok",`Note: you already own the ${other[0].name}. Compare bore and bell to be sure this one changes the sound the way you want.`);
+    }
     if(cp.kind==="edrums") add("ok","Connects to your computer by USB for recording and lessons apps; headphones plug into the module.");
     if(cp.kind==="usbcable"&&comp) add(comp.cp.ports.includes("USB-C")?"ok":"warn",comp.cp.ports.includes("USB-C")?`USB-C end fits your ${comp.name}.`:`Your ${comp.name} has USB-A ports; this cable has a USB-C end.`,undefined,"computer");
   }
@@ -114,6 +127,8 @@ function fitCheck(prodIds,opt={}){
   const seen=new Set();
   return [...checks,...more.filter(x=>!(notReady&&multi&&x.type==="ready"&&x.status==="ok"))].filter(x=>!seen.has(x.note)&&seen.add(x.note));
 }
+/* trumpet accessories: what the fit check says when a trumpet is in the rig */
+const BRASS_FIT={mouthpiece:"standard trumpet shank, fits.",mute:"fits a standard Bb trumpet bell.","valve oil":"for piston valves, fits.","slide grease":"for its tuning slides.","brass case":"made for a standard Bb trumpet.","brass stand":"holds a standard trumpet bell."};
 /* What else the shopper needs before they can play, counting their rig and basket */
 function missingFor(c,withIds=[]){
   const o=[...rigItems().map(r=>({id:r.id,cp:r.cp||{}})),...(typeof S!=="undefined"?S.basket:[]).map(b=>({id:b.id,cp:BY[b.id].cp})),
@@ -146,15 +161,17 @@ function moreChecks(c,o={}){
     {status:c.tv.inStock?"ok":"warn",note:`${c.tv.availEn} (as listed on thomann.de on ${c.tv.verified}).`,type:"delivery"}];
   const out=[],pr=PROFILE(),cp=c.cp;
   const miss=missingFor(c,o.with);
-  const verb=["electric guitar","acoustic guitar","bass","keys","edrums","amp"].includes(c.cp.kind)?"To start playing":"To use it";
+  const verb=["electric guitar","acoustic guitar","bass","keys","edrums","amp","trumpet"].includes(c.cp.kind)?"To start playing":"To use it";
   for(const m of miss)out.push({status:"warn",note:`${verb} you also need ${m.what}.`,fix:m.fix,type:"ready"});
-  if(!miss.length&&!["strings","cable","battery","picks","usbcable","booster","psu"].includes(cp.kind))
+  if(!miss.length&&!["strings","cable","battery","picks","usbcable","booster","psu","mouthpiece","mute","valve oil","slide grease","brass case","brass stand"].includes(cp.kind))
     out.push({status:"ok",note:cp.bundle?"Complete set: everything you need to start is in the box.":"Ready to play: nothing else needed with your rig.",type:"ready"});
   if(pr.place==="flat"){
     if(cp.kind==="amp")out.push(cp.headphoneOut?{status:"ok",note:"Headphone output: you can practise quietly in your flat.",type:"place"}:{status:"warn",note:`Loud for a flat: no headphone output${/tube/i.test(c.specs.Power||"")?", and tube amps need volume to sound good":""}. A modelling amp with headphones suits a flat better.`,fix:"a1",alt:true,type:"place"});
     if(cp.kind==="edrums")out.push({status:"warn",note:"In a flat, the kick pedal thumps through the floor even with headphones on. A drum mat or riser helps.",type:"place"});
     if(cp.kind==="cymbal")out.push({status:"warn",note:"Real cymbals are very loud in a flat. E-drums suit home practice better.",fix:"d1",alt:true,type:"place"});
     if(cp.kind==="monitors")out.push({status:"ok",note:"Fine for a flat at low volume; switch to headphones late at night.",type:"place"});
+    if(cp.kind==="trumpet")out.push({status:"warn",note:"A trumpet is loud in a flat, even played softly. A practice mute takes the edge off; Silent Brass lets you practise with earphones.",fix:"mu5",alt:true,type:"place"});
+    if(cp.kind==="mute"&&cp.practice)out.push({status:"ok",note:cp.silent?"Very quiet: you hear yourself through earphones, so it suits a flat, also in the evening.":"Much quieter than an open trumpet: good for warm-ups in a flat.",type:"place"});
     if(cp.kind==="headphones")out.push({status:"ok",note:`${/closed/i.test(c.specs.Type||"")?"Closed back: your neighbours and housemates hear very little.":"Open back: people nearby will hear some sound."}`,type:"place"});
   }
   if(pr.forWhom==="child"&&cp.kind==="electric guitar"&&!c.tags.includes("kids"))out.push({status:"warn",note:"Full-size guitar: for children under about 11, a 3/4 size is easier to hold and play.",fix:"kd1",alt:true,type:"place"});
